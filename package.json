@@ -1,0 +1,37 @@
+{
+  "name": "wondrr-host-client",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "PORT=8003 next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "eslint"
+  },
+  "dependencies": {
+    "@mui/material": "^7.3.5",
+    "@tanstack/react-query": "^5.90.10",
+    "axios": "^1.13.2",
+    "bcrypt": "^6.0.0",
+    "lucide-react": "^0.554.0",
+    "mongoose": "^8.19.4",
+    "next": "16.0.3",
+    "next-auth": "^4.24.13",
+    "react": "19.2.0",
+    "react-dom": "19.2.0",
+    "react-final-form": "^7.0.0",
+    "react-toastify": "^11.0.5",
+    "zustand": "^5.0.8"
+  },
+  "devDependencies": {
+    "@tailwindcss/postcss": "^4",
+    "@types/node": "^20",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "babel-plugin-react-compiler": "1.0.0",
+    "eslint": "^9",
+    "eslint-config-next": "16.0.3",
+    "tailwindcss": "^4",
+    "typescript": "^5"
+  }
+}
