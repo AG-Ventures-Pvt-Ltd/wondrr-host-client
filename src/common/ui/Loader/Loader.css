@@ -1,0 +1,10 @@
+@keyframes spin-smooth {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(180deg); }
+  }
+  
+  @layer utilities {
+    .animate-spin-smooth {
+      animation: spin-smooth 0.5s cubic-bezier(0.7, -0.13, 0.22, 0.86) infinite normal;
+    }
+  }
