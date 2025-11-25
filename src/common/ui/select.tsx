@@ -1,20 +1,19 @@
 "use client";
 
 import * as React from "react";
-import { ChevronDownIcon } from "lucide-react";
-
+import { Select as MuiSelect, MenuItem, FormControl, InputLabel, SelectChangeEvent } from "@mui/material";
 import { cn } from "./utils";
 
-interface SelectProps extends Omit<React.SelectHTMLAttributes<HTMLSelectElement>, "size"> {
+interface SelectProps extends Omit<React.SelectHTMLAttributes<HTMLSelectElement>, "size" | "onChange"> {
   size?: "sm" | "default";
   placeholder?: string;
   onValueChange?: (value: string) => void;
+  onChange?: (event: React.ChangeEvent<HTMLSelectElement>) => void;
 }
 
 function Select({
-  children,
-  ...props
-}: SelectProps) {
+  children
+}: { children: React.ReactNode }) {
   return <div>{children}</div>;
 }
 
@@ -25,38 +24,82 @@ function SelectTrigger({
   placeholder,
   onValueChange,
   onChange,
-  ...props
+  value,
+  id,
+  disabled,
+  required
 }: SelectProps) {
-  const handleChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-    onChange?.(event);
-    onValueChange?.(event.target.value);
+  const handleChange: (event: SelectChangeEvent<string>) => void = (event) => {
+    const newValue = event.target.value;
+    onValueChange?.(newValue);
+    // Create a synthetic event for onChange compatibility
+    if (onChange) {
+      const syntheticEvent = {
+        target: { value: newValue }
+      } as React.ChangeEvent<HTMLSelectElement>;
+      onChange(syntheticEvent);
+    }
   };
 
   return (
-    <div className="relative">
-      <select
-        data-slot="select"
-        className={cn(
-          "border-input bg-input-background flex w-full items-center justify-between gap-2 rounded-md border px-3 py-2 text-sm whitespace-nowrap transition-[color,box-shadow] outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50 disabled:cursor-not-allowed disabled:opacity-50",
-          size === "default" ? "h-9" : "h-8",
-          className,
-        )}
+    <FormControl
+      fullWidth
+      size={size === "sm" ? "small" : "medium"}
+      className={cn("relative", className)}
+      disabled={disabled}
+      required={required}
+    >
+      {placeholder && (
+        <InputLabel id={`${id}-label`}>{placeholder}</InputLabel>
+      )}
+      <MuiSelect
+        labelId={placeholder ? `${id}-label` : undefined}
+        id={id}
+        value={value || ""}
+        // @ts-expect-error - MUI Select has complex onChange types that conflict with our interface
         onChange={handleChange}
-        {...props}
+        displayEmpty
+        className={cn(
+          "border-input bg-input-background text-sm transition-[color,box-shadow] focus-visible:ring-[3px] focus-visible:ring-ring/50",
+          size === "default" ? "h-9" : "h-8",
+        )}
+        sx={{
+          '& .MuiOutlinedInput-notchedOutline': {
+            borderColor: 'var(--border-input)',
+          },
+          '&:hover .MuiOutlinedInput-notchedOutline': {
+            borderColor: 'var(--border-input)',
+          },
+          '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+            borderColor: 'var(--ring)',
+            borderWidth: '2px',
+          },
+          '& .MuiSelect-select': {
+            backgroundColor: 'var(--bg-input-background)',
+            color: 'var(--foreground)',
+            padding: size === "sm" ? '4px 12px' : '8px 12px',
+            fontSize: '14px',
+          },
+          '& .MuiInputLabel-root': {
+            color: 'var(--muted-foreground)',
+            '&.Mui-focused': {
+              color: 'var(--ring)',
+            },
+          },
+        }}
       >
         {placeholder && (
-          <option value="" disabled>
-            {placeholder}
-          </option>
+          <MenuItem value="" disabled>
+            <em>{placeholder}</em>
+          </MenuItem>
         )}
         {children}
-      </select>
-      <ChevronDownIcon className="absolute right-3 top-1/2 size-4 -translate-y-1/2 opacity-50 pointer-events-none" />
-    </div>
+      </MuiSelect>
+    </FormControl>
   );
 }
 
-function SelectValue({ placeholder }: { placeholder?: string }) {
+function SelectValue() {
   // This is handled by SelectTrigger
   return null;
 }
@@ -65,8 +108,12 @@ function SelectContent({ children }: { children: React.ReactNode }) {
   return <>{children}</>;
 }
 
-function SelectItem({ children, ...props }: React.OptionHTMLAttributes<HTMLOptionElement>) {
-  return <option {...props}>{children}</option>;
+function SelectItem({ children, value, ...props }: { children: React.ReactNode; value: string } & React.HTMLAttributes<HTMLElement>) {
+  return (
+    <MenuItem value={value} {...props}>
+      {children}
+    </MenuItem>
+  );
 }
 
 function SelectGroup({ className, ...props }: React.HTMLAttributes<HTMLOptGroupElement>) {

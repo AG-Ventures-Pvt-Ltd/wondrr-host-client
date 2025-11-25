@@ -15,7 +15,7 @@ const dmSans = DM_Sans({
 const theme = createTheme({
   palette: {
     primary: {
-      main: '#4F46E5',
+      main: '#155DFC',
     },
     secondary: {
       main: '#000000',

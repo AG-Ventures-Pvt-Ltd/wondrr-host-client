@@ -3,9 +3,15 @@
 @import "tailwindcss";
 
 @theme  {
-  --color-primary: #4F46E5;
-  /* --color-background: #4F46E5; */
-  --color-foreground: var(--foreground);
+  --color-maintext: #171717;
+  --color-subtext: #737373;
+  --color-background: #FFFFFF;
+  --color-primary: #155DFC;
+  --color-primary-bg : #EFF6FF;
+  --color-success: #00A63E;
+  --color-success-bg : #F0FDF4; 
+  --color-warning: #E17100;
+  --color-warning-bg : #FEF3C6;
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }

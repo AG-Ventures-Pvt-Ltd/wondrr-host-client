@@ -18,7 +18,7 @@ export default async function proxy (request: NextRequest) {
   }
 
   if (!token || token.error) {
-    return NextResponse.redirect(`${process.env.MAIN_AUTH_URL!}/auth`);
+    return NextResponse.redirect(`${process.env.MAIN_AUTH_URL!}/auth?redirectUrl=${encodeURIComponent(request.url)}`);
   }
 
   return NextResponse.next()

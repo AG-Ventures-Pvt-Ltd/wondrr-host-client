@@ -42,7 +42,7 @@ function Button({
 }: ButtonProps) {
   if (asChild && children) {
     const child = React.Children.only(children as React.ReactElement);
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+     
     return React.cloneElement(child, {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       ...(child.props as any),

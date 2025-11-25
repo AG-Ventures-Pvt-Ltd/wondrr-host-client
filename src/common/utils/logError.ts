@@ -1,6 +1,6 @@
 'use client'
 
-/* eslint-disable no-console */
+ 
 export interface LogErrorParams {
   error: unknown;
   location: string;

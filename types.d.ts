@@ -1,3 +1,6 @@
+/// <reference types="react" />
+/// <reference types="react-dom" />
+
 import { Connection } from "mongoose";
 
 declare global {

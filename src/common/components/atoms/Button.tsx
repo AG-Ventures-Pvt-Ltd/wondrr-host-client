@@ -33,7 +33,7 @@ const Button: React.FC<ButtonProps> = ({
 
   return (
     <MuiButton
-      className={`!py-2 ${className}`}
+      className={`py-2! ${className}`}
       onClick={onClick}
       style={style}
       disabled={disabled}
