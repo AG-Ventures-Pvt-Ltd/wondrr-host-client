@@ -1,0 +1,156 @@
+'use client';
+
+import React from 'react';
+import { useRouter, useParams } from 'next/navigation';
+import Card from '@/common/components/composites/Card';
+import Button from '@/common/components/atoms/Button';
+import { ArrowLeft, TrendingUp, Users, IndianRupee, MapPin, Clock, Share2, Edit } from 'lucide-react';
+import { useBatchDetails } from '../../../hooks/useBatchDetails';
+import Loader from '@/common/components/composites/Loader/Loader';
+
+
+const BatchDetailsPage = () => {
+  const router = useRouter();
+  const params = useParams();
+  const batchId = params.batchId;
+  const tripId = params.id;
+
+  const { batchDetails, isLoading, error } = useBatchDetails(batchId);
+
+  const handleEditBatch = () => {
+    router.push(`/dashboard/trips/${tripId}/batch/${batchId}/edit`);
+  };
+
+  if (isLoading) return <Loader />;
+  if (error) return <div>Error loading batch details</div>;
+  if (!batchDetails) return <div>No batch data</div>;
+
+
+  return (
+    <div>
+      <div className="flex items-center gap-2 text-maintext rounded-lg cursor-pointer w-fit" onClick={() => router.push(`/dashboard/trips/${tripId}`)}>
+        <ArrowLeft size={20} />
+        <span>Back to Trip Details</span>
+      </div>
+      <div className="pt-10">
+        <div className="flex justify-between items-start">
+          <div className="flex flex-col gap-2">
+            <h1 className="text-xl font-medium text-maintext">Batch Details</h1>
+            <p className="text-base text-neutral-500">
+              {batchDetails.dateRange}
+            </p>
+          </div>
+          <div className="flex items-center gap-3">
+            <div className="px-3 py-1.5 bg-green-50 rounded-[10px]">
+              <span className="text-xs text-green-700">{batchDetails.status}</span>
+            </div>
+            <Button 
+              variant="text" 
+              className="h-10 px-4 bg-white! rounded-2xl shadow-md flex items-center gap-2 hover:bg-gray-50" 
+              onClick={handleEditBatch}
+            >
+              <Edit className="w-4 h-4 text-maintext" />
+              <span className="text-sm text-maintext">Edit Batch</span>
+            </Button>
+          </div>
+        </div>
+      </div>
+      <div className="pt-6">
+        <div className="grid grid-cols-4 gap-6">
+          <Card className="flex flex-col gap-3">
+            <div className="flex justify-between items-start">
+              <span className="text-sm text-neutral-500">Revenue</span>
+              <div className="w-7 h-7 bg-green-50 rounded-[10px] flex items-center justify-center">
+                <TrendingUp className="w-4 h-4 text-green-600" />
+              </div>
+            </div>
+            <div className="text-2xl text-maintext tracking-tight">
+             <span className='flex items-center'><IndianRupee/>{batchDetails.stats.revenue}</span> 
+            </div>
+          </Card>
+          <Card className="flex flex-col gap-3">
+            <div className="flex justify-between items-start">
+              <span className="text-sm text-neutral-500">Seats Filled</span>
+              <div className="w-7 h-7 bg-blue-50 rounded-[10px] flex items-center justify-center">
+                <Users className="w-4 h-4 text-blue-600" />
+              </div>
+            </div>
+            <div className="text-2xl text-maintext tracking-tight">
+              {batchDetails.stats.seatsFilledValue}
+            </div>
+          </Card>
+        </div>
+      </div>
+      <div className="pt-6">
+        <div className="flex gap-6">
+          <Card className="flex-1 flex flex-col gap-5">
+            <h2 className="text-base text-maintext">Batch Information</h2>
+            <div className="flex flex-col gap-4">
+              <div className="flex flex-col gap-2">
+                <span className="text-xs text-neutral-500">Meeting Point</span>
+                <div className="flex items-center gap-2">
+                  <MapPin className="w-4 h-4 text-neutral-400" />
+                  <span className="text-sm text-maintext">
+                    {batchDetails.batchInfo.meetingPoint}
+                  </span>
+                </div>
+              </div>
+              <div className="flex flex-col gap-2">
+                <span className="text-xs text-neutral-500">Start Time</span>
+                <div className="flex items-center gap-2">
+                  <Clock className="w-4 h-4 text-neutral-400" />
+                  <span className="text-sm text-maintext">
+                    {batchDetails.batchInfo.startTime}
+                  </span>
+                </div>
+              </div>
+              <div className="flex flex-col gap-2">
+                <span className="text-xs text-neutral-500">End Point</span>
+                <div className="flex items-center gap-2">
+                  <MapPin className="w-4 h-4 text-neutral-400" />
+                  <span className="text-sm text-maintext">
+                    {batchDetails.batchInfo.endPoint}
+                  </span>
+                </div>
+              </div>
+              <div className="flex flex-col gap-2">
+                <span className="text-xs text-neutral-500">Point of Contact</span>
+                <div className="flex items-center gap-2">
+                  <div className="w-8 h-8 bg-linear-to-br from-blue-100 to-blue-50 rounded-full flex items-center justify-center">
+                    <span className="text-xs text-blue-700">
+                      {batchDetails.batchInfo.pointOfContact.charAt(0)}
+                    </span>
+                  </div>
+                  <span className="text-sm text-maintext">
+                    {batchDetails.batchInfo.pointOfContact} - {batchDetails.batchInfo.contactPhone}
+                  </span>
+                </div>
+              </div>
+            </div>
+          </Card>
+          <Card className="flex-1 flex flex-col gap-4">
+            <h2 className="text-base text-maintext">Quick Actions</h2>
+            <div className="flex flex-col gap-2">
+              <Button
+                variant="text"
+                className="h-10 px-4 rounded-2xl flex items-center gap-2 hover:bg-gray-50 text-left justify-start"
+              >
+                <Users className="w-4 h-4 text-neutral-600" />
+                <span className="text-sm text-neutral-600">View Bookings</span>
+              </Button>
+              <Button
+                variant="text"
+                className="h-10 px-4 rounded-2xl flex items-center gap-2 hover:bg-gray-50 text-left justify-start"
+              >
+                <Share2 className="w-4 h-4 text-neutral-600" />
+                <span className="text-sm text-neutral-600">Share Batch</span>
+              </Button>
+            </div>
+          </Card>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default BatchDetailsPage;

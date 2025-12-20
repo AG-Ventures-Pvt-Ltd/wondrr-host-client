@@ -12,6 +12,7 @@ interface ModalProps {
     submitText?: string;
     onSubmit?: () => void;
     showButtons?: boolean;
+    disabled?: boolean;
 }
 
 const Modal: React.FC<ModalProps> = ({ 
@@ -23,7 +24,8 @@ const Modal: React.FC<ModalProps> = ({
     cancelText = 'Cancel', 
     submitText = 'Submit', 
     onSubmit,
-    showButtons = true 
+    showButtons = true,
+    disabled = false
 }) => {
     if (!open) return null;
 
@@ -50,7 +52,7 @@ const Modal: React.FC<ModalProps> = ({
                         <Button variant="text" onClick={onClose} className='text-subtext! px-4!'>
                             {cancelText}
                         </Button>
-                        <Button variant="contained" onClick={onSubmit || onClose}>
+                        <Button variant="contained" onClick={onSubmit || onClose} disabled={disabled}>
                             {submitText}
                         </Button>
                     </div>

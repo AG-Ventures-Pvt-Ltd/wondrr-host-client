@@ -1,6 +1,6 @@
 import React from 'react'
 import Logo from '@/common/components/atoms/Logo/Logo'
-import { LayoutGrid, BarChart3, Calendar, Map, BookOpen, Bell, HelpCircle, ChevronRight, ChevronLeft } from 'lucide-react'
+import { LayoutGrid, Calendar, Map, BookOpen, Bell, HelpCircle, ChevronRight, ChevronLeft } from 'lucide-react'
 import { useRouter, usePathname } from 'next/navigation'
 import { useState } from 'react'
 
@@ -11,19 +11,18 @@ const SideNavbar = () => {
 
     const router = useRouter()
     const pathname = usePathname()
-    const activeTab = pathname === '/dashboard' ? 'home' : pathname.split('/').pop() || 'home'
 
     const MainNavItems = [
         { name: 'Home', tab : 'home' , icon: LayoutGrid },
         { name: 'Schedule', tab : 'schedule' ,icon: Calendar },
-        { name: 'Analytics', tab : 'analytics' , icon: BarChart3 },
-        { name: 'My Trips', tab : 'mytrips' , icon: Map },
+        // { name: 'Analytics', tab : 'analytics' , icon: BarChart3 },
+        { name: 'Trips', tab : 'trips' , icon: Map },
         { name: 'Bookings', tab : 'bookings' , icon: BookOpen },
     ]
 
     const SecondaryNavItems = [
         { name: 'Profile',tab : 'profile' , icon: Bell },
-        { name: 'Settings', tab : 'settings' , icon: HelpCircle },
+        // { name: 'Settings', tab : 'settings' , icon: HelpCircle },
         { name: 'Help', tab : 'help' , icon: HelpCircle },
     ]
 
@@ -38,30 +37,36 @@ const SideNavbar = () => {
             <div className='flex flex-col justify-between h-full'>
                 <div>
                     {
-                        MainNavItems.map((item) => (
+                        MainNavItems.map((item) => {
+                            const isActive = item.tab === 'home' ? pathname === '/dashboard' : pathname.startsWith(`/dashboard/${item.tab}`)
+                            return (
                             <div key={item.name}>
                                 <div
-                                    className={`text-[#64748B] flex items-center py-3   ${isCollapsed ? 'justify-center mx-2' : 'mx-4 px-6'} hover:bg-primary hover:text-white cursor-pointer my-1 rounded-xl transition-all duration-300 ease-in-out ${item.tab === activeTab ? 'bg-primary text-white' : ''}`}
+                                    className={`text-[#64748B] flex items-center py-3   ${isCollapsed ? 'justify-center mx-2' : 'mx-4 px-6'} hover:bg-primary hover:text-white cursor-pointer my-1 rounded-xl transition-all duration-300 ease-in-out ${isActive ? 'bg-primary text-white' : ''}`}
                                     onClick={() => router.push(`/dashboard/${item.tab}`)}
                                 >
                                     <item.icon className="inline transition-all duration-300 ease-in-out" size={'18'} />
                                     {!isCollapsed && <span className={`ml-2 transition-all duration-300 ease-in-out overflow-hidden whitespace-nowrap w-auto opacity-100}`}>{item.name}</span>}
                                 </div>
                             </div>
-                        ))
+                            )
+                        })
                     }
                     <div className={`w-full border border-[#E2E8F0] my-4`}></div>
                     {
-                        SecondaryNavItems.map((item) => (
+                        SecondaryNavItems.map((item) => {
+                            const isActive = item.tab === 'home' ? pathname === '/dashboard' : pathname.startsWith(`/dashboard/${item.tab}`)
+                            return (
                             <div
                                 key={item.name}
-                                className={`text-[#64748B] flex items-center py-3  ${isCollapsed ? 'justify-center mx-2' : 'mx-4 px-6'} hover:bg-primary hover:text-white my-1 cursor-pointer  rounded-xl transition-all duration-300 ease-in-out ${item.tab === activeTab ? 'bg-primary text-white' : ''}`}
+                                className={`text-[#64748B] flex items-center py-3  ${isCollapsed ? 'justify-center mx-2' : 'mx-4 px-6'} hover:bg-primary hover:text-white my-1 cursor-pointer  rounded-xl transition-all duration-300 ease-in-out ${isActive ? 'bg-primary text-white' : ''}`}
                                 onClick={() => router.push(`/dashboard/${item.tab}`)}
                             >
                                 <item.icon className="inline transition-all duration-300 ease-in-out" size={'18'} />
                                 {!isCollapsed && <span className={`ml-2 transition-all duration-300 ease-in-out overflow-hidden whitespace-nowrap w-auto opacity-100`}>{item.name}</span>}
                             </div>
-                        ))
+                            )
+                        })
                     }
                 </div>
                 <div className={`flex justify-center items-center gap-4 ${isCollapsed ? 'px-0' : 'px-4'} pb-4 border-t-2 pt-4 border-[#E2E8F0] transition-all duration-300 ease-in-out`}>

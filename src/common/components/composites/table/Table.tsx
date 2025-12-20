@@ -31,7 +31,7 @@ function Table<T = Record<string, unknown>>({
   rowClassName = '',
   keyExtractor
 }: TableProps<T>) {
-  const gridCols = columns.map((col: TableColumn<T>) => col.width).join('_')
+  const gridCols = columns.map((col: TableColumn<T>) => col.width).join(' ')
 
   const getAlignmentClass = (align?: 'left' | 'center' | 'right') => {
     switch (align) {
@@ -47,11 +47,11 @@ function Table<T = Record<string, unknown>>({
   return (
     <Card className={`bg-background rounded-lg overflow-hidden p-0! ${className}`}>
       <div className={`bg-neutral-50 border-b border-subtext sticky top-0 z-10 ${headerClassName}`}>
-        <div className={`grid grid-cols-[${gridCols}] px-6 py-4`}>
+        <div className="grid px-6 py-4" style={{ gridTemplateColumns: gridCols }}>
           {columns.map((column) => (
             <div
               key={column.key}
-              className={`text-xs font-medium text-subtext uppercase tracking-wide ${
+              className={`text-sm font-semibold text-maintext uppercase tracking-wide ${
                 column.align === 'center' ? 'text-center' : ''
               }`}
             >
@@ -65,7 +65,8 @@ function Table<T = Record<string, unknown>>({
           {data.map((item, index) => (
             <div
               key={keyExtractor ? keyExtractor(item, index) : index}
-              className={`grid grid-cols-[${gridCols}] px-6 py-3 hover:bg-primary-bg transition-colors ${rowClassName}`}
+              className={`grid px-6 py-3 hover:bg-primary-bg transition-colors ${rowClassName}`}
+              style={{ gridTemplateColumns: gridCols }}
             >
               {columns.map((column) => (
                 <div

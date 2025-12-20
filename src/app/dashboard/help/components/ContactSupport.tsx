@@ -6,7 +6,7 @@ import { SUPPORT_EMAIL, SUPPORT_PHONE } from '@/common/constants/contactInfo'
 
 const ContactSupport = () => {
     return (
-        <Card className='text-center py-8'>
+        <Card className='text-center py-8 h-fit'>
             <div className='flex flex-col items-center gap-4'>
                 <HelpCircle size={68} className='text-primary bg-primary-bg rounded-full p-3' />
                 <h2 className='text-maintext text-xl font-semibold'>Still need help?</h2>

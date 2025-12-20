@@ -8,17 +8,39 @@ import { Upload, X, Image as ImageIcon } from 'lucide-react'
 import useS3Upload from '@/common/services/useS3Upload'
 import { notify } from '@/common/utils/notify'
 
-const ImageUploader = ({ images = [], onImagesChange, minRequired = 5 }) => {
-  const fileInputRef = useRef(null)
-  const { uploadImages, isUploading, progress, error } = useS3Upload()
-  const [previewImages, setPreviewImages] = useState(images)
+interface ImagePreview {
+  file?: File
+  url: string
+  name: string
+  isUploading?: boolean
+}
 
-  const handleFileSelect = async (e) => {
-    const files = Array.from(e.target.files || [])
+interface ImageUploaderProps {
+  images?: ImagePreview[]
+  onImagesChange: (images: ImagePreview[]) => void
+  minRequired?: number
+}
+
+const ImageUploader: React.FC<ImageUploaderProps> = ({
+  images = [],
+  onImagesChange,
+  minRequired = 5
+}) => {
+  const fileInputRef = useRef<HTMLInputElement>(null)
+  const { uploadImages, isUploading, progress, error } = useS3Upload()
+  const [previewImages, setPreviewImages] = useState<ImagePreview[]>(images)
+
+  // Update previewImages when images prop changes (for edit mode)
+  React.useEffect(() => {
+    setPreviewImages(images)
+  }, [images])
+
+  const handleFileSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = Array.from(e.target.files || []) as File[]
     
     if (files.length === 0) return
 
-    const tempPreviews = files.map(file => ({
+    const tempPreviews: ImagePreview[] = files.map(file => ({
       file,
       url: URL.createObjectURL(file),
       name: file.name,
@@ -57,7 +79,7 @@ const ImageUploader = ({ images = [], onImagesChange, minRequired = 5 }) => {
     }
   }
 
-  const handleRemoveImage = (index) => {
+  const handleRemoveImage = (index: number) => {
     const newImages = previewImages.filter((_, i) => i !== index)
     
     if (previewImages[index].file) {
@@ -68,16 +90,16 @@ const ImageUploader = ({ images = [], onImagesChange, minRequired = 5 }) => {
     onImagesChange(newImages)
   }
 
-  const handleDragOver = (e) => {
+  const handleDragOver = (e: React.DragEvent<HTMLDivElement>) => {
     e.preventDefault()
     e.stopPropagation()
   }
 
-  const handleDrop = async (e) => {
+  const handleDrop = async (e: React.DragEvent<HTMLDivElement>) => {
     e.preventDefault()
     e.stopPropagation()
     
-    const files = Array.from(e.dataTransfer.files || [])
+    const files = Array.from(e.dataTransfer.files) as File[]
     const imageFiles = files.filter(file => file.type.startsWith('image/'))
     
     if (imageFiles.length === 0) {
@@ -85,7 +107,7 @@ const ImageUploader = ({ images = [], onImagesChange, minRequired = 5 }) => {
       return
     }
 
-    const tempPreviews = imageFiles.map(file => ({
+    const tempPreviews: ImagePreview[] = imageFiles.map(file => ({
       file,
       url: URL.createObjectURL(file),
       name: file.name,

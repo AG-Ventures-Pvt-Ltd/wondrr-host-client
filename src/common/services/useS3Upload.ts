@@ -85,9 +85,19 @@ const uploadToS3 = async (
   }
 };
 
-
-const getPublicUrl = (presignedUrl: string): string => {
-  return presignedUrl.split("?")[0];
+/**
+ * Get S3 path (everything after the domain)
+ */
+const getS3Path = (presignedUrl: string): string => {
+  const urlWithoutQuery = presignedUrl.split("?")[0];
+  try {
+    const url = new URL(urlWithoutQuery);
+    // Return pathname which starts with /
+    return url.pathname;
+  } catch {
+    // Fallback: if URL parsing fails, return the original without query
+    return urlWithoutQuery;
+  }
 };
 
 /**
@@ -131,15 +141,15 @@ const useS3Upload = (): UseS3UploadReturn => {
           // Upload to S3
           await uploadToS3(presignedUrl, file);
 
-          // Get public URL
-          const publicUrl = getPublicUrl(presignedUrl);
+          // Get S3 path (without domain)
+          const s3Path = getS3Path(presignedUrl);
 
           // Update progress
           setProgress(((index + 1) / totalFiles) * 100);
 
           return {
             success: true,
-            url: publicUrl,
+            url: s3Path,
             originalFile: file,
           };
         } catch (error) {

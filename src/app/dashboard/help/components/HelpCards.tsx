@@ -1,14 +1,11 @@
 import React, { useState } from 'react'
 import Card from '@/common/components/composites/Card'
-import Modal from '@/common/components/composites/Modal'
 import { Book, ArrowRight, Info, Mail, FileText } from 'lucide-react'
 import { SUPPORT_EMAIL } from '@/common/constants/contactInfo'
-import { TextField, Select, MenuItem, FormControl, InputLabel } from '@mui/material'
+import SupportTicketModal from './SupportTicketModal'
 
 const HelpCards = () => {
     const [open, setOpen] = useState(false)
-    const [category, setCategory] = useState('')
-    const [description, setDescription] = useState('')
 
     return (
         <div>
@@ -57,35 +54,10 @@ const HelpCards = () => {
                     <ArrowRight className='text-subtext' />
                 </Card>
             </div>
-            <Modal 
-                open={open} 
+            <SupportTicketModal 
+                open={open}
                 onClose={() => setOpen(false)}
-                title="Raise a Support Ticket"
-                description="Describe the issue you're facing with the dashboard and our team will help you resolve it."
-                submitText="Submit Ticket"
-                onSubmit={() => {
-                    // Handle submit logic here
-                    setOpen(false)
-                }}
-            >
-                <div className='flex flex-col gap-4'>
-                    <FormControl fullWidth required className="mb-4" sx={{ '& .MuiOutlinedInput-root': { borderRadius: '1rem' } }}>
-                        <InputLabel>Choose Category</InputLabel>
-                        <Select
-                            value={category}
-                            label="Choose Category"
-                            onChange={(e) => setCategory(e.target.value)}
-                        >
-                            <MenuItem value="bug">Bug Report</MenuItem>
-                            <MenuItem value="feature">Feature Request</MenuItem>
-                            <MenuItem value="general">General Inquiry</MenuItem>
-                            <MenuItem value="other">Other</MenuItem>
-                        </Select>
-                    </FormControl>
-                    <TextField label="What happened?" required multiline rows={6} fullWidth className="mb-1" sx={{ '& .MuiOutlinedInput-root': { borderRadius: '1rem' } }} value={description} onChange={(e) => setDescription(e.target.value)} placeholder="Please describe the issue in detail. Include any error messages or steps to reproduce the problem." />
-                </div>
-                <div className="text-xs text-subtext my-2 ml-2">*Provide as much detail as possible to help us resolve your issue quickly</div>
-            </Modal>
+            />
         </div>
     )
 }

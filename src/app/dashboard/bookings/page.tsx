@@ -310,13 +310,13 @@ const Bookings = () => {
     {
       key: 'id',
       header: 'Booking ID',
-      width: '128px',
+      width: '10%',
       align: 'left'
     },
     {
       key: 'guestName',
       header: 'Guest Name',
-      width: '208px',
+      width: '18%',
       align: 'left',
       render: (_, booking) => (
         <div className="flex items-center gap-3">
@@ -352,19 +352,19 @@ const Bookings = () => {
     {
       key: 'destination',
       header: 'Destination & Date',
-      width: '240px',
+      width: '28%',
       align: 'left'
     },
     {
       key: 'guests',
       header: 'Guests',
-      width: '96px',
+      width: '6%',
       align: 'center'
     },
     {
       key: 'amount',
       header: 'Amount',
-      width: '112px',
+      width: '12%',
       align: 'center',
       render: (value) => (
         <span className="text-sm text-maintext font-medium">{String(value)}</span>
@@ -373,7 +373,7 @@ const Bookings = () => {
     {
       key: 'status',
       header: 'Status',
-      width: '160px',
+      width: '12%',
       align: 'center',
       render: (value) => (
         value === 'confirmed' ? (
@@ -392,7 +392,7 @@ const Bookings = () => {
     {
       key: 'bookingDate',
       header: 'Booking Date',
-      width: '144px',
+      width: '14%',
       align: 'center'
     }
   ]
