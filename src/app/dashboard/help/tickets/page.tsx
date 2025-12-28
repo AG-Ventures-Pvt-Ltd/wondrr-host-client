@@ -4,38 +4,33 @@ import React, { useState, useMemo } from 'react';
 import TicketHeader from './components/TicketHeader';
 import TicketFilters from './components/TicketFilters';
 import TicketCard from './components/TicketCard';
-import SupportTicketModal from './components/SupportTicketModal';
-import { TICKET_STATUS, normalizeStatus } from './constants';
+import SupportTicketModal from '../components/SupportTicketModal';
+import { TICKET_STATUS } from './constants';
 import { useGetData } from '@/common/services/useGetData';
 import { API_ENDPOINTS } from '@/common/constants/apiEndpoints';
 import type { Ticket } from './constants';
 
 export default function TicketsPage() {
-  const [selectedStatus, setSelectedStatus] = useState('All Statuses');
-  const [selectedCategory, setSelectedCategory] = useState('All Categories');
+  const [selectedYear, setSelectedYear] = useState('2024');
+  const [selectedMonth, setSelectedMonth] = useState('All Months');
   const [ticketModalOpen, setTicketModalOpen] = useState(false);
 
   // Fetch tickets from API
-  const { data: tickets, isLoading, refetch } = useGetData<Ticket[]>(
+  const { data: tickets, isLoading } = useGetData<Ticket[]>(
     API_ENDPOINTS.SUPPORT.GET_MY_TICKETS
   );
-
-  console.log('Fetched Tickets:', tickets);
 
   // Filter tickets based on selected filters
   const filteredTickets = useMemo(() => {
     if (!tickets) return [];
     return tickets.filter((ticket) => {
-      const normalizedTicketStatus = normalizeStatus(ticket.status);
-      const statusMatch =
-        selectedStatus === 'All Statuses' ||
-        normalizedTicketStatus === selectedStatus;
-      const categoryMatch =
-        selectedCategory === 'All Categories' ||
-        ticket.type === selectedCategory;
-      return statusMatch && categoryMatch;
+      const yearMatch = ticket.createdAt.includes(selectedYear);
+      const monthMatch =
+        selectedMonth === 'All Months' ||
+        ticket.createdAt.includes(selectedMonth.slice(0, 3));
+      return yearMatch && monthMatch;
     });
-  }, [tickets, selectedStatus, selectedCategory]);
+  }, [tickets, selectedYear, selectedMonth]);
 
   // Calculate stats
   const totalTickets = filteredTickets.length;
@@ -64,10 +59,10 @@ export default function TicketsPage() {
 
       {/* Filters Section */}
       <TicketFilters
-        selectedStatus={selectedStatus}
-        selectedCategory={selectedCategory}
-        onStatusChange={setSelectedStatus}
-        onCategoryChange={setSelectedCategory}
+        selectedStatus={'All Statuses'}
+        selectedCategory={'All Categories'}
+        onStatusChange={() => {}}
+        onCategoryChange={() => {}}
         totalTickets={totalTickets}
         resolvedTickets={resolvedTickets}
       />
@@ -85,7 +80,7 @@ export default function TicketsPage() {
         ) : (
           <div className="flex items-center justify-center p-12 bg-white rounded-2xl border border-neutral-200/60">
             <p className="text-neutral-500">
-              {!tickets || tickets.length === 0 ? 'No tickets found' : 'No tickets found for the selected period'}
+              {tickets?.length === 0 ? 'No tickets found' : 'No tickets found for the selected period'}
             </p>
           </div>
         )}
@@ -95,7 +90,6 @@ export default function TicketsPage() {
       <SupportTicketModal 
         open={ticketModalOpen}
         onClose={() => setTicketModalOpen(false)}
-        onSuccess={() => refetch()}
       />
     </div>
   );

@@ -14,12 +14,17 @@ export interface TripList {
 }
 
 export interface TripBatchDetails {
+  _id: string
   id: string
   date: string
+  startDate: string
+  endDate: string
   status: string
   duration: string
   priceRange: string
   seats: string
+  totalSeats: number
+  totalBookings: number
   revenue: string
   occupancy: string
 }
