@@ -16,7 +16,7 @@ import {
 import Button from '@/common/components/atoms/Button';
 import { useGetData } from '@/common/services/useGetData';
 import { API_ENDPOINTS } from '@/common/constants/apiEndpoints';
-import Loader from '@/common/components/composites/Loader';
+import Loader from '@/common/components/composites/Loader/Loader';
 
 interface ProfileData {
   fullName: string;
