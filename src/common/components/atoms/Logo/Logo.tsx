@@ -1,7 +1,12 @@
 import React from 'react'
 import { useRouter } from 'next/navigation'
 
-const Logo = ({ className = '',isCollapsed }) => {
+interface LogoProps {
+  className?: string;
+  isCollapsed?: boolean;
+}
+
+const Logo: React.FC<LogoProps> = ({ className = '', isCollapsed }) => {
   const router = useRouter()
 
   if (!isCollapsed) {

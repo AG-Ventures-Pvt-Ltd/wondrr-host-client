@@ -7,7 +7,16 @@ import Button from '@/common/components/atoms/Button';
 import { notify } from '@/common/utils/notify';
 import {logError} from '@/common/utils/logError';
 
-const ShareTripModal = ({ isOpen, onClose, tripTitle, tripSlug }) => {
+interface ShareTripModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+  tripTitle: string;
+  tripSlug: string;
+}
+
+type SharePlatform = 'whatsapp' | 'facebook' | 'twitter' | 'linkedin' | 'email';
+
+const ShareTripModal: React.FC<ShareTripModalProps> = ({ isOpen, onClose, tripTitle, tripSlug }) => {
 
     const tripLink = `${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/trip/${tripSlug}`;
   
@@ -21,13 +30,13 @@ const ShareTripModal = ({ isOpen, onClose, tripTitle, tripSlug }) => {
     }
   };
 
-  const handleShare = (platform) => {
+  const handleShare = (platform: SharePlatform) => {
     const utmParams = `?utm_source=${platform}`;
     const fullLink = `${tripLink}${utmParams}`;
     const encodedLink = encodeURIComponent(fullLink);
     const encodedTitle = encodeURIComponent(tripTitle);
     
-    const shareLinks = {
+    const shareLinks: Record<SharePlatform, string> = {
       whatsapp: `https://wa.me/?text=${encodedTitle}%20${encodedLink}`,
       facebook: `https://www.facebook.com/sharer/sharer.php?u=${encodedLink}`,
       twitter: `https://x.com/intent/tweet?text=${encodedTitle}&url=${encodedLink}`,
