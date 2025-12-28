@@ -5,7 +5,7 @@ import { useParams, useRouter } from 'next/navigation'
 import TripForm from '../../create/components/TripForm'
 import { useTripFormStore } from '../../create/store'
 import { useTripDetails } from '../../hooks/useTripDetails'
-import Loader from '../../../../../common/components/composites/Loader/Loader'
+import Loader from '@/common/components/composites/Loader'
 import { TRIP_CATEGORIES } from '../../create/constants'
 
 const EditTripPage = () => {
