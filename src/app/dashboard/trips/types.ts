@@ -80,8 +80,7 @@ export interface TripDetails {
   basePrice?: number
   price?: number
   stats: {
-    tripBatchesCount: number
-    totalRevenue: number
-    category: string
+    batches: number
+    totalRevenue: string
   }
 }

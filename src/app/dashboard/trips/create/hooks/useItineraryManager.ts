@@ -8,8 +8,6 @@ export const useItineraryManager = () => {
     updateItineraryTitle,
     addItineraryActivity,
     removeItineraryActivity,
-    addItineraryMeal,
-    removeItineraryMeal,
     removeItineraryDay 
   } = useTripFormStore()
 
@@ -20,8 +18,6 @@ export const useItineraryManager = () => {
     updateItineraryTitle,
     addItineraryActivity,
     removeItineraryActivity,
-    addItineraryMeal,
-    removeItineraryMeal,
     removeItineraryDay,
   }
 }

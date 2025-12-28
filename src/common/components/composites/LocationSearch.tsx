@@ -6,14 +6,56 @@ import { Input } from '@/common/ui/input'
 import { Label } from '@/common/ui/label'
 import { Search } from 'lucide-react'
 
-const LocationSearch = ({ 
+interface LocationData {
+  coordinates: {
+    lat: number
+    lng: number
+  }
+  city: string
+  state: string
+  address: string
+  location: string
+}
+
+interface LocationSuggestion {
+  city: string
+  state: string
+  lat: number
+  lng: number
+  fullAddress: string
+}
+
+interface PredictionTerm {
+  offset: number
+  value: string
+}
+
+interface Prediction {
+  terms: PredictionTerm[]
+  geometry: {
+    location: {
+      lat: number
+      lng: number
+    }
+  }
+  description: string
+}
+
+interface LocationSearchProps {
+  onLocationSelect?: (location: LocationData) => void
+  label?: string
+  placeholder?: string
+  required?: boolean
+}
+
+const LocationSearch: React.FC<LocationSearchProps> = ({ 
   onLocationSelect, 
   label = "Search Location",
   placeholder = "Search for a city",
   required = false 
 }) => {
   const [input, setInput] = useState('')
-  const [suggestions, setSuggestions] = useState([])
+  const [suggestions, setSuggestions] = useState<LocationSuggestion[]>([])
 
   useEffect(() => {
     if (input.trim() === '') {
@@ -29,9 +71,9 @@ const LocationSearch = ({
           },
         })
         .then((response) => {
-          const filteredSuggestions = response.data.predictions.map((prediction) => {
-            const city = prediction.terms.find((term) => term.offset === 0)?.value
-            const state = prediction.terms.find((term) => term.offset > 0)?.value
+          const filteredSuggestions = response.data.predictions.map((prediction: Prediction) => {
+            const city = prediction.terms.find((term: PredictionTerm) => term.offset === 0)?.value
+            const state = prediction.terms.find((term: PredictionTerm) => term.offset > 0)?.value
 
             console.log('Prediction:', response.data.predictions);
             return {
@@ -53,7 +95,7 @@ const LocationSearch = ({
     return () => clearTimeout(fetchSuggestions)
   }, [input])
 
-  const handleSelectLocation = (location) => {
+  const handleSelectLocation = (location: LocationSuggestion) => {
     setInput(location.fullAddress)
     setSuggestions([])
     
