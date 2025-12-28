@@ -14,7 +14,7 @@ import TripDescription from './components/TripDescription';
 import FAQ from './components/FAQ';
 import TripSidebar from './components/TripSidebar';
 import ShareTripModal from './components/ShareTripModal';
-import Loader from '@/common/components/composites/Loader/Loader';
+import Loader from '@/common/components/composites/Loader';
 
 const TripDetailsPage = () => {
     const router = useRouter();
