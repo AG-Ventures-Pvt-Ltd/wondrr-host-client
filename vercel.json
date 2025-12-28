@@ -1,4 +1,8 @@
 {
-  "buildCommand": "next build",
-  "framework": "nextjs"
+  "git": {
+    "deploymentEnabled": {
+      "production": true,
+      "*": false
+    }
+  }
 }
