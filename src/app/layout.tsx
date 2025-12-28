@@ -27,7 +27,7 @@ export default function RootLayout({ children }: RootLayoutProps) {
     }
   }, []);
 
-  return (
+  return ( 
     <html lang="en">
       <body className={dmSans.variable}>
         <Providers>
