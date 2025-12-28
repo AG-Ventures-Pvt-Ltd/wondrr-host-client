@@ -4,7 +4,7 @@ import React, { useState, useMemo } from 'react';
 import TicketHeader from './components/TicketHeader';
 import TicketFilters from './components/TicketFilters';
 import TicketCard from './components/TicketCard';
-import SupportTicketModal from '../components/SupportTicketModal';
+import SupportTicketModal from './components/SupportTicketModal';
 import { TICKET_STATUS } from './constants';
 import { useGetData } from '@/common/services/useGetData';
 import { API_ENDPOINTS } from '@/common/constants/apiEndpoints';

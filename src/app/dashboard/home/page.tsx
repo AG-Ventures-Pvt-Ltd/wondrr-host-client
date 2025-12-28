@@ -3,7 +3,7 @@
 import React from 'react'
 import { useSession } from 'next-auth/react'
 import EmptyTripsCard from './components/EmptyTripsCard'
-import Loader from '@/common/components/composites/Loader/Loader'
+import Loader from '../../../common/components/composites/Loader/Loader'
 import { useHomeStats } from './hooks/useHomeStats'
 import StatsCards from './components/StatsCards'
 import UpcomingTrips from './components/UpcomingTrips'

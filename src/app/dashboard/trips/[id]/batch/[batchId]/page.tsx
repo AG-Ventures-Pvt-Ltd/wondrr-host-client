@@ -13,8 +13,8 @@ import BackButton from '@/common/ui/BackButton';
 const BatchDetailsPage = () => {
   const router = useRouter();
   const params = useParams();
-  const batchId = params.batchId;
-  const tripId = params.id;
+  const batchId = params.batchId as string;
+  const tripId = params.id as string;
 
   const { batchDetails, isLoading, error } = useBatchDetails(batchId);
 
