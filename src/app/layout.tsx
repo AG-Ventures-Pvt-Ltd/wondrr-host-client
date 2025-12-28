@@ -6,15 +6,15 @@ import { Providers } from './providers';
 import { ToastContainer } from 'react-toastify';
 import { DM_Sans } from 'next/font/google';
 
+interface RootLayoutProps {
+  children: React.ReactNode;
+}
+
 const dmSans = DM_Sans({ 
   subsets: ['latin'],
   variable: '--font-dm',
   display: 'swap',
 });
-
-interface RootLayoutProps {
-  children: React.ReactNode;
-}
 
 export default function RootLayout({ children }: RootLayoutProps) {
 

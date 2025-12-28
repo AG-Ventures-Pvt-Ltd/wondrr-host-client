@@ -1,10 +1,11 @@
 'use client'
 
 import React from 'react'
-import { Check, ArrowLeft } from 'lucide-react'
+import { Check } from 'lucide-react'
 import { useRouter, useParams } from 'next/navigation'
 import BatchBasicInfoStep from '../steps/BatchBasicInfoStep'
 import Button from '@/common/components/atoms/Button'
+import BackButton from '@/common/ui/BackButton'
 import { useBatchFormStore } from '../store'
 import { useFormSubmission } from '../hooks'
 import { notify } from '@/common/utils/notify'
@@ -63,7 +64,7 @@ const BatchForm: React.FC<BatchFormProps> = ({ onCancel, onSuccess, isEditMode =
     <div className="w-full h-full flex flex-col justify-between">
       <div>
         <div className="flex items-center mb-6">
-          <ArrowLeft size={32} className='mr-4 cursor-pointer' onClick={handleBack} />
+          <BackButton onClick={handleBack} iconSize={32} className='mr-4' label="" />
           <h1 className="text-xl font-normal text-neutral-900">
             {isEditMode ? 'Edit Batch' : 'Create New Batch'}
           </h1>

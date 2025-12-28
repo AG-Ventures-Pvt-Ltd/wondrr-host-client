@@ -4,9 +4,8 @@ import { validateBatchForm, prepareSubmissionData, scrollToTop } from '../utils'
 import  usePostData  from '@/common/services/usePostData'
 import { API_ENDPOINTS } from '@/common/constants/apiEndpoints'
 
-
 interface UseFormSubmissionProps {
-  tripId?: string 
+  tripId?: string
   isEditMode?: boolean
   batchId?: string
   onSuccess?: () => void

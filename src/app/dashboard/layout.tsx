@@ -3,7 +3,7 @@
 import React from "react";
 import SideNavbar from "./components/SideNavbar";
 
-export default function Layout({ children }: { children: React.         ReactNode }) {
+export default function Layout({ children }: { children: React.ReactNode }) {
   return (
     <div className="flex h-screen">
       <div className='w-auto border-r-2 border-[#E2E8F0]'>

@@ -4,25 +4,7 @@ import axios from "axios";
 import { baseAPI } from "./baseApi";
 import { notify } from "@/common/utils/notify";
 import { logError } from "@/common/utils/logError";
-
-interface PresignedUrlResponse {
-  url: string;
-  key: string;
-}
-
-interface UploadResult {
-  success: boolean;
-  url: string;
-  originalFile: File;
-  error?: string;
-}
-
-interface UseS3UploadReturn {
-  uploadImages: (files: File[]) => Promise<UploadResult[]>;
-  isUploading: boolean;
-  progress: number;
-  error?: string;
-}
+import { PresignedUrlResponse, UploadResult, UseS3UploadReturn } from '@/types/common'
 
 
 const generateRandomString = (length: number = 16): string => {

@@ -25,14 +25,6 @@ export const MembershipInfo: React.FC<MembershipInfoProps> = ({ data }) => {
             <span className="text-sm text-neutral-900">{data.memberSince}</span>
           </div>
         </div>
-        
-        <div className="flex justify-between items-center">
-          <span className="text-sm text-neutral-500">Plan Type</span>
-          <div className="px-3 py-1.5 bg-blue-50 rounded-[10px]">
-            <span className="text-sm text-blue-700">{data.planType}</span>
-          </div>
-        </div>
-        
         <div className="flex justify-between items-center">
           <span className="text-sm text-neutral-500">Status</span>
           <div className="flex items-center gap-2">

@@ -1,13 +1,14 @@
 'use client'
 
 import React from 'react'
-import { ChevronLeft, ChevronRight, Check, ArrowLeft } from 'lucide-react'
+import { ChevronLeft, ChevronRight, Check } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import BasicInfoStep from './steps/BasicInfoStep'
 import PricingItineraryStep from './steps/PricingItineraryStep'
 import InclusionsExclusionsStep from './steps/InclusionsExclusionsStep'
 import MediaAdditionalStep from './steps/MediaAdditionalStep'
 import Button from '@/common/components/atoms/Button'
+import BackButton from '@/common/ui/BackButton'
 import { useTripFormStore } from '../store'
 import { useFormSubmission } from '../hooks'
 import { FORM_STEPS } from '../constants'
@@ -54,7 +55,7 @@ const TripForm: React.FC<TripFormProps> = ({ onCancel, onSuccess, isEditMode = f
     <div className="w-full h-full flex flex-col justify-between">
       <div >
         <div className="flex items-center">
-          <ArrowLeft size={32} className='mr-4 cursor-pointer' onClick={handleBackToTrips} />
+          <BackButton onClick={handleBackToTrips} iconSize={32} className='mr-4' label="" />
           <h1 className="text-xl font-normal text-neutral-900">{isEditMode ? 'Edit Trip' : 'Create New Trip'}</h1>
         </div>
         <div className="mb-8 bg-white border-b border-b-[#d9d7d7] p-6 sticky -top-10 flex justify-between items-center z-10">

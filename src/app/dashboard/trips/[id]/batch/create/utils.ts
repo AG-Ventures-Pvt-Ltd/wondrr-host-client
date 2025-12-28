@@ -1,9 +1,5 @@
 import { BatchFormData } from './types'
-
-export interface ValidationResult {
-  isValid: boolean
-  errors: string[]
-}
+import { ValidationResult } from '@/types/common'
 
 export const validateBatchForm = (formData: BatchFormData): ValidationResult => {
   const errors: string[] = []

@@ -49,16 +49,27 @@ const Trips = () => {
                 </Button>
             </div>
             {trips.length === 0 ? (
-                <div className="flex flex-col items-center justify-center py-12">
-                    <Folder className="w-16 h-16 text-subtext mb-4" />
-                    <h3 className="text-lg font-medium text-maintext mb-2">No trips yet</h3>
-                    <p className="text-subtext text-center mb-6">Create your first trip to get started</p>
-                    <Button className="bg-primary rounded-2xl" onClick={() => router.push('/dashboard/trips/create')}>
-                        <Plus size={16} strokeWidth={4} />
-                        <span className="ml-2">Create Trip</span>
-                    </Button>
-                </div>
-            ) : (
+                <Card className="max-w-lg mx-auto flex flex-col items-center py-6 gap-6">
+                        <div className="flex items-center justify-center w-20 h-20 bg-blue-50 rounded-2xl">
+                            <Folder className="w-10 h-10 text-blue-600" />
+                        </div>
+                        <h3 className="text-base text-neutral-900 font-normal text-center">
+                            Create Your First Trip
+                        </h3>                        
+                        <p className="text-base text-neutral-600 font-normal text-center px-3">
+                            Start organizing amazing travel experiences. 
+                            <br/>
+                            Add your first destination, set up batches, and watch bookings roll in.
+                        </p>                        
+                        <Button 
+                            className="bg-blue-600 rounded-2xl text-white shadow-sm"
+                            onClick={() => router.push('/dashboard/trips/create')}
+                        >
+                            <Plus size={16} strokeWidth={2} />
+                            <span className="ml-2 text-sm">Create Your First Trip</span>
+                        </Button>
+                </Card>
+             ) : ( 
                 <div className="grid grid-cols-3 gap-6">
                     {trips.map((trip) => (
                         <div key={trip.id} className="cursor-pointer" onClick={() => router.push(`/dashboard/trips/${trip.slug}`)}>

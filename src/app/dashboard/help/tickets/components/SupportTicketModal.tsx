@@ -4,21 +4,15 @@ import { TextField, Select, MenuItem, FormControl, InputLabel } from '@mui/mater
 import usePostData from '@/common/services/usePostData'
 import { API_ENDPOINTS } from '@/common/constants/apiEndpoints'
 import SuccessModal from '@/common/components/modals/SuccessModal'
-
-const SUPPORT_CATEGORIES = [
-    "Refunds & Cancellations",
-    "Problem Creating Trips",
-    "Bug Report",
-    "Feature Request",
-    "Other"
-]
+import { SUPPORT_CATEGORIES } from '../constants'
 
 interface SupportTicketModalProps {
     open: boolean
     onClose: () => void
+    onSuccess?: () => void
 }
 
-const SupportTicketModal: React.FC<SupportTicketModalProps> = ({ open, onClose }) => {
+const SupportTicketModal: React.FC<SupportTicketModalProps> = ({ open, onClose, onSuccess }) => {
     const [category, setCategory] = useState('')
     const [description, setDescription] = useState('')
     const [successModalOpen, setSuccessModalOpen] = useState(false)
@@ -28,6 +22,7 @@ const SupportTicketModal: React.FC<SupportTicketModalProps> = ({ open, onClose }
         onSuccess: () => {
             setSuccessModalOpen(true)
             onClose()
+            onSuccess?.()
         }
     })
 

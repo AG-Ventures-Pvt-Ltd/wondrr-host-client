@@ -1,26 +1,13 @@
 import { useGetData } from '@/common/services/useGetData';
 import { API_ENDPOINTS } from '@/common/constants/apiEndpoints';
-
-interface TripApiResponse {
-  _id: string;
-  title: string;
-  batches: number;
-  slug: string;
-}
-
-interface Trip {
-  id: string;
-  name: string;
-  batches: string;
-  slug: string;
-}
+import { TripListApiResponse, TripList } from '../types';
 
 export const useTrips = () => {
-  const { data, isLoading, error, refetch } = useGetData<TripApiResponse[]>(
+  const { data, isLoading, error, refetch } = useGetData<TripListApiResponse[]>(
     API_ENDPOINTS.TRIPS.GET_HOST_TRIPS
   );
 
-  const trips: Trip[] = data?.map((trip) => ({
+  const trips: TripList[] = data?.map((trip) => ({
     id: trip._id,
     name: trip.title,
     batches: `${trip.batches} ${trip.batches === 1 ? 'batch' : 'batches'}`,

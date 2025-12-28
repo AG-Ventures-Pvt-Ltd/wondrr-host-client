@@ -40,10 +40,11 @@ export const PROFILE_STATS = [
 
 export const COMPANY_INFO = {
   companyName: "Wanderlust Adventures Pvt. Ltd.",
+  username: "wanderlust-adventures",
   email: "contact@wanderlustadventures.com",
-  phone: "+91 98765 43210",
+  phoneNumber: "+91 98765 43210",
   address: "B-204, Travel Hub, Connaught Place, New Delhi - 110001",
-  description: "We are a premium travel company specializing in adventure trips across India. With over 5 years of experience, we create unforgettable experiences for travel enthusiasts."
+  bio: "We are a premium travel company specializing in adventure trips across India. With over 5 years of experience, we create unforgettable experiences for travel enthusiasts."
 };
 
 export const VERIFIED_DOCUMENTS = [
@@ -59,11 +60,16 @@ export const MEMBERSHIP_INFO = {
   status: "Active"
 };
 
+export const LINKS_INFO = {
+  website: "https://www.wanderlustadventures.com",
+  instagram: "wanderlust_adventures",
+  linkedin: "https://www.linkedin.com/company/wanderlust-adventures",
+  facebook: "https://www.facebook.com/wanderlustadventures"
+};
+
 export const PAYMENT_DETAILS = {
   accountName: "Wanderlust Adventures Pvt. Ltd.",
   accountNumber: "****8765",
   bankName: "HDFC Bank",
-  ifscCode: "HDFC0001234",
-  upiId: "wanderlust@hdfc",
-  verified: true
+  ifscCode: "HDFC0001234"
 };

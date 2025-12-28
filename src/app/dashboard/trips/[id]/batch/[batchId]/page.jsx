@@ -4,9 +4,10 @@ import React from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import Card from '@/common/components/composites/Card';
 import Button from '@/common/components/atoms/Button';
-import { ArrowLeft, TrendingUp, Users, IndianRupee, MapPin, Clock, Share2, Edit } from 'lucide-react';
+import { TrendingUp, Users, IndianRupee, MapPin, Clock, Share2, Edit } from 'lucide-react';
 import { useBatchDetails } from '../../../hooks/useBatchDetails';
 import Loader from '@/common/components/composites/Loader/Loader';
+import BackButton from '@/common/ui/BackButton';
 
 
 const BatchDetailsPage = () => {
@@ -28,10 +29,7 @@ const BatchDetailsPage = () => {
 
   return (
     <div>
-      <div className="flex items-center gap-2 text-maintext rounded-lg cursor-pointer w-fit" onClick={() => router.push(`/dashboard/trips/${tripId}`)}>
-        <ArrowLeft size={20} />
-        <span>Back to Trip Details</span>
-      </div>
+      <BackButton label="Back to Trip Details" to={`/dashboard/trips/${tripId}`} />
       <div className="pt-10">
         <div className="flex justify-between items-start">
           <div className="flex flex-col gap-2">

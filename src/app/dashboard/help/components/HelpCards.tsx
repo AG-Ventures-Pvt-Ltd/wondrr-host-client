@@ -1,17 +1,18 @@
-import React, { useState } from 'react'
+import React from 'react'
 import Card from '@/common/components/composites/Card'
 import { Book, ArrowRight, Info, Mail, FileText } from 'lucide-react'
 import { SUPPORT_EMAIL } from '@/common/constants/contactInfo'
-import SupportTicketModal from './SupportTicketModal'
+import { useRouter } from 'next/navigation'
 
 const HelpCards = () => {
-    const [open, setOpen] = useState(false)
+
+    const router = useRouter()
 
     return (
         <div>
             <h3 className='mb-5 text-xl font-semibold text-maintext'>How can we help you?</h3>
             <div className='grid grid-cols-2 gap-5'>
-                <Card className='flex justify-between'>
+                <Card className='flex justify-between' >
                     <div className='flex gap-4 items-center'>
                         <Book size={44} className='text-primary bg-primary-bg p-2.5 rounded-xl' />
                         <div className='flex flex-col'>
@@ -21,8 +22,7 @@ const HelpCards = () => {
                     </div>
                     <ArrowRight className='text-subtext' />
                 </Card>
-                <div onClick={() => setOpen(true)} className="cursor-pointer">
-                    <Card className='flex justify-between'>
+                    <Card onClick={() => router.push('/dashboard/help/tickets')} className='cursor-pointer flex justify-between'>
                         <div className='flex gap-4 items-center'>
                             <Info size={44} className='text-success bg-success-bg p-2.5 rounded-xl' />
                             <div className='flex flex-col'>
@@ -32,8 +32,7 @@ const HelpCards = () => {
                         </div>
                         <ArrowRight className='text-subtext' />
                     </Card>
-                </div>
-                <Card className='flex justify-between'>
+                <Card className='flex justify-between' onClick={() => router.push('/dashboard/help/documentation')}>
                     <div className='flex gap-4 items-center'>
                         <FileText size={44} className='text-[#9810FA] bg-[#FAF5FF] p-2.5 rounded-xl' />
                         <div className='flex flex-col'>
@@ -54,10 +53,6 @@ const HelpCards = () => {
                     <ArrowRight className='text-subtext' />
                 </Card>
             </div>
-            <SupportTicketModal 
-                open={open}
-                onClose={() => setOpen(false)}
-            />
         </div>
     )
 }

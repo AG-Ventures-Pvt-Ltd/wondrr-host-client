@@ -8,10 +8,22 @@ export const API_ENDPOINTS = {
     GET_BATCH_DETAILS: (batchId: string) => `api/client/v1/trips/host/trip/batch/${batchId}`,
     EDIT_BATCH: (batchId: string) => `api/client/v1/trips/host/trip/batch/edit/${batchId}`,
   },
+  BOOKINGS: {
+    GET_HOST_BOOKINGS: (page: number, limit: number) => `api/client/v1/bookings/host?page=${page}&limit=${limit}`,
+  },
   S3: {
     GET_PRESIGNED_URL: 'api/client/v1/s3/presigned-url',
   },
   SUPPORT: {
     CREATE_TICKET: 'api/client/v1/support/tickets/create',
+    GET_MY_TICKETS: 'api/client/v1/support/tickets/me',
+  },
+  PROFILE: {
+    GET_HOST_PROFILE: 'api/client/v1/user/host/me',
+    UPDATE_BASIC_INFO: 'api/client/v1/user/host/profile/update',
+  },
+  HOME: {
+    GET_HOST_HOME_STATS: 'api/client/v1/landingpage/host/home/me',
+    GET_UPCOMING_BATCHES: 'api/client/v1/trips/host/batches/me',
   },
 };

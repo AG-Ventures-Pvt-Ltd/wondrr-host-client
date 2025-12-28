@@ -1,67 +1,6 @@
 import { useGetData } from '@/common/services/useGetData';
 import { API_ENDPOINTS } from '@/common/constants/apiEndpoints';
-
-interface TripDetailsApiResponse {
-  _id: string;
-  title: string;
-  location: {
-    address: string;
-    city: string;
-    state: string;
-  };
-  description: string;
-  images: string[];
-  tags: string[];
-  category: string;
-  faqs: [{ question: string; answer: string }];
-  itinerary: Array<{
-    day: string;
-    title?: string;
-    description: string;
-    activities?: string[];
-  }>;
-  inclusions: string[];
-  exclusions: string[];
-  basePrice?: number;
-  price?: number;
-  stats: {
-    tripBatchesCount: number;
-    totalRevenue: number;
-    category: string;
-  };
-}
-
-interface TripDetails {
-  id: string;
-  title: string;
-  location: string;
-  locationObj: {
-    address: string;
-    city: string;
-    state: string;
-  };
-  description: string;
-  image: string;
-  images: string[];
-  tags: string[];
-  faqs: [{ question: string; answer: string }];
-  itinerary: Array<{
-    day: string;
-    title?: string;
-    description: string;
-    activities?: string[];
-  }>;
-  inclusions: string[];
-  exclusions: string[];
-  category: string;
-  basePrice?: number;
-  price?: number;
-  stats: {
-    batches: number;
-    totalRevenue: string;
-  };
-  // Map other fields
-}
+import { TripDetailsApiResponse, TripDetails } from '../types';
 
 export const useTripDetails = (slug: string) => {
   const { data, isLoading, error, refetch } = useGetData<TripDetailsApiResponse>(

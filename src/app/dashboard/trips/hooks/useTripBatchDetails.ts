@@ -1,19 +1,9 @@
 import { useGetData } from '@/common/services/useGetData';
 import { API_ENDPOINTS } from '@/common/constants/apiEndpoints';
-
-interface TripBatch {
-  id: string;
-  date: string;
-  status: string;
-  duration: string;
-  priceRange: string;
-  seats: string;
-  revenue: string;
-  occupancy: string;
-}
+import { TripBatchDetails } from '../types';
 
 export const useTripBatchDetails = (slug: string) => {
-  const { data, isLoading, error, refetch } = useGetData<TripBatch[]>(
+  const { data, isLoading, error, refetch } = useGetData<TripBatchDetails[]>(
     API_ENDPOINTS.TRIPS.GET_TRIP_BATCHES(slug)
   );
 
