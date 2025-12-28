@@ -5,7 +5,7 @@ import { useParams, useRouter } from 'next/navigation'
 import BatchForm from '../../create/components/BatchForm'
 import { useBatchFormStore } from '../../create/store'
 import { useBatchDetails } from '../../../../hooks/useBatchDetails'
-import Loader from '@/common/components/composites/Loader/Loader'
+import Loader from '../../../../../../../common/components/composites/Loader/Loader'
 
 const EditBatchPage = () => {
     const params = useParams()

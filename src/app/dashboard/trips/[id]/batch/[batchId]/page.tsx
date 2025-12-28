@@ -6,7 +6,7 @@ import Card from '@/common/components/composites/Card';
 import Button from '@/common/components/atoms/Button';
 import { TrendingUp, Users, IndianRupee, MapPin, Clock, Share2, Edit } from 'lucide-react';
 import { useBatchDetails } from '../../../hooks/useBatchDetails';
-import Loader from '@/common/components/composites/Loader/Loader'
+import Loader from '../../../../../../common/components/composites/Loader/Loader'
 import BackButton from '@/common/ui/BackButton';
 
 
