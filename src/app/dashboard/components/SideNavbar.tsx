@@ -16,6 +16,8 @@ const SideNavbar = () => {
 
     const fullName = session?.user?.fullName || 'Guest'
     const firstName = fullName.split(' ')[0]
+
+    console.log('First Name:', session)
     const initial = firstName.charAt(0).toUpperCase()
 
     const MainNavItems = [
