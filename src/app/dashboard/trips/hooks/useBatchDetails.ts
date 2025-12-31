@@ -3,7 +3,7 @@ import { API_ENDPOINTS } from '@/common/constants/apiEndpoints';
 import { formatDateRangeWithDuration } from '@/common/utils/dateUtils';
 
 
-interface BatchDetailsApiResponse {
+export interface BatchDetailsApiResponse {
   _id: string;
   title: string;
   startDate: string;

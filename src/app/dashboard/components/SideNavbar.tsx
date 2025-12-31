@@ -26,6 +26,7 @@ const SideNavbar = () => {
         // { name: 'Analytics', tab : 'analytics' , icon: BarChart3 },
         { name: 'Trips', tab : 'trips' , icon: Map },
         { name: 'Bookings', tab : 'bookings' , icon: BookOpen },
+        { name : 'Discounts', tab : 'discounts' , icon: Map } ,
     ]
 
     const SecondaryNavItems = [

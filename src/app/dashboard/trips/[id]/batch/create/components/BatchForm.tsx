@@ -18,7 +18,7 @@ interface BatchFormProps {
   tripId?: string
 }
 
-const BatchForm: React.FC<BatchFormProps> = ({ onCancel, onSuccess, isEditMode = false, batchId, tripId: propTripId }) => {
+const BatchForm: React.FC<BatchFormProps> = ({ onCancel, isEditMode = false, batchId, tripId: propTripId }) => {
   const router = useRouter()
   const params = useParams()
   const tripId = propTripId || (params?.id as string)

@@ -4,7 +4,6 @@ import React from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import { useTripDetails } from '../hooks/useTripDetails';
 import { useTripBatchDetails } from '../hooks/useTripBatchDetails';
-import { QUICK_ACTIONS } from '@/common/constants/tripDetails';
 import BackButton from './components/BackButton';
 import TripHero from './components/TripHero';
 import StatsCards from './components/StatsCards';
@@ -23,16 +22,10 @@ const TripDetailsPage = () => {
     const [isShareModalOpen, setIsShareModalOpen] = React.useState(false);
 
     const { tripDetails, isLoading, error } = useTripDetails(tripId);
-    const { tripBatches } = useTripBatchDetails(tripId);
+    const { tripBatches } = useTripBatchDetails(tripId, 1, 2);
 
     const handleEditTrip = () => {
         router.push(`/dashboard/trips/${tripId}/edit`);
-    };
-
-    const handleQuickAction = (action: { label: string }) => {
-        if (action.label === 'Share Trip') {
-            setIsShareModalOpen(true);
-        }
     };
 
     if (isLoading) return <Loader />;
@@ -67,10 +60,11 @@ const TripDetailsPage = () => {
                     </div>
                     <TripSidebar
                         tags={tripDetails!.tags}
-                        quickActions={QUICK_ACTIONS}
                         inclusions={tripDetails!.inclusions}
                         exclusions={tripDetails!.exclusions}
-                        onQuickAction={handleQuickAction}
+                        tripSlug={tripId}
+                        tripId={tripId}
+                        onShareClick={() => setIsShareModalOpen(true)}
                     />
                 </div>
             </div>
