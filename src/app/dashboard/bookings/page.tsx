@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useMemo, useEffect } from 'react'
+import { useState, useMemo, useEffect, Suspense } from 'react'
 import { useSearchParams, useRouter } from 'next/navigation'
 import Table from '@/common/components/composites/table'
 import CustomSelect from '@/common/components/composites/CustomSelect'
@@ -19,7 +19,7 @@ interface TripBatchMap {
   }[]
 }
 
-const Bookings = () => {
+const BookingsContent = () => {
   const router = useRouter()
   const searchParams = useSearchParams()
   const [page, setPage] = useState(1)
@@ -188,6 +188,26 @@ const Bookings = () => {
         )}
       </div>
     </div>
+  )
+}
+
+const Bookings = () => {
+  return (
+    <Suspense fallback={
+      <div className="w-full bg-white">
+        <div className="max-w-7xl mx-auto">
+          <div className="mb-2">
+            <h1 className="text-2xl font-semibold text-maintext mb-2">Bookings</h1>
+            <p className="text-sm text-subtext">Manage and track all your trip bookings</p>
+          </div>
+          <div className="flex items-center justify-center h-[calc(100vh-300px)]">
+            <div className="text-subtext">Loading bookings...</div>
+          </div>
+        </div>
+      </div>
+    }>
+      <BookingsContent />
+    </Suspense>
   )
 }
 
