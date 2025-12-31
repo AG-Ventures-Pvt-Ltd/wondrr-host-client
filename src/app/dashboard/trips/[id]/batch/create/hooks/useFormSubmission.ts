@@ -18,7 +18,7 @@ export const useFormSubmission = ({ tripId, isEditMode = false, batchId, onSucce
 
   // Create batch mutation
   const { mutate: createBatch } = usePostData({
-    url: `/api/client/v1/trips/host/trip/batch/create`,
+    url: `${API_ENDPOINTS.TRIPS.CREATE_HOST_BATCH}`,
     onSuccess: () => {
       onSuccess?.()
       setIsSubmitting(false)

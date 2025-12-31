@@ -5,13 +5,13 @@ import { useGetData } from './useGetData'
 import { API_ENDPOINTS } from '@/common/constants/apiEndpoints'
 import { BookingResponse, Booking, UseGetAllBookingsReturn } from '@/app/dashboard/bookings/types'
 
-export const useGetAllBookings = (page: number, limit: number): UseGetAllBookingsReturn => {
+export const useGetAllBookings = (page: number, limit: number, tripId?: string, batchId?: string): UseGetAllBookingsReturn => {
   const { data: bookingsResponse, isLoading, error } = useGetData<{
     data: BookingResponse[];
     total: number;
     page: number;
     limit: number;
-  }>(API_ENDPOINTS.BOOKINGS.GET_HOST_BOOKINGS(page, limit))
+  }>(API_ENDPOINTS.BOOKINGS.GET_HOST_BOOKINGS(page, limit, tripId, batchId))
 
   const bookings: Booking[] = useMemo(() => {
     if (!bookingsResponse?.data) return []

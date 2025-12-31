@@ -6,9 +6,9 @@ import { notify } from "@/common/utils/notify";
 
 type MutationPayload = Record<string, unknown>;
 
-const usePostData = ({url,...rest} : {url : string} & Omit<
+const usePostData = ({url,onSuccess:onSuccessCallback,...rest} : {url : string; onSuccess?: () => void} & Omit<
     UseMutationOptions<unknown, Error, MutationPayload>,
-    "mutationFn"
+    "mutationFn" | "onSuccess"
   >) => {
   return useMutation({
     mutationFn: async (payload: Record<string, unknown>) => {
@@ -17,7 +17,11 @@ const usePostData = ({url,...rest} : {url : string} & Omit<
     },
     onSuccess: (data: unknown) => {
       const successMessage = (data as { message?: string })?.message || "Success!";
+      console.log(successMessage)
       notify.success(successMessage);
+      if (onSuccessCallback) {
+        onSuccessCallback();
+      }
     },
     onError: (error: Error) => {
         const axiosError = error as { response?: { data?: { message?: string } } };

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Card from '@/common/components/composites/Card';
 import Button from '@/common/components/atoms/Button';
@@ -22,18 +22,23 @@ interface TripBatchesProps {
 
 const TripBatches: React.FC<TripBatchesProps> = ({ batches, tripId }) => {
     const router = useRouter();
+    const [selectedBatchId, setSelectedBatchId] = useState<string | null>(null);
 
     const handleAddBatch = () => {
         router.push(`/dashboard/trips/${tripId}/batch/create`);
     };
 
     const handleBatchClick = (batchId: string) => {
-        router.push(`/dashboard/trips/${tripId}/batch/${batchId}`);
+        setSelectedBatchId(batchId);
     };
 
     const handleEditBatch = (e: React.MouseEvent, batchId: string) => {
         e.stopPropagation();
-        router.push(`/dashboard/trips/${tripId}/batch/${batchId}/edit`);
+        setSelectedBatchId(batchId);
+    };
+
+    const handleCloseModal = () => {
+        setSelectedBatchId(null);
     };
 
     return (
@@ -110,6 +115,15 @@ const TripBatches: React.FC<TripBatchesProps> = ({ batches, tripId }) => {
                     );
                 })}
             </div>
+            <Button 
+                variant="outlined" 
+                className="w-full py-3 text-sm text-maintext! hover:bg-subtext/10! border-[#E5E5E5]! rounded-xl"
+                onClick={() => router.push(`/dashboard/trips/${tripId}/batch`)}
+            >
+                Show All Batches
+            </Button>
+
+            
         </Card>
     );
 };

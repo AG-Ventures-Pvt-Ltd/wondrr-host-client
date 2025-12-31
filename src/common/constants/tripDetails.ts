@@ -90,18 +90,3 @@ export const CANCELLATION_POLICY = {
   filename: 'cancellation-policy-manali.pdf',
   displayName: 'cancellation-policy-manali.pdf'
 };
-
-export const QUICK_ACTIONS = [
-  {
-    label: 'View Public Page',
-    icon: 'Eye'
-  },
-  {
-    label: 'View All Bookings',
-    icon: 'BarChart3'
-  },
-  {
-    label: 'Share Trip',
-    icon: 'Share2'
-  }
-];

@@ -12,6 +12,10 @@ export const useTrips = () => {
     name: trip.title,
     batches: `${trip.batches} ${trip.batches === 1 ? 'batch' : 'batches'}`,
     slug: trip.slug,
+    image: trip.image,
+    location: trip.location,
+    upcomingBatches: trip.upcomingBatches || 0,
+    completedBatches: trip.completedBatches || 0,
   })) || [];
 
   return {

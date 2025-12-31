@@ -1,5 +1,5 @@
 import React from 'react'
-import { Select as MuiSelect, MenuItem, FormControl, InputLabel, SelectChangeEvent } from '@mui/material'
+import { Select as MuiSelect, MenuItem, FormControl, SelectChangeEvent } from '@mui/material'
 import { cn } from '@/common/ui/utils'
 
 interface CustomSelectProps {

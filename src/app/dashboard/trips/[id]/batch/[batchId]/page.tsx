@@ -132,6 +132,7 @@ const BatchDetailsPage = () => {
               <Button
                 variant="text"
                 className="h-10 px-4 rounded-2xl flex items-center gap-2 hover:bg-gray-50 text-left justify-start"
+                onClick={() => router.push(`/dashboard/bookings?tripId=${tripId}&batchId=${batchId}`)}
               >
                 <Users className="w-4 h-4 text-neutral-600" />
                 <span className="text-sm text-neutral-600">View Bookings</span>

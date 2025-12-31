@@ -4,6 +4,10 @@ export interface TripListApiResponse {
   title: string
   batches: number
   slug: string
+  image?: string
+  location?: string
+  upcomingBatches?: number
+  completedBatches?: number
 }
 
 export interface TripList {
@@ -11,6 +15,10 @@ export interface TripList {
   name: string
   batches: string
   slug: string
+  image?: string
+  location?: string
+  upcomingBatches: number
+  completedBatches: number
 }
 
 export interface TripBatchDetails {
@@ -27,6 +35,20 @@ export interface TripBatchDetails {
   totalBookings: number
   revenue: string
   occupancy: string
+  rating?: number
+  reviewCount?: number
+}
+
+export interface TripBatchesResponse {
+  batches: TripBatchDetails[]
+  total: number
+  page: number
+  limit: number
+  tripTitle?: string
+  tripLocation?: string
+  hasNextPage?: boolean
+  hasPrevPage?: boolean
+  totalPages?: number
 }
 
 export interface TripDetailsApiResponse {

@@ -1,39 +1,64 @@
+'use client';
+
 import React from 'react';
+import { useRouter } from 'next/navigation';
 import Card from '@/common/components/composites/Card';
 import Button from '@/common/components/atoms/Button';
 import { Eye, BarChart3, Share2 } from 'lucide-react';
 
-interface QuickAction {
-    icon: string;
-    label: string;
-}
-
 interface TripSidebarProps {
     tags: string[];
-    quickActions: QuickAction[];
     inclusions: string[];
     exclusions: string[];
-    onQuickAction: (action: QuickAction) => void;
+    tripSlug: string;
+    tripId: string;
+    onShareClick: () => void;
 }
 
 const TripSidebar: React.FC<TripSidebarProps> = ({ 
     tags, 
-    quickActions, 
     inclusions, 
     exclusions, 
-    onQuickAction 
+    tripSlug,
+    tripId,
+    onShareClick
 }) => {
-    const getActionIcon = (iconName: string) => {
-        const icons: Record<string, React.ComponentType<{ className?: string }>> = {
-            Eye,
-            BarChart3,
-            Share2
-        };
-        return icons[iconName] || Eye;
-    };
+    const router = useRouter();
 
     return (
         <div className="flex flex-col gap-6">
+            <Card className="flex flex-col gap-4">
+                <h2 className="text-base text-maintext">Quick Actions</h2>
+                <div className="flex flex-col gap-2">
+                    <Button 
+                        variant="text" 
+                        className="h-10 px-4 rounded-2xl flex items-center gap-2 hover:bg-gray-50 text-left justify-start"
+                        onClick={() => {
+                            const tripLink = `${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/trip/${tripSlug}`;
+                            window.open(tripLink, '_blank');
+                        }}
+                    >
+                        <Eye className="w-4 h-4 text-neutral-600" />
+                        <span className="text-sm text-neutral-600">View Public Page</span>
+                    </Button>
+                    <Button 
+                        variant="text" 
+                        className="h-10 px-4 rounded-2xl flex items-center gap-2 hover:bg-gray-50 text-left justify-start"
+                        onClick={() => router.push(`/dashboard/bookings?tripId=${tripId}`)}
+                    >
+                        <BarChart3 className="w-4 h-4 text-neutral-600" />
+                        <span className="text-sm text-neutral-600">View All Bookings</span>
+                    </Button>
+                    <Button 
+                        variant="text" 
+                        className="h-10 px-4 rounded-2xl flex items-center gap-2 hover:bg-gray-50 text-left justify-start"
+                        onClick={onShareClick}
+                    >
+                        <Share2 className="w-4 h-4 text-neutral-600" />
+                        <span className="text-sm text-neutral-600">Share Trip</span>
+                    </Button>
+                </div>
+            </Card>
             <Card className="flex flex-col gap-4">
                 <h2 className="text-base text-maintext">Tags</h2>
                 <div className="flex flex-wrap gap-2">
@@ -47,27 +72,6 @@ const TripSidebar: React.FC<TripSidebarProps> = ({
                     ))}
                 </div>
             </Card>
-
-            <Card className="flex flex-col gap-4">
-                <h2 className="text-base text-maintext">Quick Actions</h2>
-                <div className="flex flex-col gap-2">
-                    {quickActions.map((action, index) => {
-                        const ActionIcon = getActionIcon(action.icon);
-                        return (
-                            <Button 
-                                key={index} 
-                                variant="text" 
-                                className="h-10 px-4 rounded-2xl flex items-center gap-2 hover:bg-gray-50 text-left justify-start"
-                                onClick={() => onQuickAction(action)}
-                            >
-                                <ActionIcon className="w-4 h-4 text-neutral-600" />
-                                <span className="text-sm text-neutral-600">{action.label}</span>
-                            </Button>
-                        );
-                    })}
-                </div>
-            </Card>
-
             <Card className="flex flex-col gap-5">
                 <div className="flex flex-col gap-3">
                     <h3 className="text-sm text-maintext">Inclusions</h3>
@@ -93,7 +97,6 @@ const TripSidebar: React.FC<TripSidebarProps> = ({
                     </div>
                 </div>
             </Card>
-
             <Card>
                 <div className="flex flex-col gap-3">
                     <h3 className="text-sm text-maintext">Exclusions</h3>

@@ -2,10 +2,12 @@
 
 import React from 'react'
 import Card from '../../../common/components/composites/Card'
-import { Plus, ChevronRight, Folder, AlertCircle, Loader2 } from 'lucide-react'
+import { Plus, Dot, Folder, AlertCircle, Loader2, MapPin } from 'lucide-react'
 import Button from '@/common/components/atoms/Button'
 import { useRouter } from 'next/navigation'
 import { useTrips } from './hooks/useTrips'
+import MyImage from '@/common/components/atoms/Image'
+
 
 const Trips = () => {
     const router = useRouter()
@@ -50,40 +52,67 @@ const Trips = () => {
             </div>
             {trips.length === 0 ? (
                 <Card className="max-w-lg mx-auto flex flex-col items-center py-6 gap-6">
-                        <div className="flex items-center justify-center w-20 h-20 bg-blue-50 rounded-2xl">
-                            <Folder className="w-10 h-10 text-blue-600" />
-                        </div>
-                        <h3 className="text-base text-neutral-900 font-normal text-center">
-                            Create Your First Trip
-                        </h3>                        
-                        <p className="text-base text-neutral-600 font-normal text-center px-3">
-                            Start organizing amazing travel experiences. 
-                            <br/>
-                            Add your first destination, set up batches, and watch bookings roll in.
-                        </p>                        
-                        <Button 
-                            className="bg-blue-600 rounded-2xl text-white shadow-sm"
-                            onClick={() => router.push('/dashboard/trips/create')}
-                        >
-                            <Plus size={16} strokeWidth={2} />
-                            <span className="ml-2 text-sm">Create Your First Trip</span>
-                        </Button>
+                    <div className="flex items-center justify-center w-20 h-20 bg-blue-50 rounded-2xl">
+                        <Folder className="w-10 h-10 text-blue-600" />
+                    </div>
+                    <h3 className="text-base text-neutral-900 font-normal text-center">
+                        Create Your First Trip
+                    </h3>
+                    <p className="text-base text-neutral-600 font-normal text-center px-3">
+                        Start organizing amazing travel experiences.
+                        <br />
+                        Add your first destination, set up batches, and watch bookings roll in.
+                    </p>
+                    <Button
+                        className="bg-blue-600 rounded-2xl text-white shadow-sm"
+                        onClick={() => router.push('/dashboard/trips/create')}
+                    >
+                        <Plus size={16} strokeWidth={2} />
+                        <span className="ml-2 text-sm">Create Your First Trip</span>
+                    </Button>
                 </Card>
-             ) : ( 
+            ) : (
                 <div className="grid grid-cols-3 gap-6">
                     {trips.map((trip) => (
-                        <div key={trip.id} className="cursor-pointer" onClick={() => router.push(`/dashboard/trips/${trip.slug}`)}>
-                            <Card className="flex justify-between items-center p-4!">
-                                <div className='flex gap-2 items-center'>
-                                    <Folder size={52} className="text-primary bg-primary-bg p-3 rounded-2xl mr-2" />
-                                    <div className={`flex flex-col justify-start items-start gap-1`}>
-                                        <div className={`text-maintext font-normal`}>{trip.name}</div>
-                                        <div className={` text-subtext font-normal`}>{trip.batches}</div>
+                        <Card key={trip.id} className="cursor-pointer overflow-hidden p-0!" onClick={() => router.push(`/dashboard/trips/${trip.slug}`)}>
+                            <div className="relative w-full h-52 bg-gray-100">
+                                {trip.image ? (
+                                    <MyImage
+                                        src={trip.image}
+                                        alt={trip.slug}
+                                        fill
+                                        className="object-cover"
+                                    />
+                                ) : (
+                                    <div className="w-full h-full flex items-center justify-center">
+                                        <Folder className="w-16 h-16 text-gray-300" />
+                                    </div>
+                                )}
+                            </div>
+                            <div className="p-4 flex flex-col gap-2 mb-8">
+                                <h3 className="text-maintext font-medium text-lg">{trip.name}</h3>
+                                {trip.location && (
+                                    <div className="flex items-center gap-1 text-subtext text-sm">
+                                        <MapPin size={14} />
+                                        <span>{trip.location}</span>
+                                    </div>
+                                )}
+                                <div className="flex items-center gap-8 text-sm">
+                                    <div className="flex items-center">
+                                        <Dot size={16} strokeWidth={9} className="text-success p-0! m-0!" />
+                                        <span className="text-subtext">
+                                            {trip.upcomingBatches} upcoming
+                                        </span>
+                                    </div>
+                                    <div className="flex items-center">
+                                        <Dot size={16} strokeWidth={9} className="text-subtext" />
+                                        <span className="text-subtext">
+                                            {trip.completedBatches} completed
+                                        </span>
                                     </div>
                                 </div>
-                                <ChevronRight className="w-5 h-5 text-subtext" />
-                            </Card>
-                        </div>
+                            </div>
+                        </Card>
                     ))}
                 </div>
             )}
