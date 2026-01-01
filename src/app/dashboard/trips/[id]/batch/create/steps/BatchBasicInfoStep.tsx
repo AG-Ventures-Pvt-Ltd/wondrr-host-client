@@ -21,8 +21,6 @@ const BatchBasicInfoStep: React.FC = () => {
 
   const today = new Date().toISOString().split('T')[0]
 
-  console.log(today)
-
   return (
     <div className="space-y-6">
       {/* Date and Time Row */}

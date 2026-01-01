@@ -31,11 +31,14 @@ export const API_ENDPOINTS = {
   },
   HOME: {
     GET_HOST_HOME_STATS: 'api/client/v1/landingpage/host/home/me',
-    GET_UPCOMING_BATCHES: 'api/client/v1/trips/host/batches/me',
+    GET_UPCOMING_BATCHES: (limit? : number) => `api/client/v1/trips/host/batches/me?limit=${limit}`,
   },
   DISCOUNTS : {
     CREATE_COUPON: 'api/client/v1/discounts/host/create',
     GET_HOST_COUPONS: (page : number, limit :number) => `api/client/v1/discounts/host/me?page=${page}&limit=${limit}`,
     DEACTIVATE_COUPON: (couponId: string) => `api/client/v1/discounts/host/deactivate/${couponId}`,
+  },
+  SCHEDULE: {
+    GET_MONTH_SCHEDULE: (month: string) => `api/client/v1/trips/host/schedule/${month}`,
   }
 };

@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo } from 'react'
-import { useGetData } from './useGetData'
+import { useGetData } from '../services/useGetData'
 import { API_ENDPOINTS } from '@/common/constants/apiEndpoints'
 import { BookingResponse, Booking, UseGetAllBookingsReturn } from '@/app/dashboard/bookings/types'
 

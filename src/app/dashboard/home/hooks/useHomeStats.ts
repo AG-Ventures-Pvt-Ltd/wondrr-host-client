@@ -1,7 +1,7 @@
 import { useGetData } from '@/common/services/useGetData';
 import { API_ENDPOINTS } from '@/common/constants/apiEndpoints';
 import { useMemo } from 'react';
-import type { UseQueryOptions } from '@tanstack/react-query';
+import { useGetBatches } from '@/common/hooks/useGetBatches';
 
 interface HomeStatsResponse {
   totalActiveTrips: number;
@@ -15,16 +15,6 @@ interface StatItem {
   title: string;
   stat: string;
   direction: 'up' | 'down';
-}
-
-interface BatchItem {
-  _id: string;
-  tripTitle: string;
-  startDate: string;
-  endDate: string;
-  totalBookings: number;
-  totalSeats: number;
-  status: string;
 }
 
 interface UpcomingTrip {
@@ -41,15 +31,11 @@ export const useHomeStats = () => {
     API_ENDPOINTS.HOME.GET_HOST_HOME_STATS
   );
 
-  
-  const { data: batchesData, isLoading: batchesLoading, error: batchesError } = useGetData<BatchItem[]>(
-      API_ENDPOINTS.HOME.GET_UPCOMING_BATCHES,
-      {
-          enabled: homeStats?.hasCreatedTrips ?? false,
-        } as UseQueryOptions<BatchItem[], Error>
-    );
+  const { batches, isLoading: batchesLoading, error: batchesError } = useGetBatches({
+    enabled: homeStats?.hasCreatedTrips ?? false,
+  });
     
-    console.log('Fetched Home Stats:',statsLoading, batchesLoading);
+
   const statsData: StatItem[] = useMemo(() => {
     if (!homeStats) return [];
 
@@ -78,9 +64,9 @@ export const useHomeStats = () => {
   }, [homeStats]);
 
   const upcomingTrips: UpcomingTrip[] = useMemo(() => {
-    if (!batchesData) return [];
+    if (!batches) return [];
 
-    return batchesData.map((batch) => ({
+    return batches.map((batch) => ({
       _id : batch._id,
       title: batch.tripTitle,
       startDate: batch.startDate,
@@ -88,7 +74,7 @@ export const useHomeStats = () => {
       totalSeats: batch.totalSeats,
       status: batch.status,
     }));
-  }, [batchesData]);
+  }, [batches]);
 
   return {
     statsData,

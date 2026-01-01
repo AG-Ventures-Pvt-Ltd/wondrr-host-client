@@ -9,6 +9,8 @@ import { useGetData } from '@/common/services/useGetData'
 import Button from '@/common/components/atoms/Button'
 import { Coupon, CouponApiResponse } from './types'
 import { API_ENDPOINTS } from '@/common/constants/apiEndpoints'
+import CustomInput from '@/common/components/composites/CustomInput'
+
 
 const Discounts = () => {
   const router = useRouter()
@@ -56,15 +58,18 @@ const Discounts = () => {
             Create Coupon
           </Button>
         </div>
+        <div className="mb-6">
+          <CouponStats stats={stats} />
+        </div>
         <div className="flex items-center justify-between gap-4 mb-6">
           <div className="flex-1 relative">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
-            <input
+            <CustomInput
               type="text"
               placeholder="Search coupons..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full pl-10 pr-4 py-2.5 border border-gray-200/60 rounded-2xl text-sm placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
+              className="w-full pl-10 pr-4 py-3.5! rounded-xl!"
             />
           </div>
           <div className="flex items-center gap-2 bg-gray-100/60 p-1 rounded-2xl">
@@ -99,9 +104,6 @@ const Discounts = () => {
               Inactive
             </button>
           </div>
-        </div>
-        <div className="mb-6">
-          <CouponStats stats={stats} />
         </div>
         <div className="space-y-4">
           {isLoading ? (

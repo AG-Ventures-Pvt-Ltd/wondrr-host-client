@@ -9,6 +9,7 @@ interface CalendarProps {
   days: CalendarDayType[];
   onDayClick?: (date: number) => void;
   onBatchClick?: (batchId: string) => void;
+  selectedDate?: Date | null;
 }
 
 const Calendar: React.FC<CalendarProps> = ({
@@ -17,6 +18,7 @@ const Calendar: React.FC<CalendarProps> = ({
   days,
   onDayClick,
   onBatchClick,
+  selectedDate,
 }) => {
   return (
     <div className="bg-white rounded-[14px] border border-[rgba(229,229,229,0.6)] shadow-sm p-6">
@@ -25,8 +27,6 @@ const Calendar: React.FC<CalendarProps> = ({
           {month} {year}
         </h2>
       </div>
-
-      {/* Days of Week Header */}
       <div className="grid grid-cols-7 gap-0 mb-6">
         {DAYS_OF_WEEK.map((day) => (
           <div key={day} className="text-center">
@@ -34,8 +34,6 @@ const Calendar: React.FC<CalendarProps> = ({
           </div>
         ))}
       </div>
-
-      {/* Calendar Grid */}
       <div className="grid grid-cols-7 gap-3">
         {days.map((day, index) => (
           <CalendarDay
@@ -43,6 +41,9 @@ const Calendar: React.FC<CalendarProps> = ({
             day={day}
             onDayClick={onDayClick}
             onBatchClick={onBatchClick}
+            selectedDate={selectedDate}
+            currentYear={year}
+            currentMonth={month}
           />
         ))}
       </div>

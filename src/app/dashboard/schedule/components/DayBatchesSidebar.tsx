@@ -27,14 +27,8 @@ const DayBatchesSidebar: React.FC<DayBatchesSidebarProps> = ({ selectedDate, bat
           <h3 className="text-base text-maintext">{monthDay}</h3>
           <p className="text-xs text-subtext">{dayName}</p>
         </div>
-        <div className="w-7 h-7 flex items-center justify-center">
-          <svg className="w-4 h-4 text-subtext" fill="none" viewBox="0 0 16 16">
-            <circle cx="8" cy="8" r="5.33" stroke="currentColor" strokeWidth="1.33"/>
-          </svg>
-        </div>
       </div>
-
-      <div className="flex flex-col gap-3 max-h-64 overflow-y-auto">
+      <div className="flex flex-col gap-3">
         {batches.length === 0 ? (
           <p className="text-sm text-gray-500">No batches scheduled</p>
         ) : (

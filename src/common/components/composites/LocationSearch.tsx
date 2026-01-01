@@ -75,7 +75,6 @@ const LocationSearch: React.FC<LocationSearchProps> = ({
             const city = prediction.terms.find((term: PredictionTerm) => term.offset === 0)?.value
             const state = prediction.terms.find((term: PredictionTerm) => term.offset > 0)?.value
 
-            console.log('Prediction:', response.data.predictions);
             return {
               city: city || '',
               state: state || '',

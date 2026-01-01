@@ -17,7 +17,6 @@ const usePostData = ({url,onSuccess:onSuccessCallback,...rest} : {url : string; 
     },
     onSuccess: (data: unknown) => {
       const successMessage = (data as { message?: string })?.message || "Success!";
-      console.log(successMessage)
       notify.success(successMessage);
       if (onSuccessCallback) {
         onSuccessCallback();

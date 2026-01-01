@@ -28,7 +28,6 @@ const getPresignedUrl = async (
   fileType: string
 ): Promise<PresignedUrlResponse> => {
   try {
-    console.log("Requesting presigned URL for:", fileName, fileType);
 
     const response = await baseAPI.post<{ data: PresignedUrlResponse }>(
       "/api/client/v1/s3upload/geturl",

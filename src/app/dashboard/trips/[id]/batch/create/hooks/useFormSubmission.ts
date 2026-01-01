@@ -56,9 +56,6 @@ export const useFormSubmission = ({ tripId, isEditMode = false, batchId, onSucce
       }
       setIsSubmitting(false)
       
-      // Temporary success simulation
-      console.log(isEditMode ? 'Batch edit data:' : 'Batch submission data:', submissionData)
-      
     } catch (error) {
       console.error(`Error ${isEditMode ? 'updating' : 'creating'} batch:`, error)
       setIsSubmitting(false)

@@ -6,88 +6,53 @@ import ScheduleFilters from './components/ScheduleFilters';
 import CalendarNavigation from './components/CalendarNavigation';
 import Calendar from './components/Calendar';
 import DayBatchesSidebar from './components/DayBatchesSidebar';
-import { CalendarDay, FilterType } from './types';
-import { MOCK_BATCHES } from './constants';
+import { FilterType } from './types';
+import { useScheduleData } from './hooks/useScheduleData';
+import {
+  generateCalendarDays,
+  getSelectedDayBatches,
+  navigateToPreviousDay,
+  navigateToNextDay,
+  getMonthName,
+} from './utils/scheduleUtils';
 
 const Schedule = () => {
-  const today = new Date();
+  const today = useMemo(() => new Date(), []);
   const [currentDate, setCurrentDate] = useState(today);
   const [selectedDate, setSelectedDate] = useState<Date | null>(today);
   const [searchQuery, setSearchQuery] = useState('');
   const [activeFilter, setActiveFilter] = useState<FilterType>('all');
 
-  const calendarDays = useMemo(() => {
-    const year = currentDate.getFullYear();
-    const month = currentDate.getMonth();
-    const firstDay = new Date(year, month, 1);
-    const lastDay = new Date(year, month + 1, 0);
-    const daysInMonth = lastDay.getDate();
-    const startingDayOfWeek = firstDay.getDay();
+  const { batches, isLoading, mapBatchItemToBatch } = useScheduleData(currentDate);
 
-    const days: CalendarDay[] = [];
+  const calendarDays = useMemo(
+    () => generateCalendarDays(currentDate, today, batches, searchQuery, mapBatchItemToBatch),
+    [currentDate, searchQuery, today, batches, mapBatchItemToBatch]
+  );
 
-    for (let i = 0; i < startingDayOfWeek; i++) {
-      days.push({
-        date: 0,
-        batches: [],
-        isCurrentMonth: false,
-      });
-    }
+  const selectedDayBatches = useMemo(
+    () => getSelectedDayBatches(selectedDate, calendarDays, currentDate),
+    [selectedDate, calendarDays, currentDate]
+  );
 
-    for (let date = 1; date <= daysInMonth; date++) {
-      const batches = [];
-
-      if (date === today.getDate() && month === today.getMonth() && year === today.getFullYear()) {
-        batches.push(MOCK_BATCHES[0], MOCK_BATCHES[1]);
-      } else if (date === today.getDate() + 1 && month === today.getMonth() && year === today.getFullYear()) {
-        batches.push(MOCK_BATCHES[2]);
-      } else if (date === today.getDate() + 2 && month === today.getMonth() && year === today.getFullYear()) {
-        batches.push(MOCK_BATCHES[3], MOCK_BATCHES[4]);
-      }
-
-      const isToday = date === today.getDate() && month === today.getMonth() && year === today.getFullYear();
-
-      days.push({
-        date,
-        batches: batches.filter((batch) =>
-          searchQuery ? batch.destination.toLowerCase().includes(searchQuery.toLowerCase()) : true
-        ),
-        isToday,
-        isCurrentMonth: true,
-      });
-    }
-
-    return days;
-  }, [currentDate, searchQuery, today]);
-
-  const selectedDayBatches = useMemo(() => {
-    if (!selectedDate) return [];
-    
-    const day = calendarDays.find(d => 
-      d.isCurrentMonth && 
-      d.date === selectedDate.getDate() &&
-      currentDate.getMonth() === selectedDate.getMonth() &&
-      currentDate.getFullYear() === selectedDate.getFullYear()
-    );
-    
-    return day?.batches || [];
-  }, [selectedDate, calendarDays, currentDate]);
-
-  const monthName = currentDate.toLocaleString('default', { month: 'long' });
+  const monthName = getMonthName(currentDate);
   const year = currentDate.getFullYear();
 
-  const handlePreviousMonth = () => {
-    setCurrentDate(new Date(currentDate.getFullYear(), currentDate.getMonth() - 1, 1));
-  };
-
-  const handleNextMonth = () => {
-    setCurrentDate(new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 1));
-  };
-
   const handleToday = () => {
-    const today = new Date();
     setCurrentDate(today);
     setSelectedDate(today);
+  };
+
+  const handlePreviousDay = () => {
+    const { newDate, newMonthDate } = navigateToPreviousDay(selectedDate, today);
+    setSelectedDate(newDate);
+    setCurrentDate(newMonthDate);
+  };
+
+  const handleNextDay = () => {
+    const { newDate, newMonthDate } = navigateToNextDay(selectedDate, today);
+    setSelectedDate(newDate);
+    setCurrentDate(newMonthDate);
   };
 
   const handleCreateBatch = () => {
@@ -106,29 +71,32 @@ const Schedule = () => {
   };
 
   return (
-    <div className="w-full flex flex-col gap-6">
+    <div className="w-full flex flex-col gap-4">
       <ScheduleHeader onCreateBatch={handleCreateBatch} />
-      <div className="flex gap-3">
-        <div className='flex-3'>
+      <div className="flex gap-6">
+        <div className='w-[70%]'>
           <Calendar
             month={monthName}
             year={year}
             days={calendarDays}
             onDayClick={handleDayClick}
             onBatchClick={handleBatchClick}
+            selectedDate={selectedDate}
           />
         </div>
-        <div className='flex-1 flex flex-col gap-3'>
+        <div className='w-[30%] flex flex-col gap-4'>
           <div className="flex items-center justify-between gap-2">
-            <ScheduleFilters
-              searchQuery={searchQuery}
-              onSearchChange={setSearchQuery}
-              activeFilter={activeFilter}
-              onFilterChange={setActiveFilter}
-            />
+            <div className="flex items-center gap-2">
+              <ScheduleFilters
+                searchQuery={searchQuery}
+                onSearchChange={setSearchQuery}
+                activeFilter={activeFilter}
+                onFilterChange={setActiveFilter}
+              />
+            </div>
             <CalendarNavigation
-              onPrevious={handlePreviousMonth}
-              onNext={handleNextMonth}
+              onPrevious={handlePreviousDay}
+              onNext={handleNextDay}
               onToday={handleToday}
             />
           </div>

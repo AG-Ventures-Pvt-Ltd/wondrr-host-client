@@ -30,7 +30,7 @@ const BatchForm: React.FC<BatchFormProps> = ({ onCancel, isEditMode = false, bat
     isEditMode,
     batchId,
     onSuccess: () => {
-      console.log(isEditMode ? 'Batch updated successfully' : 'Batch created successfully')
+
       if (isEditMode && batchId) {
         router.push(`/dashboard/trips/${tripId}/batch/${batchId}`)
       } else {
