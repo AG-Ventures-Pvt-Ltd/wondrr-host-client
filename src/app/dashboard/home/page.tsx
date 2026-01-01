@@ -14,6 +14,7 @@ import RecentBookings from './components/RecentBookings'
 const Home = () => {
 
     const { data: session } = useSession()
+ 
     const firstName = session?.user?.fullName?.split(' ')[0] || 'Guest'
 
     const { statsData, upcomingTrips, hasCreatedTrips, isLoading } = useHomeStats();

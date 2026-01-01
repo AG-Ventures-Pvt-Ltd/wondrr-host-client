@@ -1,4 +1,8 @@
 export const API_ENDPOINTS = {
+  AUTH: {
+    REGISTER: 'api/client/v1/user/host/register',
+    VERIFY_OTP: 'api/client/v1/user/verifyOTP',
+  },
   TRIPS: {
     CREATE_HOST_TRIP: 'api/client/v1/trips/host/create',
     CREATE_HOST_BATCH : 'api/client/v1/trips/host/trip/batch/create',
