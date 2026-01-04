@@ -30,7 +30,7 @@ const LoginForm = () => {
         <h1 className="text-2xl font-medium text-maintext">Welcome back</h1>
         <p className="text-subtext">Sign in to access your dashboard</p>
       </div>
-      <div className="space-y-6">
+      <div className="space-y-4">
         <div className="space-y-2">
           <label className="text-sm text-neutral-600">Email address</label>
           <div className="relative">
@@ -80,10 +80,10 @@ const LoginForm = () => {
           <ArrowRight className="w-5 h-5" />
         </Button>
         {error && (
-          <p className="text-sm text-red-600 text-center">{error}</p>
+          <p className="text-sm text-red-600 text-center mt-4">{error}</p>
         )}
       </div>
-      <div className="space-y-6">
+      <div className="">
         <p className="text-center text-sm text-neutral-600">
           Don&apos;t have an account?{' '}
           <a href="/auth?mode=signup" className="text-primary hover:underline">

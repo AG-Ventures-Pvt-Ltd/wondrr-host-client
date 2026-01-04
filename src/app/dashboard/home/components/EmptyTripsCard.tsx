@@ -11,7 +11,7 @@ const EmptyTripsCard: React.FC = () => {
   return (
     <Card className="w-full max-w-lg flex flex-col items-center justify-center mt-8">
         <div className="w-24 h-24 bg-linear-to-br from-blue-50 to-indigo-50 rounded-3xl flex justify-center items-center">
-          <Sparkles className="text-blue-600" size={48} strokeWidth={3} />
+          <Sparkles className="text-blue-600" size={48} strokeWidth={1.5} />
         </div>
         <h2 className="mt-8 text-center text-neutral-900 text-base font-normal leading-6">
           Start Your Journey with Wondrr

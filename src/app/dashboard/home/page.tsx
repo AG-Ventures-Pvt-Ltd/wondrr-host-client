@@ -31,7 +31,7 @@ const Home = () => {
     return (
         <div>
             <div>
-                <h1 className='text-lg'>Hi, {firstName} 👋</h1>
+                <h1 className='text-lg'>Hi, {firstName} </h1>
                 <p className='mt-1 text-sm text-subtext'>Here&apos;s what&apos;s happening with your trips today</p>
             </div>
             

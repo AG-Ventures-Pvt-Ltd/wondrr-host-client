@@ -22,6 +22,10 @@ export default async function proxy(request: NextRequest) {
     secret: process.env.NEXTAUTH_SECRET,
     cookieName: 'next-auth.session-token'
   });
+
+  if (token && token?.type != 'Host') {
+    return NextResponse.redirect(new URL(`${process.env.NEXT_PUBLIC_NEXTAUTH_URL}`))
+  }
   
   if (!token || token.error) {
     if (pathname.startsWith('/dashboard')) {
