@@ -2,6 +2,8 @@
 
 import { signIn } from "next-auth/react";
 import { useState } from "react";
+import { notify } from "@/common/utils/notify";
+
 
 interface LoginCredentials extends Record<string, unknown> {
   email: string;
@@ -30,14 +32,17 @@ export const useLogin = (): UseLoginReturn => {
       });
 
       if (result?.error) {
-        setError(result.error);
+        if (result?.error == 'OTP_NOT_VERIFIED') {
+          notify.info('Please verify your email before logging in!') 
+        }
+          setError(result.error);
         return { success: false, error: result.error };
       }
 
       return { success: true };
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : "Login failed";
-      setError(errorMessage);
+        setError(errorMessage);
       return { success: false, error: errorMessage };
     } finally {
       setIsLoading(false);
