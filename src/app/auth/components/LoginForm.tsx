@@ -14,7 +14,8 @@ const LoginForm = () => {
   const [otp, setOtp] = useState('')
   const [showPassword, setShowPassword] = useState(false)
   const [showOtp, setShowOtp] = useState(false)
-  const { login, isLoading, error } = useLogin()
+  const [loginError, setLoginError] = useState<string | null>(null)
+  const { login, isLoading } = useLogin()
   const { verifyOtp, isLoading: isVerifying, error: otpError } = useVerifyOtp()
 
   const router = useRouter()
@@ -27,17 +28,22 @@ const LoginForm = () => {
         setShowOtp(false)
         setOtp('')
         setPassword('')
+        setLoginError(null)
       } else {
         notify.error('Invalid OTP')
       }
     } else {
-      // Login
-      await login({ email, password })
-      if (error === 'OTP_NOT_VERIFIED') {
+      const res = await login({ email, password })
+      
+      if (!res.success && res.error === 'OTP_NOT_VERIFIED') {
         setShowOtp(true)
-      } else if (!error) {
+        setLoginError(null)
+      } else if (res.success) {
         router.push('/dashboard')
         notify.success('Login Successful!')
+        setLoginError(null)
+      } else {
+        setLoginError(res.error || 'Login failed')
       }
     }
   }
@@ -113,8 +119,8 @@ const LoginForm = () => {
           {isLoading || isVerifying ? (showOtp ? 'Verifying...' : 'Signing in...') : (showOtp ? 'Verify OTP' : 'Sign in to Dashboard')}
           <ArrowRight className="w-5 h-5" />
         </Button>
-        {(error && error !== 'OTP_NOT_VERIFIED') && (
-          <p className="text-sm text-red-600 text-center mt-4">{error}</p>
+        {(loginError && loginError !== 'OTP_NOT_VERIFIED') && (
+          <p className="text-sm text-red-600 text-center mt-4">{loginError}</p>
         )}
         {otpError && (
           <p className="text-sm text-red-600 text-center mt-4">{otpError.message}</p>

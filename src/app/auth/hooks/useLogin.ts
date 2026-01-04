@@ -13,16 +13,13 @@ interface LoginCredentials extends Record<string, unknown> {
 interface UseLoginReturn {
   login: (credentials: LoginCredentials) => Promise<{ success: boolean; error?: string }>;
   isLoading: boolean;
-  error: string | null;
 }
 
 export const useLogin = (): UseLoginReturn => {
   const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
 
   const login = async (credentials: LoginCredentials): Promise<{ success: boolean; error?: string }> => {
     setIsLoading(true);
-    setError(null);
 
     try {
       const result = await signIn("credentials", {
@@ -30,19 +27,17 @@ export const useLogin = (): UseLoginReturn => {
         password: credentials.password,
         redirect: false,
       });
-
+      console.log('result',result)
       if (result?.error) {
         if (result?.error == 'OTP_NOT_VERIFIED') {
           notify.info('Please verify your email before logging in!') 
         }
-          setError(result.error);
         return { success: false, error: result.error };
       }
-
+      console.log('after result')
       return { success: true };
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : "Login failed";
-        setError(errorMessage);
       return { success: false, error: errorMessage };
     } finally {
       setIsLoading(false);
@@ -52,6 +47,5 @@ export const useLogin = (): UseLoginReturn => {
   return {
     login,
     isLoading,
-    error,
   };
 };

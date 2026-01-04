@@ -3,8 +3,6 @@ import { LogOut } from 'lucide-react'
 import { signOut } from "next-auth/react";
 import Button from '@/common/components/atoms/Button';
 import { logError } from '@/common/utils/logError';
-import { useRouter } from 'next/navigation';
-import { notify } from '@/common/utils/notify';
 
 interface LogoutButtonProps {
     isCollapsed: boolean;
@@ -12,12 +10,9 @@ interface LogoutButtonProps {
 
 const LogoutButton: React.FC<LogoutButtonProps> = ({ isCollapsed }) => {
 
-    const router = useRouter()
     const handleLogOut = async () => {
         try {
             await signOut({ callbackUrl: "/auth" })
-            notify.success('Logged out successfully!')
-            router.push('/auth')
         } catch (error) {
             logError({error: error, location : "src/app/dashboard/components/LogoutButton.tsx" , when : "durring logout"})
         }
