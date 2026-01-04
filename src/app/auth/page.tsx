@@ -1,6 +1,6 @@
 'use client'
 
-import React from 'react'
+import React, { Suspense } from 'react'
 import { useSearchParams } from 'next/navigation'
 import AuthBranding from './components/AuthBranding'
 import LoginForm from './components/LoginForm'
@@ -28,4 +28,10 @@ const Auth = () => {
   )
 }
 
-export default Auth
+const AuthPage = () => (
+  <Suspense fallback={<div>Loading...</div>}>
+    <Auth />
+  </Suspense>
+)
+
+export default AuthPage
