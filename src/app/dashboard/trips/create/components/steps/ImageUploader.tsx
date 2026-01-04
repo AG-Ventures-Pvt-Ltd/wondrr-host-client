@@ -5,7 +5,7 @@ import { Card } from '@/common/ui/card'
 import { Button } from '@/common/ui/button'
 import { Badge } from '@/common/ui/badge'
 import { Upload, X, Image as ImageIcon } from 'lucide-react'
-import useS3Upload from '@/common/services/useS3Upload'
+import useS3Upload from '@/common/hooks/useS3Upload'
 import { notify } from '@/common/utils/notify'
 
 interface ImagePreview {

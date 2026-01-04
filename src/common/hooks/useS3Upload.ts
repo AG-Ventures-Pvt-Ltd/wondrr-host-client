@@ -1,7 +1,7 @@
 "use client";
 import { useState } from "react";
 import axios from "axios";
-import { baseAPI } from "./baseApi";
+import { baseAPI } from "../services/baseApi";
 import { notify } from "@/common/utils/notify";
 import { logError } from "@/common/utils/logError";
 import { PresignedUrlResponse, UploadResult, UseS3UploadReturn } from '@/types/common'

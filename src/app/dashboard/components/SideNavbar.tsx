@@ -1,9 +1,10 @@
 import React from 'react'
 import Logo from '@/common/components/atoms/Logo/Logo'
-import { LayoutGrid, Calendar, Map, BookOpen, Bell, HelpCircle, ChevronRight, ChevronLeft, LogOut } from 'lucide-react'
+import { LayoutGrid, Calendar, Map, BookOpen, Bell, HelpCircle, ChevronRight, ChevronLeft } from 'lucide-react'
 import { useRouter, usePathname } from 'next/navigation'
 import { useState } from 'react'
 import { useSession } from 'next-auth/react'
+import LogoutButton from './LogoutButton'
 
 
 const SideNavbar = () => {
@@ -79,15 +80,7 @@ const SideNavbar = () => {
                 </div>
                 <div>
                 <div className={`flex justify-center items-center gap-4 ${isCollapsed ? 'px-0' : 'px-4'} py-2 transition-all duration-300 ease-in-out`}>
-                    <button 
-                        className={`text-[#64748B] flex items-center py-2 px-4 ${isCollapsed ? 'justify-center' : 'w-full'} hover:bg-red-50 hover:text-red-600 cursor-pointer rounded-xl transition-all duration-300 ease-in-out`}
-                        onClick={() => {
-                            console.log('Logout clicked')
-                        }}
-                    >
-                        <LogOut className="inline transition-all duration-300 ease-in-out" size={'16'} />
-                        {!isCollapsed && <span className={`ml-2 transition-all duration-300 ease-in-out overflow-hidden whitespace-nowrap w-auto opacity-100`}>Logout</span>}
-                    </button>
+                    <LogoutButton isCollapsed={isCollapsed}/>
                 </div>
                 <div className={`flex justify-center items-center gap-4 ${isCollapsed ? 'px-0' : 'px-4'} pb-2 border-t-2 pt-4 border-[#E2E8F0] transition-all duration-300 ease-in-out`}>
                     <p className='bg-amber-300 rounded-full w-10 h-10 transition-all duration-300 ease-in-out flex items-center justify-center'>{initial}</p>
