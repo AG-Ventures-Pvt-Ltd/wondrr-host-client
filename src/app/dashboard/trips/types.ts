@@ -76,6 +76,11 @@ export interface TripDetailsApiResponse {
   exclusions: string[]
   basePrice?: number
   price?: number
+  sharingPrice?: [{
+      additionalPricePerPerson : number;
+      people : number;
+  }]
+  additionalInfo?:string;
   stats: {
     tripBatchesCount: number
     totalRevenue: number
@@ -108,6 +113,11 @@ export interface TripDetails {
   exclusions: string[]
   basePrice?: number
   price?: number
+  sharingPrice?: [{
+      additionalPricePerPerson : number;
+      people : number;
+  }]
+  additionalInfo?: string;
   stats: {
     batches: number
     totalRevenue: string

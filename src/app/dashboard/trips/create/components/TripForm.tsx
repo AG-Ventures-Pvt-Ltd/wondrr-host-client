@@ -28,7 +28,7 @@ const TripForm: React.FC<TripFormProps> = ({ isEditMode = false, tripId }) => {
   const [showResultModal, setShowResultModal] = useState(false)
   const [submissionResult, setSubmissionResult] = useState<{ success: boolean; error?: string; tripId?: string } | null>(null)
 
-  const { currentStep, validationErrors, nextStep, previousStep, title, description, category, tags, location, tripImages, faqs, basePrice, price, itinerary, inclusions, exclusions } = useTripFormStore()
+  const { currentStep, validationErrors, nextStep, previousStep, title, description, category, tags, location, tripImages, faqs, basePrice, price, sharingPrice, itinerary, inclusions, exclusions, additionalInfo } = useTripFormStore()
 
   const { handleSubmit, isSubmitting } = useFormSubmission({ 
     onSuccess: (tripId?: string) => {
@@ -60,9 +60,11 @@ const TripForm: React.FC<TripFormProps> = ({ isEditMode = false, tripId }) => {
       faqs.length > 0 ||
       basePrice !== null ||
       price !== null ||
+      sharingPrice.length > 0 ||
       itinerary.some(day => day.title.trim() !== '' || day.description.trim() !== '' || day.activities.length > 0) ||
       inclusions.length > 0 ||
-      exclusions.length > 0
+      exclusions.length > 0 ||
+      additionalInfo.trim() !== ''
     )
   }
 

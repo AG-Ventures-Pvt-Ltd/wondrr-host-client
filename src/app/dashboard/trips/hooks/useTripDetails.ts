@@ -27,6 +27,8 @@ export const useTripDetails = (slug: string) => {
     category : data.category,
     basePrice: data.basePrice,
     price: data.price,
+    additionalInfo : data?.additionalInfo,
+    sharingPrice : data.sharingPrice ,
     stats: {
         batches : data.stats?.tripBatchesCount, 
         totalRevenue : `₹${data.stats?.totalRevenue}`,

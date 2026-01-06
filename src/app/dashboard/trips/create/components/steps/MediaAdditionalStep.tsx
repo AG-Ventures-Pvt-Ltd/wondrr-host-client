@@ -14,7 +14,7 @@ import { VALIDATION_RULES, PHOTO_TIPS } from '../../constants'
 import { FAQ } from '../../types'
 
 const MediaAdditionalStep: React.FC = () => {
-  const { tripImages, updateField } = useTripFormStore()
+  const { tripImages, additionalInfo, updateField } = useTripFormStore()
   const {
     question,
     setQuestion,
@@ -127,6 +127,25 @@ const MediaAdditionalStep: React.FC = () => {
           </div>
         )}
       </div>
+
+      {/* Additional Information Section */}
+      <div className="space-y-3">
+        <Label className="text-base! font-medium">
+          Additional Information
+        </Label>
+        <p className="text-xs text-muted-foreground">
+          Add any additional details or special instructions that travelers should know about this trip.
+        </p>
+        <CustomInput
+          id="additionalInfo"
+          placeholder="e.g., Special requirements, packing tips, important notes..."
+          value={additionalInfo}
+          onChange={(e) => updateField('additionalInfo', e.target.value)}
+          variant="textarea"
+          rows={5}
+        />
+      </div>
+
       <div className="p-4 bg-blue-50 border border-blue-200 rounded-lg">
         <h4 className="text-sm font-medium text-blue-900 mb-2">Tips for Great Trip Photos</h4>
         <ul className="text-xs text-blue-800 space-y-1">

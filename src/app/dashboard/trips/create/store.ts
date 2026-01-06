@@ -18,6 +18,7 @@ const initialFormData: TripFormData = {
   faqs: [],
   basePrice: null,
   price: null,
+  sharingPrice: [],
   itinerary: [
     {
       id: Date.now(),
@@ -30,6 +31,7 @@ const initialFormData: TripFormData = {
   ],
   inclusions: [],
   exclusions: [],
+  additionalInfo: '',
   status: 'draft',
 }
 
@@ -190,6 +192,32 @@ export const useTripFormStore = create<TripFormState>((set) => ({
   removeExclusion: (id) =>
     set((state) => ({
       exclusions: state.exclusions.filter((exclusion) => exclusion.id !== id),
+    })),
+
+  addSharingPrice: (people, additionalPricePerPerson) =>
+    set((state) => ({
+      sharingPrice: [
+        ...state.sharingPrice,
+        {
+          id: Date.now(),
+          people,
+          additionalPricePerPerson,
+        },
+      ],
+      validationErrors: state.validationErrors.length > 0 ? [] : state.validationErrors,
+    })),
+
+  removeSharingPrice: (id) =>
+    set((state) => ({
+      sharingPrice: state.sharingPrice.filter((sp) => sp.id !== id),
+    })),
+
+  updateSharingPrice: (id, field, value) =>
+    set((state) => ({
+      sharingPrice: state.sharingPrice.map((sp) =>
+        sp.id === id ? { ...sp, [field]: value } : sp
+      ),
+      validationErrors: state.validationErrors.length > 0 ? [] : state.validationErrors,
     })),
 
   setValidationErrors: (errors) => set({ validationErrors: errors }),

@@ -3,7 +3,7 @@
 import React, { useState } from 'react'
 import { Label } from '@/common/ui/label'
 import { Badge } from '@/common/ui/badge'
-import { DollarSign, Plus, Trash2, X } from 'lucide-react'
+import { IndianRupee, Plus, Trash2, X } from 'lucide-react'
 import CustomInput from '@/common/components/composites/CustomInput'
 import { useTripFormStore } from '../../store'
 import { useItineraryManager } from '../../hooks'
@@ -14,7 +14,7 @@ interface PricingItineraryStepProps {
 }
 
 const PricingItineraryStep: React.FC<PricingItineraryStepProps> = ({ isEditMode = false }) => {
-  const { basePrice, price, updateField } = useTripFormStore()
+  const { basePrice, price, sharingPrice, updateField, addSharingPrice, removeSharingPrice, updateSharingPrice } = useTripFormStore()
   const { 
     itinerary, 
     addItineraryDay, 
@@ -26,12 +26,22 @@ const PricingItineraryStep: React.FC<PricingItineraryStepProps> = ({ isEditMode 
   } = useItineraryManager()
 
   const [activityInputs, setActivityInputs] = useState<{ [key: number]: string }>({})
+  const [newSharingPeople, setNewSharingPeople] = useState<number>(1)
+  const [newSharingPrice, setNewSharingPrice] = useState<number>(0)
 
   const handleAddActivity = (dayId: number) => {
     const activity = activityInputs[dayId]?.trim()
     if (activity) {
       addItineraryActivity(dayId, activity)
       setActivityInputs({ ...activityInputs, [dayId]: '' })
+    }
+  }
+
+  const handleAddSharingPrice = () => {
+    if (newSharingPeople >= 1 && newSharingPrice >= 0) {
+      addSharingPrice(newSharingPeople, newSharingPrice)
+      setNewSharingPeople(1)
+      setNewSharingPrice(0)
     }
   }
 
@@ -45,7 +55,7 @@ const PricingItineraryStep: React.FC<PricingItineraryStepProps> = ({ isEditMode 
           {/* Base Price */}
           <div className="space-y-2">
             <Label htmlFor="basePrice" className="text-sm flex items-center gap-2">
-              <DollarSign className="w-4 h-4 text-neutral-400" />
+              <IndianRupee className="w-4 h-4 text-neutral-400" />
               Base Price per Person
             </Label>
             <CustomInput
@@ -59,14 +69,14 @@ const PricingItineraryStep: React.FC<PricingItineraryStepProps> = ({ isEditMode 
               disabled={isEditMode}
             />
             <p className="text-xs text-muted-foreground">
-              Starting price for this trip
+              Base price for 2/3 sharing (depending on availability)
             </p>
           </div>
 
           {/* Max Price */}
           <div className="space-y-2">
             <Label htmlFor="price" className="text-sm flex items-center gap-2">
-              <DollarSign className="w-4 h-4 text-neutral-400" />
+              <IndianRupee className="w-4 h-4 text-neutral-400" />
               Price per Person
             </Label>
             <CustomInput
@@ -83,6 +93,121 @@ const PricingItineraryStep: React.FC<PricingItineraryStepProps> = ({ isEditMode 
               Price for this trip
             </p>
           </div>
+        </div>
+
+        <div className="space-y-3 mt-6">
+          <div className="flex items-center justify-between">
+            <Label className="text-sm font-medium">Hotel Sharing Options (Optional)</Label>
+            <Badge variant="secondary">
+              {sharingPrice.length} option{sharingPrice.length !== 1 ? 's' : ''}
+            </Badge>
+          </div>
+          <p className="text-xs text-muted-foreground">
+            {isEditMode 
+              ? "Current hotel sharing options for this trip." 
+              : "Add additional pricing for different hotel sharing options (e.g., single sharing). If you only offer the base price, you can skip this section."
+            }
+          </p>
+
+          {sharingPrice.length > 0 && (
+            <div className="space-y-2">
+              {sharingPrice.map((sp) => (
+                <div
+                  key={sp.id}
+                  className="bg-white rounded-xl border border-neutral-200/60 p-3 flex items-center justify-between"
+                >
+                  <div className="flex-1 grid grid-cols-2 gap-4">
+                    <div className="space-y-1">
+                      <Label className="text-xs text-neutral-500">People per Room</Label>
+                      <CustomInput
+                        type="number"
+                        min="1"
+                        value={sp.people}
+                        onChange={(e) => updateSharingPrice(sp.id, 'people', Number(e.target.value))}
+                        variant="input"
+                        className="h-8"
+                        disabled={isEditMode}
+                      />
+                    </div>
+                    <div className="space-y-1">
+                      <Label className="text-xs text-neutral-500">Additional Price</Label>
+                      <CustomInput
+                        type="number"
+                        min="0"
+                        value={sp.additionalPricePerPerson}
+                        onChange={(e) => updateSharingPrice(sp.id, 'additionalPricePerPerson', Number(e.target.value))}
+                        variant="input"
+                        className="h-8"
+                        disabled={isEditMode}
+                      />
+                    </div>
+                  </div>
+                  {!isEditMode && (
+                    <button
+                      type="button"
+                      onClick={() => removeSharingPrice(sp.id)}
+                      className="ml-3 text-neutral-400 hover:text-red-500 transition-colors"
+                    >
+                      <Trash2 className="w-4 h-4" />
+                    </button>
+                  )}
+                </div>
+              ))}
+            </div>
+          )}
+
+          {!isEditMode && (
+            <div className="bg-neutral-50/50 rounded-2xl border border-neutral-200/50 p-4 space-y-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="sharingPeople" className="text-xs">
+                    Number of People per Room
+                  </Label>
+                  <CustomInput
+                    id="sharingPeople"
+                    type="number"
+                    placeholder="1"
+                    min="1"
+                    value={newSharingPeople}
+                    onChange={(e) => setNewSharingPeople(Number(e.target.value))}
+                    variant="input"
+                  />
+                  <p className="text-xs text-muted-foreground">
+                    e.g., 1 for single sharing
+                  </p>
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="sharingAdditionalPrice" className="text-xs">
+                    Additional Price per Person
+                  </Label>
+                  <CustomInput
+                    id="sharingAdditionalPrice"
+                    type="number"
+                    placeholder="2000"
+                    min="0"
+                    value={newSharingPrice === 0 ? '' : newSharingPrice}
+                    onChange={(e) => setNewSharingPrice(e.target.value ? Number(e.target.value) : 0)}
+                    variant="input"
+                  />
+                  <p className="text-xs text-muted-foreground">
+                    Extra charge for this sharing option
+                  </p>
+                </div>
+              </div>
+
+              <button
+                type="button"
+                onClick={handleAddSharingPrice}
+                disabled={newSharingPeople < 1 || newSharingPrice < 0}
+                className="flex items-center gap-2 text-blue-600 hover:text-blue-700 text-sm transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                <Plus className="w-4 h-4" />
+                Add Sharing Option
+              </button>
+            </div>
+          )}
+          
         </div>
       </div>
 

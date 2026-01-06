@@ -13,6 +13,12 @@ interface TripSidebarProps {
     tripSlug: string;
     tripId: string;
     onShareClick: () => void;
+    basePrice?: number;
+    price?: number;
+    sharingPrice?: Array<{
+        people: number;
+        additionalPricePerPerson: number;
+    }>;
 }
 
 const TripSidebar: React.FC<TripSidebarProps> = ({ 
@@ -21,7 +27,10 @@ const TripSidebar: React.FC<TripSidebarProps> = ({
     exclusions, 
     tripSlug,
     tripId,
-    onShareClick
+    onShareClick,
+    basePrice,
+    price,
+    sharingPrice = []
 }) => {
     const router = useRouter();
 
@@ -70,6 +79,40 @@ const TripSidebar: React.FC<TripSidebarProps> = ({
                             {tag}
                         </span>
                     ))}
+                </div>
+            </Card>
+            <Card className="flex flex-col gap-4">
+                <h2 className="text-base text-maintext">Pricing Details</h2>
+                <div className="flex flex-col gap-3">
+                    <div className="flex justify-between items-center">
+                        <span className="text-sm text-neutral-600">Base Price</span>
+                        <span className="text-sm font-medium text-neutral-900">
+                            ₹{basePrice?.toLocaleString() || 'N/A'}
+                        </span>
+                    </div>
+                    <div className="flex justify-between items-center">
+                        <span className="text-sm text-neutral-600">Price per Person</span>
+                        <span className="text-sm font-medium text-neutral-900">
+                            ₹{price?.toLocaleString() || 'N/A'}
+                        </span>
+                    </div>
+                    {sharingPrice && sharingPrice.length > 0 && (
+                        <div className="border-t pt-3">
+                            <h4 className="text-sm font-medium text-neutral-900 mb-2">Hotel Sharing Options</h4>
+                            <div className="space-y-2">
+                                {sharingPrice.map((option, index) => (
+                                    <div key={index} className="flex justify-between items-center text-xs">
+                                        <span className="text-neutral-600">
+                                            {option.people} person{option.people !== 1 ? 's' : ''} per room
+                                        </span>
+                                        <span className="font-medium text-neutral-900">
+                                            +₹{option.additionalPricePerPerson.toLocaleString()}
+                                        </span>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                    )}
                 </div>
             </Card>
             <Card className="flex flex-col gap-5">

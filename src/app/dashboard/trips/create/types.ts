@@ -37,6 +37,12 @@ export interface Exclusion {
   text: string
 }
 
+export interface SharingPrice {
+  id: number
+  people: number
+  additionalPricePerPerson: number
+}
+
 export interface TripFormData {
   title: string
   description: string
@@ -47,9 +53,11 @@ export interface TripFormData {
   faqs: FAQ[]
   basePrice: number | null
   price: number | null
+  sharingPrice: SharingPrice[]
   itinerary: ItineraryDay[]
   inclusions: Inclusion[]
   exclusions: Exclusion[]
+  additionalInfo: string
   status: 'draft' | 'published'
 }
 
@@ -73,6 +81,9 @@ export interface TripFormState extends TripFormData {
   removeInclusion: (id: number) => void
   addExclusion: (text: string) => void
   removeExclusion: (id: number) => void
+  addSharingPrice: (people: number, additionalPricePerPerson: number) => void
+  removeSharingPrice: (id: number) => void
+  updateSharingPrice: (id: number, field: 'people' | 'additionalPricePerPerson', value: number) => void
   setValidationErrors: (errors: string[]) => void
   clearValidationErrors: () => void
   resetForm: () => void

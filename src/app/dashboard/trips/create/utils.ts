@@ -94,6 +94,16 @@ export const validateTripForm = (formData: TripFormData): ValidationResult => {
     errors.push(`At least ${VALIDATION_RULES.MIN_EXCLUSIONS} exclusions are required`)
   }
 
+  // Sharing Price validations
+  formData.sharingPrice.forEach((sp, index) => {
+    if (sp.people < 1) {
+      errors.push(`Sharing option ${index + 1}: Number of people must be at least 1`)
+    }
+    if (sp.additionalPricePerPerson < 0) {
+      errors.push(`Sharing option ${index + 1}: Additional price cannot be negative`)
+    }
+  })
+
   return {
     isValid: errors.length === 0,
     errors,
@@ -123,6 +133,11 @@ export const prepareSubmissionData = (formData: TripFormData) => {
     })),
     inclusions: formData.inclusions.map((item) => item.text),
     exclusions: formData.exclusions.map((item) => item.text),
+    sharingPrice: formData.sharingPrice.map((sp) => ({
+      people: sp.people,
+      additionalPricePerPerson: sp.additionalPricePerPerson,
+    })),
+    additionalInfo: formData.additionalInfo,
     status: 'draft',
   }
 }

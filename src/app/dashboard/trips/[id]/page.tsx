@@ -65,6 +65,9 @@ const TripDetailsPage = () => {
                         tripSlug={tripId}
                         tripId={tripId}
                         onShareClick={() => setIsShareModalOpen(true)}
+                        basePrice={tripDetails!.basePrice}
+                        price={tripDetails!.price}
+                        sharingPrice={tripDetails!.sharingPrice}
                     />
                 </div>
             </div>
