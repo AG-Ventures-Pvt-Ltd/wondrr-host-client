@@ -16,6 +16,7 @@ export const useTrips = () => {
     location: trip.location,
     upcomingBatches: trip.upcomingBatches || 0,
     completedBatches: trip.completedBatches || 0,
+    status: trip.status || 'draft',
   })) || [];
 
   return {

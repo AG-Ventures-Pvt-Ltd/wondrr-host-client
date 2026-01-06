@@ -7,10 +7,12 @@ interface Step4SecurityProps {
   confirmPassword: string
   showPassword: boolean
   showConfirmPassword: boolean
+  passwordError: string
   onPasswordChange: (value: string) => void
   onConfirmPasswordChange: (value: string) => void
   onToggleShowPassword: () => void
   onToggleShowConfirmPassword: () => void
+  onPasswordBlur: () => void
 }
 
 const Step4Security: React.FC<Step4SecurityProps> = ({
@@ -18,10 +20,12 @@ const Step4Security: React.FC<Step4SecurityProps> = ({
   confirmPassword,
   showPassword,
   showConfirmPassword,
+  passwordError,
   onPasswordChange,
   onConfirmPasswordChange,
   onToggleShowPassword,
-  onToggleShowConfirmPassword
+  onToggleShowConfirmPassword,
+  onPasswordBlur
 }) => {
   return (
     <div className="space-y-6 animate-in fade-in slide-in-from-right-4 duration-300">
@@ -47,6 +51,7 @@ const Step4Security: React.FC<Step4SecurityProps> = ({
               className="pl-12 pr-12"
               value={password}
               onChange={(e) => onPasswordChange(e.target.value)}
+              onBlur={onPasswordBlur}
               required
             />
             <button
@@ -57,6 +62,7 @@ const Step4Security: React.FC<Step4SecurityProps> = ({
               {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
             </button>
           </div>
+          {passwordError && <p className="text-xs text-red-500">{passwordError}</p>}
           <p className="text-xs text-neutral-500">
             Use at least 8 characters with a mix of letters and numbers
           </p>

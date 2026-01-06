@@ -73,14 +73,6 @@ const EditTripPage = () => {
         }
     }, [tripDetails])
 
-    const handleSuccess = () => {
-        router.push(`/dashboard/trips/${tripId}`)
-    }
-
-    const handleCancel = () => {
-        router.push(`/dashboard/trips/${tripId}`)
-    }
-
     if (isLoading) return <Loader />
     
     if (error) return <div className="flex justify-center items-center h-screen text-red-500">Error loading trip details</div>
@@ -88,8 +80,6 @@ const EditTripPage = () => {
     return (
         <div className="w-full flex flex-col items-center h-full px-20">
             <TripForm 
-                onCancel={handleCancel} 
-                onSuccess={handleSuccess}
                 isEditMode={true}
                 tripId={tripId}
             />

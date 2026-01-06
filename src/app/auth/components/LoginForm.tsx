@@ -18,6 +18,8 @@ const LoginForm = () => {
   const { login, isLoading } = useLogin()
   const { verifyOtp, isLoading: isVerifying, error: otpError } = useVerifyOtp()
 
+  
+
   const router = useRouter()
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -129,7 +131,7 @@ const LoginForm = () => {
       <div className="">
         <p className="text-center text-sm text-neutral-600">
           Don&apos;t have an account?{' '}
-          <a href="/auth?mode=signup" className="text-primary hover:underline">
+          <a href="/auth?mode=signup" onClick={(e) => { e.preventDefault(); router.push('?mode=signup'); }} className="text-primary hover:underline">
             Sign up for Wondrr
           </a>
         </p>

@@ -8,6 +8,7 @@ export interface TripListApiResponse {
   location?: string
   upcomingBatches?: number
   completedBatches?: number
+  status?: string
 }
 
 export interface TripList {
@@ -19,6 +20,7 @@ export interface TripList {
   location?: string
   upcomingBatches: number
   completedBatches: number
+  status?: string
 }
 
 export interface TripBatchDetails {

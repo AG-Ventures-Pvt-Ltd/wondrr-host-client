@@ -12,7 +12,7 @@ const ContactSupport = () => {
                 <h2 className='text-maintext text-xl font-semibold'>Still need help?</h2>
                 <p className='text-subtext'>Our support team is here to assist you with any questions</p>
                 <div className='flex gap-4'>
-                    <Button startIcon={<Mail size={20} />} variant="contained" className='rounded-2xl! px-5!'>
+                    <Button startIcon={<Mail size={20} />} variant="contained" className='rounded-2xl! px-5!' onClick={() => window.open(`https://mail.google.com/mail/u/0/?view=cm&fs=1&to=${SUPPORT_EMAIL}`)}>
                         {SUPPORT_EMAIL}
                     </Button>
                     <Button startIcon={<Phone size={20} />} variant="text" className='rounded-2xl! px-5!'>

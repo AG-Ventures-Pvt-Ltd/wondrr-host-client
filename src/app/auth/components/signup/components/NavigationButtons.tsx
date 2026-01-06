@@ -10,7 +10,6 @@ interface NavigationButtonsProps {
   onBack: () => void
   onNext: () => void
   onSendOtp: () => void
-  onVerifyOtp: () => void
 }
 
 const NavigationButtons: React.FC<NavigationButtonsProps> = ({
@@ -20,12 +19,11 @@ const NavigationButtons: React.FC<NavigationButtonsProps> = ({
   isVerifyingOtp,
   onBack,
   onNext,
-  onSendOtp,
-  onVerifyOtp
+  onSendOtp
 }) => {
   return (
     <div className="flex gap-3 pt-6">
-      {currentStep > 1 && (
+      {currentStep > 1 && currentStep !== 5 && (
         <Button
           type="button"
           onClick={onBack}
@@ -58,7 +56,6 @@ const NavigationButtons: React.FC<NavigationButtonsProps> = ({
       ) : (
         <Button
           type="submit"
-          onClick={onVerifyOtp}
           disabled={isVerifyingOtp || !isStepValid}
           className="flex-1 py-3 rounded-2xl font-normal shadow-sm"
         >

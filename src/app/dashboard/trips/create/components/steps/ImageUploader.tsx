@@ -7,6 +7,7 @@ import { Badge } from '@/common/ui/badge'
 import { Upload, X, Image as ImageIcon } from 'lucide-react'
 import useS3Upload from '@/common/hooks/useS3Upload'
 import { notify } from '@/common/utils/notify'
+import MyImage from '@/common/components/atoms/Image'
 
 interface ImagePreview {
   file?: File
@@ -29,65 +30,53 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({
   const fileInputRef = useRef<HTMLInputElement>(null)
   const { uploadImages, isUploading, progress, error } = useS3Upload()
   const [previewImages, setPreviewImages] = useState<ImagePreview[]>(images)
+  const [stagedImages, setStagedImages] = useState<ImagePreview[]>([])
 
   // Update previewImages when images prop changes (for edit mode)
   React.useEffect(() => {
     setPreviewImages(images)
   }, [images])
 
-  const handleFileSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(e.target.files || []) as File[]
     
     if (files.length === 0) return
 
-    const tempPreviews: ImagePreview[] = files.map(file => ({
+    const newStagedImages: ImagePreview[] = files.map(file => ({
       file,
       url: URL.createObjectURL(file),
       name: file.name,
-      isUploading: true,
+      isUploading: false,
     }))
     
-    setPreviewImages(prev => [...prev, ...tempPreviews])
-
-    try {
-      const results = await uploadImages(files)
-      
-      const uploadedImages = results
-        .filter(result => result.success)
-        .map(result => ({
-          url: result.url,
-          name: result.originalFile.name,
-          isUploading: false,
-        }))
-
-      tempPreviews.forEach(preview => URL.revokeObjectURL(preview.url))
-      
-      const newImages = [...images, ...uploadedImages]
-      setPreviewImages(newImages)
-      onImagesChange(newImages)
-
-      const failedUploads = results.filter(result => !result.success)
-      if (failedUploads.length > 0) {
-        notify.error(`${failedUploads.length} image(s) failed to upload`)
-      }
-    } catch {
-      const revertedPreviews = previewImages.filter(
-        img => !tempPreviews.some(temp => temp.name === img.name)
-      )
-      setPreviewImages(revertedPreviews)
-      notify.error('Failed to upload images. Please try again.')
+    setStagedImages(prev => [...prev, ...newStagedImages])
+    
+    // Reset file input
+    if (fileInputRef.current) {
+      fileInputRef.current.value = ''
     }
   }
 
-  const handleRemoveImage = (index: number) => {
-    const newImages = previewImages.filter((_, i) => i !== index)
-    
-    if (previewImages[index].file) {
-      URL.revokeObjectURL(previewImages[index].url)
+  const handleRemoveImage = (index: number, isStaged: boolean) => {
+    if (isStaged) {
+      const imageToRemove = stagedImages[index]
+      const newStagedImages = stagedImages.filter((_, i) => i !== index)
+      
+      if (imageToRemove.file) {
+        URL.revokeObjectURL(imageToRemove.url)
+      }
+      
+      setStagedImages(newStagedImages)
+    } else {
+      const newImages = previewImages.filter((_, i) => i !== index)
+      
+      if (previewImages[index].file) {
+        URL.revokeObjectURL(previewImages[index].url)
+      }
+      
+      setPreviewImages(newImages)
+      onImagesChange(newImages)
     }
-    
-    setPreviewImages(newImages)
-    onImagesChange(newImages)
   }
 
   const handleDragOver = (e: React.DragEvent<HTMLDivElement>) => {
@@ -95,7 +84,7 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({
     e.stopPropagation()
   }
 
-  const handleDrop = async (e: React.DragEvent<HTMLDivElement>) => {
+  const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
     e.preventDefault()
     e.stopPropagation()
     
@@ -107,17 +96,33 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({
       return
     }
 
-    const tempPreviews: ImagePreview[] = imageFiles.map(file => ({
+    const newStagedImages: ImagePreview[] = imageFiles.map(file => ({
       file,
       url: URL.createObjectURL(file),
       name: file.name,
-      isUploading: true,
+      isUploading: false,
     }))
     
-    setPreviewImages(prev => [...prev, ...tempPreviews])
+    setStagedImages(prev => [...prev, ...newStagedImages])
+  }
+
+  const handleUploadImages = async () => {
+    if (stagedImages.length === 0) return
+
+    if (totalImages < minRequired) {
+      notify.error(`Please select at least ${minRequired} images before uploading`)
+      return
+    }
+
+    const filesToUpload = stagedImages.map(img => img.file!).filter(Boolean)
+    
+    if (filesToUpload.length === 0) return
+
+    // Mark all staged images as uploading
+    setStagedImages(prev => prev.map(img => ({ ...img, isUploading: true })))
 
     try {
-      const results = await uploadImages(imageFiles)
+      const results = await uploadImages(filesToUpload)
       
       const uploadedImages = results
         .filter(result => result.success)
@@ -127,38 +132,57 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({
           isUploading: false,
         }))
 
-      // Clean up temp previews and add uploaded images
-      tempPreviews.forEach(preview => URL.revokeObjectURL(preview.url))
+      // Clean up staged image URLs
+      stagedImages.forEach(preview => {
+        if (preview.file) {
+          URL.revokeObjectURL(preview.url)
+        }
+      })
       
-      const newImages = [...images, ...uploadedImages]
+      const newImages = [...previewImages, ...uploadedImages]
       setPreviewImages(newImages)
       onImagesChange(newImages)
+      setStagedImages([])
 
-      // Handle failed uploads
       const failedUploads = results.filter(result => !result.success)
       if (failedUploads.length > 0) {
         notify.error(`${failedUploads.length} image(s) failed to upload`)
+      } else {
+        notify.success(`${uploadedImages.length} image(s) uploaded successfully`)
       }
     } catch {
-      // Revert previews on error
-      const revertedPreviews = previewImages.filter(
-        img => !tempPreviews.some(temp => temp.name === img.name)
-      )
-      setPreviewImages(revertedPreviews)
+      setStagedImages(prev => prev.map(img => ({ ...img, isUploading: false })))
       notify.error('Failed to upload images. Please try again.')
     }
   }
 
+  const totalImages = previewImages.length + stagedImages.length
+
   return (
     <div className="space-y-3">
-      <div className="flex items-center gap-2">
-        <Badge variant={previewImages.length >= minRequired ? "default" : "secondary"}>
-          {previewImages.length}/{minRequired} required
-        </Badge>
-        {previewImages.length < minRequired && (
-          <span className="text-xs text-muted-foreground">
-            Add {minRequired - previewImages.length} more image{minRequired - previewImages.length !== 1 ? 's' : ''}
-          </span>
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-2">
+          <Badge variant={totalImages >= minRequired ? "default" : "secondary"} className={`${totalImages >= minRequired ? 'text-white!' : ''}`}>
+            {totalImages >= minRequired ? `${totalImages}/${minRequired} ` : `${totalImages}/${minRequired}`}
+            required
+          </Badge>
+          {totalImages < minRequired && (
+            <span className="text-xs text-muted-foreground">
+              Add {minRequired - totalImages} more image{minRequired - totalImages !== 1 ? 's' : ''}
+            </span>
+          )}
+        </div>
+        {stagedImages.length > 0 && (
+          <Button
+            type="button"
+            onClick={handleUploadImages}
+            disabled={isUploading || totalImages < minRequired}
+            size="sm"
+            className='text-white!'
+            variant='default'
+          >
+            {isUploading ? `Uploading ${Math.round(progress)}%` : `Upload ${stagedImages.length} Image${stagedImages.length !== 1 ? 's' : ''}`}
+          </Button>
         )}
       </div>
 
@@ -204,60 +228,122 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({
       )}
 
       {/* Image Previews */}
-      {previewImages.length > 0 && (
-        <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mt-4">
-          {previewImages.map((preview, index) => (
-            <Card key={index} className="relative group overflow-hidden p-2">
-              <div className="aspect-video bg-gray-100 rounded-md overflow-hidden">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
-                  src={preview.url}
-                  alt={preview.name}
-                  className="w-full h-full object-cover"
-                />
-                
-                {/* Uploading Overlay */}
-                {preview.isUploading && (
-                  <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
-                    <div className="text-white text-xs">Uploading...</div>
-                  </div>
-                )}
+      {(previewImages.length > 0 || stagedImages.length > 0) && (
+        <div className="space-y-3">
+          {/* Uploaded Images */}
+          {previewImages.length > 0 && (
+            <div>
+              <p className="text-sm font-medium text-gray-700 mb-2">Uploaded Images</p>
+              <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                {previewImages.map((preview, index) => (
+                  <Card key={`uploaded-${index}`} className="relative group overflow-hidden p-2">
+                    <div className="aspect-video bg-gray-100 rounded-md overflow-hidden">
+                      <MyImage
+                        src={preview.url}
+                        alt={preview.name}
+                        width={0}
+                        height={0}
+                        className="w-full h-full object-cover"
+                      />
+                    </div>
+                    
+                    {/* Cover Badge */}
+                    {index === 0 && (
+                      <Badge
+                        variant="default"
+                        className="absolute top-4 left-4 z-10"
+                      >
+                        Cover Image
+                      </Badge>
+                    )}
+                    
+                    {/* Remove Button */}
+                    <button
+                      type="button"
+                      onClick={() => handleRemoveImage(index, false)}
+                      className="absolute top-4 right-4 z-10 w-6 h-6 bg-white rounded-full flex items-center justify-center shadow-md opacity-0 group-hover:opacity-100 transition-opacity hover:bg-red-50"
+                    >
+                      <X className="w-4 h-4 text-red-600" />
+                    </button>
+                    
+                    <p className="text-xs text-muted-foreground mt-2 truncate">
+                      {preview.name}
+                    </p>
+                  </Card>
+                ))}
               </div>
-              
-              {/* Cover Badge */}
-              {index === 0 && (
-                <Badge
-                  variant="default"
-                  className="absolute top-4 left-4 z-10"
-                >
-                  Cover Image
-                </Badge>
-              )}
-              
-              {/* Remove Button */}
-              {!preview.isUploading && (
-                <button
-                  type="button"
-                  onClick={() => handleRemoveImage(index)}
-                  className="absolute top-4 right-4 z-10 w-6 h-6 bg-white rounded-full flex items-center justify-center shadow-md opacity-0 group-hover:opacity-100 transition-opacity hover:bg-red-50"
-                >
-                  <X className="w-4 h-4 text-red-600" />
-                </button>
-              )}
-              
-              <p className="text-xs text-muted-foreground mt-2 truncate">
-                {preview.name}
-              </p>
-            </Card>
-          ))}
+            </div>
+          )}
+
+          {/* Staged Images */}
+          {stagedImages.length > 0 && (
+            <div>
+              <p className="text-sm font-medium text-gray-700 mb-2">Selected Images (Not Uploaded Yet)</p>
+              <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                {stagedImages.map((preview, index) => (
+                  <Card key={`staged-${index}`} className="relative group overflow-hidden p-2 border-2 border-dashed border-amber-300">
+                    <div className="aspect-video bg-gray-100 rounded-md overflow-hidden">
+                      <MyImage
+                        src={preview.url}
+                        alt={preview.name}
+                        width={0}
+                        height={0}
+                        className="w-full h-full object-cover"
+                      />
+                      
+                      {/* Uploading Overlay */}
+                      {preview.isUploading && (
+                        <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
+                          <div className="text-white text-xs">Uploading...</div>
+                        </div>
+                      )}
+                    </div>
+                    
+                    {/* Staged Badge */}
+                    <Badge
+                      variant="secondary"
+                      className="absolute top-4 left-4 z-10 bg-amber-100 text-amber-800"
+                    >
+                      Pending
+                    </Badge>
+                    
+                    {/* Remove Button */}
+                    {!preview.isUploading && (
+                      <button
+                        type="button"
+                        onClick={() => handleRemoveImage(index, true)}
+                        className="absolute top-4 right-4 z-10 w-6 h-6 bg-white rounded-full flex items-center justify-center shadow-md opacity-0 group-hover:opacity-100 transition-opacity hover:bg-red-50"
+                      >
+                        <X className="w-4 h-4 text-red-600" />
+                      </button>
+                    )}
+                    
+                    <p className="text-xs text-muted-foreground mt-2 truncate">
+                      {preview.name}
+                    </p>
+                  </Card>
+                ))}
+              </div>
+            </div>
+          )}
         </div>
       )}
 
       {/* Upload Summary */}
-      {previewImages.length > 0 && (
-        <div className="flex items-center gap-2 text-sm text-muted-foreground">
-          <ImageIcon className="w-4 h-4" />
-          <span>{previewImages.length} image{previewImages.length !== 1 ? 's' : ''} uploaded</span>
+      {(previewImages.length > 0 || stagedImages.length > 0) && (
+        <div className="flex items-center gap-4 text-sm">
+          {previewImages.length > 0 && (
+            <div className="flex items-center gap-2 text-green-600">
+              <ImageIcon className="w-4 h-4" />
+              <span>{previewImages.length} uploaded</span>
+            </div>
+          )}
+          {stagedImages.length > 0 && (
+            <div className="flex items-center gap-2 text-amber-600">
+              <ImageIcon className="w-4 h-4" />
+              <span>{stagedImages.length} pending</span>
+            </div>
+          )}
         </div>
       )}
     </div>

@@ -55,10 +55,16 @@ const CompanyInformationModal: React.FC<CompanyInformationModalProps> = ({
   onClose,
   initialData,
   onSubmit,
-  isLoading = false,
 }) => {
   const [formData, setFormData] = useState<CompanyInfoData>(
-    initialData || {
+    initialData ? {
+      ...initialData,
+      location: initialData.location || {
+        address: '',
+        city: '',
+        state: '',
+      },
+    } : {
       companyName: '',
       username: '',
       email: '',
@@ -95,7 +101,7 @@ const CompanyInformationModal: React.FC<CompanyInformationModalProps> = ({
 
   const handleSubmit = () => {
     // Basic validation - only check updatable fields
-    if (!formData.email || !formData.phoneNumber || !formData.location.address || !formData.location.city || !formData.location.state) {
+    if (!formData.email || !formData.phoneNumber || !formData.location?.address || !formData.location?.city || !formData.location?.state) {
       return;
     }
     
@@ -110,7 +116,14 @@ const CompanyInformationModal: React.FC<CompanyInformationModalProps> = ({
 
   const handleClose = () => {
     if (initialData) {
-      setFormData(initialData);
+      setFormData({
+        ...initialData,
+        location: initialData.location || {
+          address: '',
+          city: '',
+          state: '',
+        },
+      });
     } else {
       setFormData({
         companyName: '',
@@ -131,9 +144,9 @@ const CompanyInformationModal: React.FC<CompanyInformationModalProps> = ({
   const isFormValid = 
     formData.email.trim() !== '' &&
     formData.phoneNumber.trim() !== '' &&
-    formData.location.address.trim() !== '' &&
-    formData.location.city.trim() !== '' &&
-    formData.location.state.trim() !== '';
+    formData.location?.address.trim() !== '' &&
+    formData.location?.city.trim() !== '' &&
+    formData.location?.state.trim() !== '';
 
   return (
     <Modal
@@ -206,7 +219,7 @@ const CompanyInformationModal: React.FC<CompanyInformationModalProps> = ({
             <span className="text-red-500 ml-1">*</span>
           </label>
           <CustomInput
-            value={formData.location.address}
+            value={formData.location?.address}
             onChange={(e) => handleLocationChange('address', e.target.value)}
             placeholder="Enter street address"
           />
@@ -219,7 +232,7 @@ const CompanyInformationModal: React.FC<CompanyInformationModalProps> = ({
               <span className="text-red-500 ml-1">*</span>
             </label>
             <CustomInput
-              value={formData.location.city}
+              value={formData.location?.city}
               onChange={(e) => handleLocationChange('city', e.target.value)}
               placeholder="Enter city"
             />
@@ -231,7 +244,7 @@ const CompanyInformationModal: React.FC<CompanyInformationModalProps> = ({
               <span className="text-red-500 ml-1">*</span>
             </label>
             <CustomInput
-              value={formData.location.state}
+              value={formData.location?.state}
               onChange={(e) => handleLocationChange('state', e.target.value)}
               placeholder="Enter state"
             />
@@ -305,7 +318,7 @@ export const CompanyInformation: React.FC<CompanyInformationProps> = ({ data, on
           
           <InfoField
             label="Location"
-            value={`${data.location.address}, ${data.location.city}, ${data.location.state}`}
+            value={data.location ? `${data.location?.address}, ${data.location?.city}, ${data.location?.state}` : ""}
             icon={<MapPin size={16} />}
           />
           

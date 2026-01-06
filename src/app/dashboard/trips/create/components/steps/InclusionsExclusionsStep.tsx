@@ -36,32 +36,30 @@ const InclusionsExclusionsStep: React.FC<InclusionsExclusionsStepProps> = ({ isE
       <div className="space-y-4">
         <div className="flex items-center justify-between">
           <h3 className="text-lg font-medium text-neutral-900">Inclusions</h3>
-          <Badge variant={inclusions.length >= VALIDATION_RULES.MIN_INCLUSIONS ? "default" : "secondary"}>
+          <Badge variant={inclusions.length >= VALIDATION_RULES.MIN_INCLUSIONS ? "default" : "secondary"} className={`${exclusions.length >= VALIDATION_RULES.MIN_EXCLUSIONS ? 'text-white!' : ''}`}>
             {inclusions.length}/{VALIDATION_RULES.MIN_INCLUSIONS} required
           </Badge>
         </div>
 
         <div className="space-y-3">
-          {!isEditMode && (
-            <div className="flex gap-2">
-              <CustomInput
-                id="inclusion"
-                placeholder="e.g., Hotel accommodation"
-                value={inclusionInput}
-                onChange={(e) => setInclusionInput(e.target.value)}
-                onKeyDown={handleInclusionKeyPress}
-                variant="input"
-                className="flex-1"
-              />
-              <button
-                type="button"
-                onClick={handleAddInclusion}
-                className="w-10 h-10 rounded-2xl border border-neutral-200/60 flex items-center justify-center hover:bg-neutral-50 transition-colors"
-              >
-                <Plus className="w-4 h-4 text-neutral-400" />
-              </button>
-            </div>
-          )}
+          <div className="flex gap-2">
+            <CustomInput
+              id="inclusion"
+              placeholder="e.g., Hotel accommodation"
+              value={inclusionInput}
+              onChange={(e) => setInclusionInput(e.target.value)}
+              onKeyDown={handleInclusionKeyPress}
+              variant="input"
+              className="flex-1"
+            />
+            <button
+              type="button"
+              onClick={handleAddInclusion}
+              className="w-10 h-10 rounded-2xl border border-neutral-200/60 flex items-center justify-center hover:bg-neutral-50 transition-colors"
+            >
+              <Plus className="w-4 h-4 text-neutral-400" />
+            </button>
+          </div>
 
           {inclusions.length < VALIDATION_RULES.MIN_INCLUSIONS && (
             <p className="text-xs text-muted-foreground">
@@ -77,30 +75,26 @@ const InclusionsExclusionsStep: React.FC<InclusionsExclusionsStepProps> = ({ isE
                   className="flex items-center justify-between p-3 bg-green-50/50 border border-green-200/50 rounded-lg"
                 >
                   <span className="text-sm text-neutral-900">{inclusion.text}</span>
-                  {!isEditMode && (
-                    <button
-                      type="button"
-                      onClick={() => handleRemoveInclusion(inclusion.id)}
-                      className="text-neutral-400 hover:text-red-500 transition-colors"
-                    >
-                      <X className="w-4 h-4" />
-                    </button>
-                  )}
+                  <button
+                    type="button"
+                    onClick={() => handleRemoveInclusion(inclusion.id)}
+                    className="text-neutral-400 hover:text-red-500 transition-colors"
+                  >
+                    <X className="w-4 h-4" />
+                  </button>
                 </div>
               ))}
             </div>
           )}
 
-          {!isEditMode && (
-            <button
-              type="button"
-              onClick={handleAddInclusion}
-              className="flex items-center gap-2 text-blue-600 hover:text-blue-700 text-sm transition-colors"
-            >
-              <Plus className="w-4 h-4" />
-              Add Inclusion
-            </button>
-          )}
+          <button
+            type="button"
+            onClick={handleAddInclusion}
+            className="flex items-center gap-2 text-blue-600 hover:text-blue-700 text-sm transition-colors"
+          >
+            <Plus className="w-4 h-4" />
+            Add Inclusion
+          </button>
         </div>
       </div>
 
@@ -108,7 +102,7 @@ const InclusionsExclusionsStep: React.FC<InclusionsExclusionsStepProps> = ({ isE
       <div className="space-y-4">
         <div className="flex items-center justify-between">
           <h3 className="text-lg font-medium text-neutral-900">Exclusions</h3>
-          <Badge variant={exclusions.length >= VALIDATION_RULES.MIN_EXCLUSIONS ? "default" : "secondary"}>
+          <Badge variant={exclusions.length >= VALIDATION_RULES.MIN_EXCLUSIONS ? "default" : "secondary"} className={`${exclusions.length >= VALIDATION_RULES.MIN_EXCLUSIONS ? 'text-white!' : ''}`}>
             {exclusions.length}/{VALIDATION_RULES.MIN_EXCLUSIONS} required
           </Badge>
         </div>
@@ -149,15 +143,13 @@ const InclusionsExclusionsStep: React.FC<InclusionsExclusionsStepProps> = ({ isE
                   className="flex items-center justify-between p-3 bg-red-50/50 border border-red-200/50 rounded-lg"
                 >
                   <span className="text-sm text-neutral-900">{exclusion.text}</span>
-                  {!isEditMode && (
-                    <button
-                      type="button"
-                      onClick={() => handleRemoveExclusion(exclusion.id)}
-                      className="text-neutral-400 hover:text-red-500 transition-colors"
-                    >
-                      <X className="w-4 h-4" />
-                    </button>
-                  )}
+                  <button
+                    type="button"
+                    onClick={() => handleRemoveExclusion(exclusion.id)}
+                    className="text-neutral-400 hover:text-red-500 transition-colors"
+                  >
+                    <X className="w-4 h-4" />
+                  </button>
                 </div>
               ))}
             </div>

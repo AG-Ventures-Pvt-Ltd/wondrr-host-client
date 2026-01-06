@@ -9,6 +9,8 @@ import Step4Security from './components/Step4Security'
 import Step5OtpVerification from './components/Step5OtpVerification'
 import NavigationButtons from './components/NavigationButtons'
 import { steps, OTP_TIMER_DURATION } from './constants'
+import { useRouter } from 'next/navigation'
+
 
 const SignupForm = () => {
   const [currentStep, setCurrentStep] = useState(1)
@@ -26,10 +28,16 @@ const SignupForm = () => {
   const [otp, setOtp] = useState('')
   const [otpTimer, setOtpTimer] = useState(0)
   const [isOtpSent, setIsOtpSent] = useState(false)
+  const [emailError, setEmailError] = useState('')
+  const [instagramError, setInstagramError] = useState('')
+  const [websiteError, setWebsiteError] = useState('')
+  const [passwordError, setPasswordError] = useState('')
+  const [usernameError, setUsernameError] = useState('')
 
   const { register, isLoading, error } = useRegister()
   const { verifyOtp: verifyOtpMutation, isLoading: isVerifyingOtp, error: otpError, isSuccess: isOtpVerified, data: otpData } = useVerifyOtp()
 
+  const router = useRouter()
   // OTP Timer Effect
   useEffect(() => {
     let interval: NodeJS.Timeout
@@ -77,7 +85,9 @@ const SignupForm = () => {
     e.preventDefault()
     try {
       const response = await verifyOtpMutation({ email, otp })
-      console.log('OTP verification response:', response)
+      if (response.data.verified) {
+        router.push('/auth?mode=login')
+      }
     } catch (err) {
       console.error('OTP verification failed:', err)
     }
@@ -90,16 +100,65 @@ const SignupForm = () => {
     }
   }
 
+  const validateEmail = (email: string) => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+    if (!emailRegex.test(email)) {
+      setEmailError('Please enter a valid email address')
+    } else {
+      setEmailError('')
+    }
+  }
+
+  const validateInstagram = (link: string) => {
+    if (link && !link.includes('instagram.com')) {
+      setInstagramError('Please enter a valid Instagram URL')
+    } else {
+      setInstagramError('')
+    }
+  }
+
+  const validateWebsite = (link: string) => {
+    if (link) {
+      try {
+        new URL(link)
+        setWebsiteError('')
+      } catch {
+        setWebsiteError('Please enter a valid website URL')
+      }
+    } else {
+      setWebsiteError('')
+    }
+  }
+
+  const validatePassword = (password: string) => {
+    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/
+    if (!passwordRegex.test(password)) {
+      setPasswordError('Password must contain at least 8 characters, including uppercase, lowercase, number, and special character')
+    } else {
+      setPasswordError('')
+    }
+  }
+
+  const validateUsername = (username: string) => {
+    if (username.length < 4) {
+      setUsernameError('Username must be at least 4 characters long')
+    } else if (/^\d/.test(username)) {
+      setUsernameError('Username cannot start with a number')
+    } else {
+      setUsernameError('')
+    }
+  }
+
   const isStepValid = () => {
     switch (currentStep) {
       case 1:
         return !!(hostType && fullName.trim())
       case 2:
-        return !!(username.trim() && email.trim() && contactNumber.trim())
+        return !!(username.trim() && email.trim() && contactNumber.length === 10 && !emailError && !usernameError)
       case 3:
-        return !!instagramLink.trim()
+        return !!instagramLink.trim() && !instagramError && (!websiteLink || !websiteError)
       case 4:
-        return !!(password && confirmPassword && password === confirmPassword)
+        return !!(password && confirmPassword && password === confirmPassword && !passwordError)
       case 5:
         return otp.trim().length === 6
       default:
@@ -124,9 +183,13 @@ const SignupForm = () => {
             username={username}
             email={email}
             contactNumber={contactNumber}
+            emailError={emailError}
+            usernameError={usernameError}
             onUsernameChange={setUsername}
             onEmailChange={setEmail}
             onContactNumberChange={setContactNumber}
+            onEmailBlur={() => validateEmail(email)}
+            onUsernameBlur={() => validateUsername(username)}
           />
         )
       case 3:
@@ -134,8 +197,12 @@ const SignupForm = () => {
           <Step3SocialPresence
             instagramLink={instagramLink}
             websiteLink={websiteLink}
+            instagramError={instagramError}
+            websiteError={websiteError}
             onInstagramLinkChange={setInstagramLink}
             onWebsiteLinkChange={setWebsiteLink}
+            onInstagramBlur={() => validateInstagram(instagramLink)}
+            onWebsiteBlur={() => validateWebsite(websiteLink)}
           />
         )
       case 4:
@@ -145,10 +212,12 @@ const SignupForm = () => {
             confirmPassword={confirmPassword}
             showPassword={showPassword}
             showConfirmPassword={showConfirmPassword}
+            passwordError={passwordError}
             onPasswordChange={setPassword}
             onConfirmPasswordChange={setConfirmPassword}
             onToggleShowPassword={() => setShowPassword(!showPassword)}
             onToggleShowConfirmPassword={() => setShowConfirmPassword(!showConfirmPassword)}
+            onPasswordBlur={() => validatePassword(password)}
           />
         )
       case 5:
@@ -184,7 +253,6 @@ const SignupForm = () => {
             onBack={handleBack}
             onNext={handleNext}
             onSendOtp={handleSendOtp}
-            onVerifyOtp={() => handleVerifyOtp({} as React.FormEvent)}
           />
 
           {(error || otpError) && (
@@ -202,7 +270,7 @@ const SignupForm = () => {
           <div className="text-center pt-4">
             <p className="text-sm text-neutral-600">
               Already have an account?{' '}
-              <a href="/auth?mode=login" className="text-primary hover:underline font-medium">
+              <a href="/auth?mode=login" onClick={(e) => { e.preventDefault(); router.push('?mode=login'); }} className="text-primary hover:underline font-medium">
                 Sign in
               </a>
             </p>

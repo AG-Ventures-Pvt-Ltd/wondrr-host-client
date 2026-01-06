@@ -3,10 +3,15 @@ import Card from '@/common/components/composites/Card'
 import { Book, ArrowRight, Info, Mail, FileText } from 'lucide-react'
 import { SUPPORT_EMAIL } from '@/common/constants/contactInfo'
 import { useRouter } from 'next/navigation'
+import { useState } from 'react'
+import Modal from '@/common/components/composites/Modal'
+import { Copy } from 'lucide-react'
+import { notify } from '@/common/utils/notify'
 
 const HelpCards = () => {
 
     const router = useRouter()
+    const [isEmailModalOpen, setIsEmailModalOpen] = useState(false)
 
     return (
         <div>
@@ -42,7 +47,7 @@ const HelpCards = () => {
                     </div>
                     <ArrowRight className='text-subtext' />
                 </Card>
-                <Card className='flex justify-between'>
+                <Card className='flex justify-between' onClick={() => setIsEmailModalOpen(true)}>
                     <div className='flex gap-4 items-center'>
                         <Mail size={44} className='text-warning bg-warning-bg p-2.5 rounded-xl' />
                         <div className='flex flex-col'>
@@ -53,6 +58,20 @@ const HelpCards = () => {
                     <ArrowRight className='text-subtext' />
                 </Card>
             </div>
+            <Modal
+                open={isEmailModalOpen}
+                onClose={() => setIsEmailModalOpen(false)}
+                title="Contact Support"
+                description="Send us an email for assistance"
+                showButtons={false}
+            >
+                <div className="flex justify-center gap-2">
+                    <span>{SUPPORT_EMAIL}</span>
+                    <button onClick={() => {navigator.clipboard.writeText(SUPPORT_EMAIL); notify.success('Email copied to clipboard!');}} className="p-1 hover:bg-gray-100 rounded">
+                        <Copy size={14} />
+                    </button>
+                </div>
+            </Modal>
         </div>
     )
 }

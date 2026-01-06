@@ -5,15 +5,23 @@ import { Link, Globe } from 'lucide-react'
 interface Step3SocialPresenceProps {
   instagramLink: string
   websiteLink: string
+  instagramError: string
+  websiteError: string
   onInstagramLinkChange: (value: string) => void
   onWebsiteLinkChange: (value: string) => void
+  onInstagramBlur: () => void
+  onWebsiteBlur: () => void
 }
 
 const Step3SocialPresence: React.FC<Step3SocialPresenceProps> = ({
   instagramLink,
   websiteLink,
+  instagramError,
+  websiteError,
   onInstagramLinkChange,
-  onWebsiteLinkChange
+  onWebsiteLinkChange,
+  onInstagramBlur,
+  onWebsiteBlur
 }) => {
   return (
     <div className="space-y-6 animate-in fade-in slide-in-from-right-4 duration-300">
@@ -39,9 +47,11 @@ const Step3SocialPresence: React.FC<Step3SocialPresenceProps> = ({
               className="pl-12"
               value={instagramLink}
               onChange={(e) => onInstagramLinkChange(e.target.value)}
+              onBlur={onInstagramBlur}
               required
             />
           </div>
+          {instagramError && <p className="text-xs text-red-500">{instagramError}</p>}
           <p className="text-xs text-neutral-500">
             This helps build trust with travelers
           </p>
@@ -49,7 +59,7 @@ const Step3SocialPresence: React.FC<Step3SocialPresenceProps> = ({
 
         <div className="space-y-2">
           <label className="text-sm font-medium text-neutral-700">
-            Got a website? Share it! 🌐 <span className="text-neutral-400">(Optional)</span>
+            Website link 🌐 <span className="text-neutral-400">(Optional)</span>
           </label>
           <div className="relative">
             <Globe className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-neutral-400" />
@@ -59,10 +69,12 @@ const Step3SocialPresence: React.FC<Step3SocialPresenceProps> = ({
               className="pl-12"
               value={websiteLink}
               onChange={(e) => onWebsiteLinkChange(e.target.value)}
+              onBlur={onWebsiteBlur}
             />
           </div>
+          {websiteError && <p className="text-xs text-red-500">{websiteError}</p>}
           <p className="text-xs text-neutral-500">
-            Not required, but great for showcasing your work
+            Preferred, if you have one
           </p>
         </div>
       </div>

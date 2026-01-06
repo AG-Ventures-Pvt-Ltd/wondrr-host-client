@@ -4,7 +4,7 @@ import { API_ENDPOINTS } from '@/common/constants/apiEndpoints'
 import { validateTripForm, prepareSubmissionData, scrollToTop } from '../utils'
 
 interface UseFormSubmissionOptions {
-  onSuccess?: () => void
+  onSuccess?: (tripId?: string) => void
   onError?: (error: Error) => void
   isEditMode?: boolean
   tripId?: string
@@ -15,11 +15,13 @@ export const useFormSubmission = ({ onSuccess, onError, isEditMode = false, trip
 
   const createTripMutation = usePostData({
     url: isEditMode && tripId ? API_ENDPOINTS.TRIPS.EDIT_HOST_TRIP(tripId) : API_ENDPOINTS.TRIPS.CREATE_HOST_TRIP,
-    onSuccess: () => {
+    onSuccess: (data: unknown) => {
       if (!isEditMode) {
         resetForm()
       }
-      onSuccess?.()
+      const responseData = data as { trip?: { id?: string } }
+      const newTripId = responseData?.trip?.id || tripId
+      onSuccess?.(newTripId)
     },
     onError: (error) => {
       onError?.(error as Error)

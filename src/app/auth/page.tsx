@@ -20,7 +20,7 @@ const Auth = () => {
           {isLogin ? (
             <LoginForm />
           ) : (
-            <SignupForm />
+            <SignupForm/>
           )}
         </div>
       </div>

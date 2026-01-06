@@ -5,10 +5,12 @@ import { useSearchParams, useRouter } from 'next/navigation'
 import Table from '@/common/components/composites/table'
 import CustomSelect from '@/common/components/composites/CustomSelect'
 import Button from '@/common/components/atoms/Button'
+import Card from '@/common/components/composites/Card'
 import { useGetAllBookings } from '@/common/hooks/useGetAllBookings'
 import { useGetData } from '@/common/services/useGetData'
 import { API_ENDPOINTS } from '@/common/constants/apiEndpoints'
 import { BOOKINGS_COLUMNS } from './constants/constants'
+import { UsersRound } from 'lucide-react';
 
 interface TripBatchMap {
   tripId: string
@@ -172,6 +174,20 @@ const BookingsContent = () => {
         {isLoading || isLoadingMaps ? (
           <div className="flex items-center justify-center h-[calc(100vh-300px)]">
             <div className="text-subtext">Loading bookings...</div>
+          </div>
+        ) : filteredBookings.length === 0 ? (
+          <div className="flex justify-center items-center h-[calc(100vh-320px)]">
+            <Card className="p-0 w-[434px] h-[292px] relative">
+              <div className="absolute w-20 h-20 left-44 top-12 bg-[#FAF5FF] rounded-xl flex justify-center items-center">
+                <UsersRound className='text-[#9810FA]' size={36}/>
+              </div>
+              <div className="absolute w-[384px] h-6 left-6 top-[152px]">
+                <div className="absolute left-[132.36px] -top-0.5 text-center text-maintext text-base font-normal leading-6 wrap-break-words">No Bookings Yet</div>
+              </div>
+              <div className="absolute w-[384px] h-[78px] left-6 top-[188px]">
+                <div className="absolute w-[369px] left-[7.71px] -top-0.5 text-center text-[#525252] text-base font-normal leading-[26px] wrap-break-word">Once customers start booking your trips, you&apos;ll see all their details here. Create your first trip to get started.</div>
+              </div>
+            </Card>
           </div>
         ) : (
           <>

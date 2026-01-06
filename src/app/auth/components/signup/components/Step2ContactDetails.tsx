@@ -6,18 +6,26 @@ interface Step2ContactDetailsProps {
   username: string
   email: string
   contactNumber: string
+  emailError: string
+  usernameError: string
   onUsernameChange: (value: string) => void
   onEmailChange: (value: string) => void
   onContactNumberChange: (value: string) => void
+  onEmailBlur: () => void
+  onUsernameBlur: () => void
 }
 
 const Step2ContactDetails: React.FC<Step2ContactDetailsProps> = ({
   username,
   email,
   contactNumber,
+  emailError,
+  usernameError,
   onUsernameChange,
   onEmailChange,
-  onContactNumberChange
+  onContactNumberChange,
+  onEmailBlur,
+  onUsernameBlur
 }) => {
   return (
     <div className="space-y-6 animate-in fade-in slide-in-from-right-4 duration-300">
@@ -43,9 +51,11 @@ const Step2ContactDetails: React.FC<Step2ContactDetailsProps> = ({
               className="pl-12"
               value={username}
               onChange={(e) => onUsernameChange(e.target.value.toLowerCase().replace(/\s/g, '_'))}
+              onBlur={onUsernameBlur}
               required
             />
           </div>
+          {usernameError && <p className="text-xs text-red-500">{usernameError}</p>}
           <p className="text-xs text-neutral-500">This will be your unique identifier</p>
         </div>
 
@@ -61,9 +71,11 @@ const Step2ContactDetails: React.FC<Step2ContactDetailsProps> = ({
               className="pl-12"
               value={email}
               onChange={(e) => onEmailChange(e.target.value)}
+              onBlur={onEmailBlur}
               required
             />
           </div>
+          {emailError && <p className="text-xs text-red-500">{emailError}</p>}
         </div>
 
         <div className="space-y-2">

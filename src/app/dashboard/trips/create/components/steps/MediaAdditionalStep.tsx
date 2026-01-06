@@ -49,8 +49,9 @@ const MediaAdditionalStep: React.FC = () => {
         <p className="text-xs text-muted-foreground">
           Add common questions and answers to help travelers understand your trip better.
         </p>
-        <div className="flex items-center gap-2 text-white">
-          <Badge variant={faqs.length >= VALIDATION_RULES.MIN_FAQS ? "default" : "secondary"}>
+        <div className="flex items-center gap-2">
+          <Badge variant={faqs.length >= VALIDATION_RULES.MIN_FAQS ? "default" : "secondary"} 
+            className={faqs.length >= VALIDATION_RULES.MIN_FAQS ? "text-white!" : ""}>
             {faqs.length}/{VALIDATION_RULES.MIN_FAQS} required
           </Badge>
           {faqs.length < VALIDATION_RULES.MIN_FAQS && (

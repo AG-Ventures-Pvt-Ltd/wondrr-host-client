@@ -3,6 +3,7 @@
 import React from 'react';
 import { Filter } from 'lucide-react';
 import { STATUS_OPTIONS, CATEGORY_OPTIONS } from '../constants';
+import CustomSelect from '@/common/components/composites/CustomSelect';
 
 interface TicketFiltersProps {
   selectedStatus: string;
@@ -21,6 +22,8 @@ const TicketFilters: React.FC<TicketFiltersProps> = ({
   totalTickets,
   resolvedTickets,
 }) => {
+  const statusOptions = STATUS_OPTIONS.map(option => ({ value: option, label: option }));
+  const categoryOptions = CATEGORY_OPTIONS.map(option => ({ value: option, label: option }));
   return (
     <div className="bg-white rounded-2xl border border-neutral-200/60 p-6 shadow-sm">
       <div className="flex items-center gap-5">
@@ -33,33 +36,23 @@ const TicketFilters: React.FC<TicketFiltersProps> = ({
         {/* Status Filter */}
         <div className="flex items-center gap-3">
           <label className="text-sm text-neutral-500">Status</label>
-          <select
+          <CustomSelect
             value={selectedStatus}
-            onChange={(e) => onStatusChange(e.target.value)}
-            className="h-9 px-3 rounded-2xl border border-neutral-200 text-sm text-neutral-950 bg-white focus:outline-none focus:ring-2 focus:ring-green-500"
-          >
-            {STATUS_OPTIONS.map((status) => (
-              <option key={status} value={status}>
-                {status}
-              </option>
-            ))}
-          </select>
+            onChange={onStatusChange}
+            options={statusOptions}
+            className="w-40"
+          />
         </div>
 
         {/* Category Filter */}
         <div className="flex items-center gap-3">
           <label className="text-sm text-neutral-500">Category</label>
-          <select
+          <CustomSelect
             value={selectedCategory}
-            onChange={(e) => onCategoryChange(e.target.value)}
-            className="h-9 px-3 rounded-2xl border border-neutral-200 text-sm text-neutral-950 bg-white focus:outline-none focus:ring-2 focus:ring-green-500"
-          >
-            {CATEGORY_OPTIONS.map((category) => (
-              <option key={category} value={category}>
-                {category}
-              </option>
-            ))}
-          </select>
+            onChange={onCategoryChange}
+            options={categoryOptions}
+            className="w-48"
+          />
         </div>
 
         <div className="flex-1" />

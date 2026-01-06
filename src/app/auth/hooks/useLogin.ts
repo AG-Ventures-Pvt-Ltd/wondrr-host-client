@@ -27,14 +27,12 @@ export const useLogin = (): UseLoginReturn => {
         password: credentials.password,
         redirect: false,
       });
-      console.log('result',result)
       if (result?.error) {
         if (result?.error == 'OTP_NOT_VERIFIED') {
           notify.info('Please verify your email before logging in!') 
         }
         return { success: false, error: result.error };
       }
-      console.log('after result')
       return { success: true };
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : "Login failed";

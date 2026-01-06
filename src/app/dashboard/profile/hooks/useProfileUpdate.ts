@@ -2,7 +2,7 @@ import { useQueryClient } from '@tanstack/react-query';
 import usePostData from '@/common/services/usePostData';
 import { API_ENDPOINTS } from '@/common/constants/apiEndpoints';
 
-type UpdateType = 'basic_info' | 'payment_details' | 'social_links';
+type UpdateType = 'basic_info' | 'payment_details' | 'social_links' | 'documents';
 
 interface BasicInfoUpdate {
   bio: string;

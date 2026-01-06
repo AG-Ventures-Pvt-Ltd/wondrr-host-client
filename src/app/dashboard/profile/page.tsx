@@ -10,7 +10,6 @@ import { PaymentDetails } from './components/PaymentDetails';
 import { LinksCard } from './components/LinksCard';
 import {
   PROFILE_STATS,
-  VERIFIED_DOCUMENTS,
   MEMBERSHIP_INFO,
 } from './constants';
 import Button from '@/common/components/atoms/Button';
@@ -23,6 +22,7 @@ interface ProfileData {
   username: string;
   email: string;
   phoneNumber: string;
+  hostType: string;
   location: {
     address: string;
     city: string;
@@ -35,7 +35,8 @@ interface ProfileData {
     bankName: string;
     ifscCode: string;
   }
-  verified: boolean;
+  isVerified: boolean;
+  companyDocuments:boolean;
   socialMedia : [{
     platform : 'Facebook' | 'Instagram' | 'LinkedIn' | 'Website';
     url : string;
@@ -43,7 +44,7 @@ interface ProfileData {
 }
 
 const ProfilePage = () => {
-  const { data: profileData, isLoading, refetch } = useGetData<ProfileData>(
+  const { data: profileData, isLoading } = useGetData<ProfileData>(
     API_ENDPOINTS.PROFILE.GET_HOST_PROFILE
   );
 
@@ -101,16 +102,16 @@ const ProfilePage = () => {
           />
           <PaymentDetails 
             data={{
-              accountName: profileData.paymentDetails.accountName,
-              accountNumber: profileData.paymentDetails.accountNumber,
-              bankName: profileData.paymentDetails.bankName,
-              ifscCode: profileData.paymentDetails.ifscCode,
+              accountName: profileData.paymentDetails?.accountName,
+              accountNumber: profileData.paymentDetails?.accountNumber,
+              bankName: profileData.paymentDetails?.bankName,
+              ifscCode: profileData.paymentDetails?.ifscCode,
             }}
-            verified={profileData.verified}
+            verified={profileData.isVerified}
           />
         </div>        
         <div className="flex flex-col gap-6">
-          <VerifiedDocuments documents={VERIFIED_DOCUMENTS} />
+          <VerifiedDocuments verified={profileData.isVerified} hostType={profileData.hostType} hasSubmitted={profileData.companyDocuments}/>
           <MembershipInfo data={MEMBERSHIP_INFO} />
           <LinksCard 
             data={{

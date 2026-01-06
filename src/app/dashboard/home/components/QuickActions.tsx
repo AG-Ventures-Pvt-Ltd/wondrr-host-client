@@ -22,13 +22,6 @@ const QuickActions: React.FC = () => {
         >
           <span className='justify-self-start'>Create new trip</span>
         </Button>
-        <Button 
-          className='rounded-2xl! whitespace-nowrap w-full justify-start! pl-6! text-subtext!' 
-          variant={'text'}
-        >
-          <Users className='mr-1' size={20} /> 
-          <span>View inquiries</span>
-        </Button>
       </div>
     </Card>
   );

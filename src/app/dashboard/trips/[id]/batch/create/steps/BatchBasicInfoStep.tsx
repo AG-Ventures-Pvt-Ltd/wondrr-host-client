@@ -137,7 +137,7 @@ const BatchBasicInfoStep: React.FC = () => {
       <div className="space-y-2">
         <Label htmlFor="pointOfContactPhone" className="text-sm flex items-center gap-2">
           <Phone className="w-4 h-4 text-neutral-400" />
-          Phone Number
+          Point of Contact Phone Number
         </Label>
         <CustomInput
           id="pointOfContactPhone"
@@ -158,7 +158,7 @@ const BatchBasicInfoStep: React.FC = () => {
       <div className="space-y-2">
         <Label htmlFor="totalSeats" className="text-sm flex items-center gap-2">
           <Users className="w-4 h-4 text-neutral-400" />
-          Total Seats
+          Total Batch Capacity
         </Label>
         <CustomInput
           id="totalSeats"

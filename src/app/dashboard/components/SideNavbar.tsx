@@ -1,6 +1,6 @@
 import React from 'react'
 import Logo from '@/common/components/atoms/Logo/Logo'
-import { LayoutGrid, Calendar, Map, BookOpen, Bell, HelpCircle, ChevronRight, ChevronLeft } from 'lucide-react'
+import { LayoutGrid, Calendar, Map, BookOpen, Bell, HelpCircle, ChevronLeft } from 'lucide-react'
 import { useRouter, usePathname } from 'next/navigation'
 import { useState } from 'react'
 import { useSession } from 'next-auth/react'
@@ -82,13 +82,12 @@ const SideNavbar = () => {
                 <div className={`flex justify-center items-center gap-4 ${isCollapsed ? 'px-0' : 'px-4'} py-2 transition-all duration-300 ease-in-out`}>
                     <LogoutButton isCollapsed={isCollapsed}/>
                 </div>
-                <div className={`flex justify-center items-center gap-4 ${isCollapsed ? 'px-0' : 'px-4'} pb-2 border-t-2 pt-4 border-[#E2E8F0] transition-all duration-300 ease-in-out`}>
+                <div className={`flex justify-center items-center gap-4 ${isCollapsed ? 'px-0' : 'px-4'} pb-2 border-t-2 pt-3 border-[#E2E8F0] transition-all duration-300 ease-in-out`}>
                     <p className='bg-amber-300 rounded-full w-10 h-10 transition-all duration-300 ease-in-out flex items-center justify-center'>{initial}</p>
                     {!isCollapsed && <div className={`transition-all duration-300 ease-in-out overflow-hidden w-auto opacity-100`}>
                         <p className='text-[#64748B] whitespace-nowrap text-sm'>Welcome back</p>
                         <p className='whitespace-nowrap'>{firstName}</p>
                     </div>}
-                    {!isCollapsed && <ChevronRight className={`transition-all duration-300 ease-in-out ${isCollapsed ? 'w-0 opacity-0' : 'w-auto opacity-100'}`} />}
                 </div>
                 </div>
             </div>

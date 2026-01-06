@@ -47,7 +47,7 @@ const Home = () => {
                         <UpcomingTrips trips={upcomingTrips} />
                         <QuickActions />
                     </div>
-                    <RecentBookings bookings={recentBookings} />
+                    {/* <RecentBookings bookings={recentBookings} /> */}
                 </div>
             )}
         </div>

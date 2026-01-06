@@ -5,18 +5,18 @@ import TicketHeader from './components/TicketHeader';
 import TicketFilters from './components/TicketFilters';
 import TicketCard from './components/TicketCard';
 import SupportTicketModal from './components/SupportTicketModal';
-import { TICKET_STATUS } from './constants';
+import { TICKET_STATUS, normalizeStatus } from './constants';
 import { useGetData } from '@/common/services/useGetData';
 import { API_ENDPOINTS } from '@/common/constants/apiEndpoints';
 import type { Ticket } from './constants';
 
 export default function TicketsPage() {
-  const [selectedYear, setSelectedYear] = useState('2024');
-  const [selectedMonth, setSelectedMonth] = useState('All Months');
+  const [selectedStatus, setSelectedStatus] = useState('All Statuses');
+  const [selectedCategory, setSelectedCategory] = useState('All Categories');
   const [ticketModalOpen, setTicketModalOpen] = useState(false);
 
   // Fetch tickets from API
-  const { data: tickets, isLoading } = useGetData<Ticket[]>(
+  const { data: tickets, isLoading, refetch } = useGetData<Ticket[]>(
     API_ENDPOINTS.SUPPORT.GET_MY_TICKETS
   );
 
@@ -24,19 +24,19 @@ export default function TicketsPage() {
   const filteredTickets = useMemo(() => {
     if (!tickets) return [];
     return tickets.filter((ticket) => {
-      const yearMatch = ticket.createdAt.includes(selectedYear);
-      const monthMatch =
-        selectedMonth === 'All Months' ||
-        ticket.createdAt.includes(selectedMonth.slice(0, 3));
-      return yearMatch && monthMatch;
+      const statusMatch = selectedStatus === 'All Statuses' || normalizeStatus(ticket.status) === selectedStatus;
+      const categoryMatch = selectedCategory === 'All Categories' || ticket.type === selectedCategory;
+      return statusMatch && categoryMatch;
     });
-  }, [tickets, selectedYear, selectedMonth]);
+  }, [tickets, selectedStatus, selectedCategory]);
 
   // Calculate stats
   const totalTickets = filteredTickets.length;
   const resolvedTickets = filteredTickets.filter(
     (ticket) => ticket.status === TICKET_STATUS.RESOLVED
   ).length;
+
+  console.log(filteredTickets)
 
   const handleRaiseTicket = () => {
     setTicketModalOpen(true);
@@ -59,10 +59,10 @@ export default function TicketsPage() {
 
       {/* Filters Section */}
       <TicketFilters
-        selectedStatus={'All Statuses'}
-        selectedCategory={'All Categories'}
-        onStatusChange={() => {}}
-        onCategoryChange={() => {}}
+        selectedStatus={selectedStatus}
+        selectedCategory={selectedCategory}
+        onStatusChange={setSelectedStatus}
+        onCategoryChange={setSelectedCategory}
         totalTickets={totalTickets}
         resolvedTickets={resolvedTickets}
       />
@@ -90,6 +90,7 @@ export default function TicketsPage() {
       <SupportTicketModal 
         open={ticketModalOpen}
         onClose={() => setTicketModalOpen(false)}
+        onSuccess={refetch}
       />
     </div>
   );

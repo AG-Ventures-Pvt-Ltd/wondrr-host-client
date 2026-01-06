@@ -7,6 +7,7 @@ export const API_ENDPOINTS = {
     CREATE_HOST_TRIP: 'api/client/v1/trips/host/create',
     CREATE_HOST_BATCH : 'api/client/v1/trips/host/trip/batch/create',
     EDIT_HOST_TRIP: (slug: string) => `api/client/v1/trips/host/trip/edit/${slug}`,
+    CHANGE_TRIP_STATUS: 'api/client/v1/trips/host/changestatus',
     GET_HOST_TRIPS: 'api/client/v1/trips/host/trips/me',
     GET_TRIP_DETAILS: (slug: string) => `api/client/v1/trips/host/trip/${slug}`,
     GET_TRIP_BATCHES: (slug: string, page: number, limit: number) => `api/client/v1/trips/host/trip/${slug}/batches?page=${page}&limit=${limit}`,

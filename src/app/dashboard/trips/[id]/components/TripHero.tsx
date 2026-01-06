@@ -1,7 +1,7 @@
 import React from 'react';
-import Image from 'next/image';
 import { MapPin, Edit } from 'lucide-react';
 import Button from '@/common/components/atoms/Button';
+import MyImage from '@/common/components/atoms/Image'
 
 interface TripHeroProps {
     image: string;
@@ -13,9 +13,9 @@ interface TripHeroProps {
 const TripHero: React.FC<TripHeroProps> = ({ image, title, location, onEdit }) => {
     return (
         <div className="relative h-72 rounded-2xl overflow-hidden">
-            <Image
+            <MyImage
                 className="w-full h-full object-cover"
-                src={`${process.env.NEXT_PUBLIC_CLOUDFRONT_URL}/${image}`}
+                src={image}
                 alt={title}
                 width={1093}
                 height={286}

@@ -15,6 +15,8 @@ import {
   navigateToNextDay,
   getMonthName,
 } from './utils/scheduleUtils';
+import { useRouter } from 'next/navigation';
+
 
 const Schedule = () => {
   const today = useMemo(() => new Date(), []);
@@ -22,8 +24,9 @@ const Schedule = () => {
   const [selectedDate, setSelectedDate] = useState<Date | null>(today);
   const [searchQuery, setSearchQuery] = useState('');
   const [activeFilter, setActiveFilter] = useState<FilterType>('all');
+  const router = useRouter()
 
-  const { batches, isLoading, mapBatchItemToBatch } = useScheduleData(currentDate);
+  const { batches, mapBatchItemToBatch } = useScheduleData(currentDate);
 
   const calendarDays = useMemo(
     () => generateCalendarDays(currentDate, today, batches, searchQuery, mapBatchItemToBatch),
@@ -56,7 +59,7 @@ const Schedule = () => {
   };
 
   const handleCreateBatch = () => {
-    console.log('Create batch clicked');
+    router.push('/dashboard/trips/create')
   };
 
   const handleDayClick = (date: number) => {

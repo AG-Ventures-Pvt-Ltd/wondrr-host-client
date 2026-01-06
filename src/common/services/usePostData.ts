@@ -6,7 +6,7 @@ import { notify } from "@/common/utils/notify";
 
 type MutationPayload = Record<string, unknown>;
 
-const usePostData = ({url,onSuccess:onSuccessCallback,...rest} : {url : string; onSuccess?: () => void} & Omit<
+const usePostData = ({url,onSuccess:onSuccessCallback,...rest} : {url : string; onSuccess?: (data: unknown) => void} & Omit<
     UseMutationOptions<unknown, Error, MutationPayload>,
     "mutationFn" | "onSuccess"
   >) => {
@@ -19,7 +19,7 @@ const usePostData = ({url,onSuccess:onSuccessCallback,...rest} : {url : string; 
       const successMessage = (data as { message?: string })?.message || "Success!";
       notify.success(successMessage);
       if (onSuccessCallback) {
-        onSuccessCallback();
+        onSuccessCallback(data);
       }
     },
     onError: (error: Error) => {

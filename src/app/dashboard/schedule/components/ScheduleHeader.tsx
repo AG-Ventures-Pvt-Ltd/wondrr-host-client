@@ -1,5 +1,5 @@
 import React from 'react';
-
+import Button from '@/common/components/atoms/Button';
 interface ScheduleHeaderProps {
   onCreateBatch: () => void;
 }
@@ -16,12 +16,12 @@ const ScheduleHeader: React.FC<ScheduleHeaderProps> = ({ onCreateBatch }) => {
         </p>
       </div>
       
-      <button
+      <Button
         onClick={onCreateBatch}
-        className="flex items-center gap-2 px-4 h-10 bg-primary text-white rounded-[14px] shadow-sm hover:bg-[#0d3593] transition-colors"
-      >
-        <span className="text-[14px] leading-5">Create Batch</span>
-      </button>
+        variant='contained'
+>
+        <span className="text-[14px] leading-5">Create a Trip</span>
+      </Button>
     </div>
   );
 };

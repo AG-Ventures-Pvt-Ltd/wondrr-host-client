@@ -1,39 +1,102 @@
 'use client'
 
-import React from 'react'
-import { ChevronLeft, ChevronRight, Check } from 'lucide-react'
+import React, { useState } from 'react'
+import { ChevronLeft, ChevronRight, Check, AlertTriangle, CheckCircle } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import BasicInfoStep from './steps/BasicInfoStep'
 import PricingItineraryStep from './steps/PricingItineraryStep'
 import InclusionsExclusionsStep from './steps/InclusionsExclusionsStep'
 import MediaAdditionalStep from './steps/MediaAdditionalStep'
+import ConfirmDiscardModal from './ConfirmDiscardModal'
 import Button from '@/common/components/atoms/Button'
 import BackButton from '@/common/ui/BackButton'
+import Modal from '@/common/components/composites/Modal'
 import { useTripFormStore } from '../store'
 import { useFormSubmission } from '../hooks'
 import { FORM_STEPS } from '../constants'
 
 interface TripFormProps {
-  onCancel?: () => void
-  onSuccess?: () => void
   isEditMode?: boolean
   tripId?: string
 }
 
-const TripForm: React.FC<TripFormProps> = ({ onCancel, onSuccess, isEditMode = false, tripId }) => {
+const TripForm: React.FC<TripFormProps> = ({ isEditMode = false, tripId }) => {
 
   const router = useRouter()
+  const [showDiscardModal, setShowDiscardModal] = useState(false)
+  const [showSubmitConfirmModal, setShowSubmitConfirmModal] = useState(false)
+  const [showResultModal, setShowResultModal] = useState(false)
+  const [submissionResult, setSubmissionResult] = useState<{ success: boolean; error?: string; tripId?: string } | null>(null)
 
-  const { currentStep, validationErrors, nextStep, previousStep } = useTripFormStore()
+  const { currentStep, validationErrors, nextStep, previousStep, title, description, category, tags, location, tripImages, faqs, basePrice, price, itinerary, inclusions, exclusions } = useTripFormStore()
 
-  const { handleSubmit, isSubmitting } = useFormSubmission({ onSuccess, isEditMode, tripId })
+  const { handleSubmit, isSubmitting } = useFormSubmission({ 
+    onSuccess: (tripId?: string) => {
+      setSubmissionResult({ success: true, tripId })
+      setShowSubmitConfirmModal(false)
+      setShowResultModal(true)
+    },
+    onError: (error: Error) => {
+      setSubmissionResult({ success: false, error: error.message })
+      setShowSubmitConfirmModal(false)
+      setShowResultModal(true)
+    },
+    isEditMode, 
+    tripId 
+  })
+
+  const hasFormData = () => {
+    return (
+      title.trim() !== '' ||
+      description.trim() !== '' ||
+      category !== '' ||
+      tags.length > 0 ||
+      location.address.trim() !== '' ||
+      location.city.trim() !== '' ||
+      location.state.trim() !== '' ||
+      location.latitude !== null ||
+      location.longitude !== null ||
+      tripImages.length > 0 ||
+      faqs.length > 0 ||
+      basePrice !== null ||
+      price !== null ||
+      itinerary.some(day => day.title.trim() !== '' || day.description.trim() !== '' || day.activities.length > 0) ||
+      inclusions.length > 0 ||
+      exclusions.length > 0
+    )
+  }
 
   const handleBackToTrips = () => {
-    if (isEditMode && tripId) {
-      router.push(`/dashboard/trips/${tripId}`)
+    if (hasFormData()) {
+      setShowDiscardModal(true)
+    } else {
+      if (isEditMode && tripId) {
+        router.push(`/dashboard/trips/${tripId}`)
+      } else {
+        router.push('/dashboard/trips')
+      }
+    }
+  }
+
+  const handleConfirmSubmit = () => {
+    setShowSubmitConfirmModal(false)
+    handleSubmit()
+  }
+
+  const handleViewTrip = () => {
+    if (submissionResult?.tripId) {
+      router.push(`/dashboard/trips/${submissionResult.tripId}`)
     } else {
       router.push('/dashboard/trips')
     }
+    setShowResultModal(false)
+  }
+
+  const handleAddBatch = () => {
+    if (submissionResult?.tripId) {
+      router.push(`/dashboard/trips/${submissionResult.tripId}/batch/create`)
+    }
+    setShowResultModal(false)
   }
 
   const renderStepContent = () => {
@@ -118,7 +181,7 @@ const TripForm: React.FC<TripFormProps> = ({ onCancel, onSuccess, isEditMode = f
         <div className="flex w-full justify-end gap-4">
           <div>
             {currentStep === 1 && (
-              <Button variant="text" onClick={onCancel}>
+              <Button variant="text" onClick={handleBackToTrips}>
                 Cancel
               </Button>
             )}
@@ -138,15 +201,89 @@ const TripForm: React.FC<TripFormProps> = ({ onCancel, onSuccess, isEditMode = f
               </Button>
             ) : (
               <Button
-                onClick={handleSubmit}
+                onClick={() => setShowSubmitConfirmModal(true)}
                 disabled={isSubmitting}
               >
-                {isSubmitting ? (isEditMode ? 'Updating Trip...' : 'Creating Trip...') : (isEditMode ? 'Update Trip' : 'Create Trip')}
+                {isEditMode ? 'Update Trip' : 'Create Trip'}
               </Button>
             )}
           </div>
         </div>
       </div>
+
+      <ConfirmDiscardModal
+        open={showDiscardModal}
+        onClose={() => setShowDiscardModal(false)}
+      />
+
+      {/* Trip Creation/Update Confirmation Modal */}
+      <Modal
+        open={showSubmitConfirmModal}
+        onClose={() => setShowSubmitConfirmModal(false)}
+        title={isEditMode ? "Update Trip?" : "Create Trip?"}
+        description={`Are you sure you want to ${isEditMode ? 'update' : 'create'} this trip?`}
+        submitText={isEditMode ? "Update Trip" : "Create Trip"}
+        onSubmit={handleConfirmSubmit}
+        cancelText="Cancel"
+      />
+
+      {/* Trip Result Modal */}
+      <Modal
+        open={showResultModal}
+        onClose={() => setShowResultModal(false)}
+        title=""
+        description=""
+        showButtons={false}
+      >
+        <div className="text-center py-6">
+          {submissionResult?.success ? (
+            <div className="space-y-4">
+              <div className="flex justify-center">
+                <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center">
+                  <CheckCircle className="w-8 h-8 text-green-600" />
+                </div>
+              </div>
+              <div>
+                <h3 className="text-lg font-semibold text-gray-900">
+                  {isEditMode ? 'Trip Updated Successfully!' : 'Trip Created Successfully!'}
+                </h3>
+                <p className="text-sm text-gray-600 mt-1">
+                  Your trip has been {isEditMode ? 'updated' : 'created'} and is now live.
+                </p>
+              </div>
+              <div className="flex gap-3 justify-center pt-4">
+                <Button variant="outlined" onClick={handleViewTrip}>
+                  See Trip
+                </Button>
+                <Button onClick={handleAddBatch}>
+                  Add Batch
+                </Button>
+              </div>
+            </div>
+          ) : (
+            <div className="space-y-4">
+              <div className="flex justify-center">
+                <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center">
+                  <AlertTriangle className="w-8 h-8 text-red-600" />
+                </div>
+              </div>
+              <div>
+                <h3 className="text-lg font-semibold text-gray-900">
+                  {isEditMode ? 'Trip Update Failed' : 'Trip Creation Failed'}
+                </h3>
+                <p className="text-sm text-gray-600 mt-1">
+                  {submissionResult?.error || 'An unexpected error occurred. Please try again.'}
+                </p>
+              </div>
+              <div className="flex gap-3 justify-center pt-4">
+                <Button onClick={() => setShowResultModal(false)}>
+                  Try Again
+                </Button>
+              </div>
+            </div>
+          )}
+        </div>
+      </Modal>
     </div>
   )
 }
