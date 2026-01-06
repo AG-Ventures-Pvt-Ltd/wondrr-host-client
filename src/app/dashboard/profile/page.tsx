@@ -2,16 +2,15 @@
 
 import React from 'react';
 import { Eye } from 'lucide-react';
-import { ProfileStats } from './components/ProfileStats';
+// import { ProfileStats } from './components/ProfileStats';
 import { CompanyInformation } from './components/CompanyInformation';
 import { VerifiedDocuments } from './components/VerifiedDocuments';
 import { MembershipInfo } from './components/MembershipInfo';
 import { PaymentDetails } from './components/PaymentDetails';
 import { LinksCard } from './components/LinksCard';
-import {
-  PROFILE_STATS,
-  MEMBERSHIP_INFO,
-} from './constants';
+// import {
+  // PROFILE_STATS,
+// } from './constants';
 import Button from '@/common/components/atoms/Button';
 import { useGetData } from '@/common/services/useGetData';
 import { API_ENDPOINTS } from '@/common/constants/apiEndpoints';
@@ -41,6 +40,7 @@ interface ProfileData {
     platform : 'Facebook' | 'Instagram' | 'LinkedIn' | 'Website';
     url : string;
   }]
+  joinedAt :string;
 }
 
 const ProfilePage = () => {
@@ -87,7 +87,7 @@ const ProfilePage = () => {
           </Button>
         </div>
       </div>
-      <ProfileStats stats={PROFILE_STATS} />
+      {/* <ProfileStats stats={PROFILE_STATS} /> */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div className="lg:col-span-2 flex flex-col gap-6">
           <CompanyInformation 
@@ -112,7 +112,7 @@ const ProfilePage = () => {
         </div>        
         <div className="flex flex-col gap-6">
           <VerifiedDocuments verified={profileData.isVerified} hostType={profileData.hostType} hasSubmitted={profileData.companyDocuments}/>
-          <MembershipInfo data={MEMBERSHIP_INFO} />
+          <MembershipInfo data={{memberSince : profileData.joinedAt, status : profileData.isVerified}} />
           <LinksCard 
             data={{
               website: profileData.socialMedia?.find(s => s.platform === 'Website')?.url || '',

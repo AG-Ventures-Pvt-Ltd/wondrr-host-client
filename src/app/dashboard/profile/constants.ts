@@ -54,12 +54,6 @@ export const VERIFIED_DOCUMENTS = [
   { id: 4, name: "Insurance Certificate", verified: true }
 ];
 
-export const MEMBERSHIP_INFO = {
-  memberSince: "January 15, 2020",
-  planType: "Premium",
-  status: "Active"
-};
-
 export const LINKS_INFO = {
   website: "https://www.wanderlustadventures.com",
   instagram: "wanderlust_adventures",
