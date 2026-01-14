@@ -15,7 +15,9 @@ import TripSidebar from './components/TripSidebar';
 import ShareTripModal from './components/ShareTripModal';
 import Loader from '@/common/components/composites/Loader';
 
+
 const TripDetailsPage = () => {
+
     const router = useRouter();
     const params = useParams();
     const tripId = params.id as string;
@@ -82,3 +84,11 @@ const TripDetailsPage = () => {
 };
 
 export default TripDetailsPage;
+
+
+export async function generateMetadata({ params }: { params: { id: string } }) {
+  return {
+    title: `Trip ${params.id}`,
+    description: "Dynamic description"
+  }
+}

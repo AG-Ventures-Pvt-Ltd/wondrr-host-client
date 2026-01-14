@@ -27,9 +27,6 @@ const BookingsContent = () => {
   const [page, setPage] = useState(1)
   const [limit] = useState(10)
   
-  const [statusFilter, setStatusFilter] = useState<'all' | 'confirmed' | 'pending'>(
-    (searchParams.get('status') as 'all' | 'confirmed' | 'pending') || 'all'
-  )
   const [selectedTrip, setSelectedTrip] = useState<string>(searchParams.get('tripId') || 'all')
   const [selectedBatch, setSelectedBatch] = useState<string>(searchParams.get('batchId') || 'all')
 
@@ -46,13 +43,12 @@ const BookingsContent = () => {
   useEffect(() => {
     const params = new URLSearchParams()
     
-    if (statusFilter !== 'all') params.set('status', statusFilter)
     if (selectedTrip !== 'all') params.set('tripId', selectedTrip)
     if (selectedBatch !== 'all') params.set('batchId', selectedBatch)
 
     const queryString = params.toString()
     router.replace(`/dashboard/bookings${queryString ? `?${queryString}` : ''}`, { scroll: false })
-  }, [statusFilter, selectedTrip, selectedBatch, router])
+  }, [selectedTrip, selectedBatch, router])
 
   const trips = useMemo(() => {
     if (!tripBatchMaps) return [{ id: 'all', name: 'All Trips' }]
@@ -86,17 +82,10 @@ const BookingsContent = () => {
   }, [tripBatchMaps])
 
   const filteredBookings = useMemo(() => {
-    let filtered = bookingsData
-
-    if (statusFilter !== 'all') {
-      filtered = filtered.filter(booking => booking.status === statusFilter)
-    }
-
-    return filtered
-  }, [bookingsData, statusFilter])
+    return bookingsData.filter(booking => booking.status === 'confirmed')
+  }, [bookingsData])
 
   const handleClearFilters = () => {
-    setStatusFilter('all')
     setSelectedTrip('all')
     setSelectedBatch('all')
   }
@@ -110,20 +99,6 @@ const BookingsContent = () => {
         </div>
         <div className="mb-4">
             <div className="flex items-end gap-6">
-              <div className="flex-1 min-w-[200px]">
-                <label className="block text-sm font-medium text-maintext mb-2">
-                  Status
-                </label>
-                <CustomSelect
-                  value={statusFilter}
-                  onChange={(value) => setStatusFilter(value as 'all' | 'confirmed' | 'pending')}
-                  options={[
-                    { value: 'all', label: 'All Status' },
-                    { value: 'confirmed', label: 'Confirmed' },
-                    { value: 'pending', label: 'Pending' }
-                  ]}
-                />
-              </div>
               <div className="flex-1 min-w-[200px]">
                 <label className="block text-sm font-medium text-maintext mb-2">
                   Trip

@@ -10,7 +10,7 @@ interface RootLayoutProps {
   children: React.ReactNode;
 }
 
-const dmSans = DM_Sans({ 
+const dmSans = DM_Sans({
   subsets: ['latin'],
   variable: '--font-dm',
   display: 'swap',
@@ -27,8 +27,12 @@ export default function RootLayout({ children }: RootLayoutProps) {
     }
   }, []);
 
-  return ( 
+  return (
     <html lang="en">
+      <head>
+        <title>Wondrr Trips</title>
+        <link rel="icon" href="/png/favicon.png" />
+      </head>
       <body className={dmSans.variable}>
         <Providers>
           {children}
