@@ -33,6 +33,8 @@ export const API_ENDPOINTS = {
   PROFILE: {
     GET_HOST_PROFILE: 'api/client/v1/user/host/me',
     UPDATE_BASIC_INFO: 'api/client/v1/user/host/profile/update',
+    UPDATE_AVATAR: 'api/client/v1/user/host/avatar/update',
+    CHANGE_PASSWORD: 'api/client/v1/user/host/password/change',
   },
   HOME: {
     GET_HOST_HOME_STATS: 'api/client/v1/landingpage/host/home/me',

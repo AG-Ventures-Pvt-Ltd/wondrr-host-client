@@ -84,11 +84,3 @@ const TripDetailsPage = () => {
 };
 
 export default TripDetailsPage;
-
-
-export async function generateMetadata({ params }: { params: { id: string } }) {
-  return {
-    title: `Trip ${params.id}`,
-    description: "Dynamic description"
-  }
-}
