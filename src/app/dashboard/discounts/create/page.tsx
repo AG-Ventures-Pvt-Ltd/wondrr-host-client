@@ -25,10 +25,11 @@ const CreateCoupon = () => {
     validFrom: '',
     validUntil: '',
     selectedTrip: '',
+    numberOfPeople: '',
   })
 
   const { data: tripsData } = useGetData<TripOption[]>(`${API_ENDPOINTS.TRIPS.GET_HOST_TRIPS}?titlesOnly=true`)
-  
+
   const trips = tripsData || []
   const availableTrips = [
     { id: 'all', name: 'All Trips' },
@@ -36,7 +37,7 @@ const CreateCoupon = () => {
   ]
 
   const { mutate: createCoupon, isPending } = usePostData({
-    url: API_ENDPOINTS.DISCOUNTS.CREATE_COUPON ,
+    url: API_ENDPOINTS.DISCOUNTS.CREATE_COUPON,
     onSuccess: () => {
       router.push('/dashboard/discounts')
     }
@@ -56,7 +57,8 @@ const CreateCoupon = () => {
       endDate: formData.validUntil,
       minOrderAmount: formData.minPurchase ? Number(formData.minPurchase) : null,
       maxDiscountAmount: formData.maxDiscount ? Number(formData.maxDiscount) : null,
-      ...(formData.selectedTrip && formData.selectedTrip !== 'all' && { tripApplicable: formData.selectedTrip })
+      ...(formData.selectedTrip && formData.selectedTrip !== 'all' && { tripApplicable: formData.selectedTrip }),
+      ...(formData.discountType === 'people_count' && formData.numberOfPeople && { numberOfPeople: Number(formData.numberOfPeople) })
     }
 
     createCoupon(payload)
@@ -110,14 +112,14 @@ const CreateCoupon = () => {
           <label className="block text-sm font-medium text-gray-700">
             Discount Type <span className="text-red-500">*</span>
           </label>
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-3 gap-3">
             <Button
               type="button"
               onClick={() => setFormData({ ...formData, discountType: 'percentage' })}
               variant={formData.discountType === 'percentage' ? 'contained' : 'outlined'}
               color="primary"
               fullWidth
-              startIcon={<Percent size={16} strokeWidth={2}/>}
+              startIcon={<Percent size={16} strokeWidth={2} />}
             >
               Percentage
             </Button>
@@ -127,59 +129,101 @@ const CreateCoupon = () => {
               variant={formData.discountType === 'fixed' ? 'contained' : 'outlined'}
               color="primary"
               fullWidth
-              startIcon={<IndianRupee size={12} strokeWidth={3}/>}
+              startIcon={<IndianRupee size={12} strokeWidth={3} />}
             >
               Fixed
             </Button>
+            <Button
+              type="button"
+              onClick={() => setFormData({ ...formData, discountType: 'people_count' })}
+              variant={formData.discountType === 'people_count' ? 'contained' : 'outlined'}
+              color="primary"
+              fullWidth
+            >
+              People
+            </Button>
           </div>
         </div>
-        <div className="space-y-2 flex gap-4">
-          <div className='flex-1'>
-            <label className="block text-sm font-medium text-gray-700">
-              Discount Value <span className="text-red-500">*</span>
-            </label>
-            <div className="relative">
-              <CustomInput
-                type="number"
-                placeholder="25"
-                value={formData.discountValue}
-                onChange={(e) => setFormData({ ...formData, discountValue: e.target.value })}
-                required
-              />
-              <span className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400">
-                {formData.discountType === 'percentage' ? '%' : '₹'}
-              </span>
-            </div>
-          </div>
-          {formData.discountType === 'percentage' && (
-            <div className="flex-1">
-              <label className="block text-sm font-medium text-gray-700">Max. Discount Amount</label>
+        {formData.discountType === 'people_count' ? (
+          <div className="space-y-2 flex gap-4">
+            <div className='flex-1'>
+              <label className="block text-sm font-medium text-gray-700">
+                Discount Value <span className="text-red-500">*</span>
+              </label>
               <div className="relative">
                 <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 z-10">₹</span>
                 <CustomInput
                   type="number"
-                  placeholder="No limit"
-                  value={formData.maxDiscount}
-                  onChange={(e) => setFormData({ ...formData, maxDiscount: e.target.value })}
+                  placeholder="Enter discount amount"
+                  value={formData.discountValue}
+                  onChange={(e) => setFormData({ ...formData, discountValue: e.target.value })}
+                  className="pl-8!"
+                  required
+                />
+              </div>
+            </div>
+            <div className='flex-1'>
+              <label className="block text-sm font-medium text-gray-700">
+                Number of People <span className="text-red-500">*</span>
+              </label>
+              <CustomInput
+                type="number"
+                placeholder="Enter number of people"
+                value={formData.numberOfPeople}
+                onChange={(e) => setFormData({ ...formData, numberOfPeople: e.target.value })}
+                required
+              />
+            </div>
+          </div>
+        ) : (
+          <div className="space-y-2 flex gap-4">
+            <div className='flex-1'>
+              <label className="block text-sm font-medium text-gray-700">
+                Discount Value <span className="text-red-500">*</span>
+              </label>
+              <div className="relative">
+                <CustomInput
+                  type="number"
+                  placeholder="25"
+                  value={formData.discountValue}
+                  onChange={(e) => setFormData({ ...formData, discountValue: e.target.value })}
+                  required
+                />
+                <span className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400">
+                  {formData.discountType === 'percentage' ? '%' : '₹'}
+                </span>
+              </div>
+            </div>
+            {formData.discountType === 'percentage' && (
+              <div className="flex-1">
+                <label className="block text-sm font-medium text-gray-700">Max. Discount Amount</label>
+                <div className="relative">
+                  <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 z-10">₹</span>
+                  <CustomInput
+                    type="number"
+                    placeholder="No limit"
+                    value={formData.maxDiscount}
+                    onChange={(e) => setFormData({ ...formData, maxDiscount: e.target.value })}
+                    className="pl-8!"
+                  />
+                </div>
+              </div>
+            )}
+            <div className="flex-1">
+              <label className="block text-sm font-medium text-gray-700">Min. Purchase Amount</label>
+              <div className="relative">
+                <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 z-10">₹</span>
+                <CustomInput
+                  type="number"
+                  placeholder="0"
+                  value={formData.minPurchase}
+                  onChange={(e) => setFormData({ ...formData, minPurchase: e.target.value })}
                   className="pl-8!"
                 />
               </div>
             </div>
-          )}
-          <div className="flex-1">
-            <label className="block text-sm font-medium text-gray-700">Min. Purchase Amount</label>
-            <div className="relative">
-              <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 z-10">₹</span>
-              <CustomInput
-                type="number"
-                placeholder="0"
-                value={formData.minPurchase}
-                onChange={(e) => setFormData({ ...formData, minPurchase: e.target.value })}
-                className="pl-8!"
-              />
-            </div>
           </div>
-        </div>
+        )}
         <div className="space-y-2">
           <label className="block text-sm font-medium text-gray-700">
             Apply To <span className="text-red-500">*</span>

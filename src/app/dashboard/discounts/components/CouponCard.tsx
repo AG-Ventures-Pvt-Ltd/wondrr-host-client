@@ -66,6 +66,8 @@ const CouponCard = ({ coupon, onDeactivateSuccess }: CouponCardProps) => {
             <span className={`px-3 py-1 rounded-lg text-xs ${getDiscountBadgeColor()}`}>
               {coupon.discountType === 'percentage' 
                 ? `${coupon.discountValue}% Off` 
+                : coupon.discountType === 'people_count'
+                ? `₹${coupon.discountValue} Off`
                 : `₹${coupon.discountValue} Off`}
             </span>
           </div>
@@ -102,11 +104,17 @@ const CouponCard = ({ coupon, onDeactivateSuccess }: CouponCardProps) => {
           </div>
 
           <div className="flex items-center gap-4 text-sm text-gray-500">
-            {coupon.minOrderAmount && (
-              <span>Min. Purchase: ₹{coupon.minOrderAmount}</span>
-            )}
-            {coupon.maxDiscountAmount && (
-              <span>Max. Discount: ₹{coupon.maxDiscountAmount}</span>
+            {coupon.discountType === 'people_count' ? (
+              <span>Group Booking of {coupon.numberOfPeople}</span>
+            ) : (
+              <>
+                {coupon.minOrderAmount && (
+                  <span>Min. Purchase: ₹{coupon.minOrderAmount}</span>
+                )}
+                {coupon.maxDiscountAmount && (
+                  <span>Max. Discount: ₹{coupon.maxDiscountAmount}</span>
+                )}
+              </>
             )}
           </div>
         </div>

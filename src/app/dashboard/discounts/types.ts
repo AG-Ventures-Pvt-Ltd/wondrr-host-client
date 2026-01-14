@@ -19,9 +19,10 @@ export interface Coupon {
     _id: string
     code: string
     isActive: boolean
-    discountType: 'percentage' | 'fixed'
+    discountType: 'percentage' | 'fixed' | 'people_count'
     discountValue: number
     description: string
+    numberOfPeople?: number
     tripApplicable?: {
         _id: string
         name: string
@@ -39,7 +40,7 @@ export interface Coupon {
 export interface CouponFormData {
     code: string
     description: string
-    discountType: 'percentage' | 'fixed'
+    discountType: 'percentage' | 'fixed' | 'people_count'
     discountValue: string
     minPurchase: string
     maxDiscount: string
@@ -48,6 +49,7 @@ export interface CouponFormData {
     validFrom: string
     validUntil: string
     selectedTrip: string
+    numberOfPeople: string
 }
 
 export interface TripOption {
