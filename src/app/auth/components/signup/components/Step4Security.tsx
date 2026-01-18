@@ -41,7 +41,7 @@ const Step4Security: React.FC<Step4SecurityProps> = ({
       <div className="space-y-4">
         <div className="space-y-2">
           <label className="text-sm font-medium text-neutral-700">
-            Choose a strong password 🔐
+            Choose a strong password
           </label>
           <div className="relative">
             <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-neutral-400" />
@@ -70,7 +70,7 @@ const Step4Security: React.FC<Step4SecurityProps> = ({
 
         <div className="space-y-2">
           <label className="text-sm font-medium text-neutral-700">
-            Confirm your password ✓
+            Confirm your password
           </label>
           <div className="relative">
             <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-neutral-400" />
@@ -92,12 +92,12 @@ const Step4Security: React.FC<Step4SecurityProps> = ({
           </div>
           {password !== confirmPassword && confirmPassword && (
             <p className="text-xs text-red-600 flex items-center gap-1">
-              ⚠️ Passwords don&apos;t match
+              Passwords don&apos;t match
             </p>
           )}
           {password === confirmPassword && confirmPassword && (
             <p className="text-xs text-green-600 flex items-center gap-1">
-              ✓ Passwords match!
+              Passwords match!
             </p>
           )}
         </div>

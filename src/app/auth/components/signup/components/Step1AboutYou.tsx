@@ -30,14 +30,14 @@ const Step1AboutYou: React.FC<Step1AboutYouProps> = ({
       <div className="space-y-4">
         <div className="space-y-2">
           <label className="text-sm font-medium text-neutral-700">
-            Are you joining us as an individual or representing an organization? 🤔
+            Are you joining us as an individual or representing an organization?
           </label>
           <CustomSelect
             value={hostType}
             onChange={onHostTypeChange}
             options={[
-              { value: 'Individual', label: '👤 Individual - Just me!' },
-              { value: 'Organization', label: '🏢 Organization - We\'re a team' }
+              { value: 'Individual', label: 'Individual - Just me!' },
+              { value: 'Organization', label: 'Organization - We\'re a team' }
             ]}
             placeholder="Choose your type"
             required
@@ -47,8 +47,8 @@ const Step1AboutYou: React.FC<Step1AboutYouProps> = ({
         <div className="space-y-2">
           <label className="text-sm font-medium text-neutral-700">
             {hostType === 'Organization'
-              ? 'What\'s your company called? 🏢'
-              : 'What\'s your full name? 👋'}
+              ? 'What\'s your company called?'
+              : 'What\'s your full name?'}
           </label>
           <div className="relative">
             {hostType === 'Organization' ? (

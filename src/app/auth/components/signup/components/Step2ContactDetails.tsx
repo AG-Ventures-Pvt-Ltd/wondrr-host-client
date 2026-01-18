@@ -41,7 +41,7 @@ const Step2ContactDetails: React.FC<Step2ContactDetailsProps> = ({
       <div className="space-y-4">
         <div className="space-y-2">
           <label className="text-sm font-medium text-neutral-700">
-            Pick a unique username ✨
+            Pick a unique username
           </label>
           <div className="relative">
             <User className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-neutral-400" />
@@ -61,7 +61,7 @@ const Step2ContactDetails: React.FC<Step2ContactDetailsProps> = ({
 
         <div className="space-y-2">
           <label className="text-sm font-medium text-neutral-700">
-            What&apos;s your email address? 📧
+            What&apos;s your email address?
           </label>
           <div className="relative">
             <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-neutral-400" />
@@ -80,7 +80,7 @@ const Step2ContactDetails: React.FC<Step2ContactDetailsProps> = ({
 
         <div className="space-y-2">
           <label className="text-sm font-medium text-neutral-700">
-            WhatsApp number for quick updates? 📱
+            WhatsApp number for quick updates?
           </label>
           <div className="relative">
             <Phone className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-neutral-400" />

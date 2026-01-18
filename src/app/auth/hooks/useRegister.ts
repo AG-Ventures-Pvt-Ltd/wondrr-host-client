@@ -11,6 +11,7 @@ interface RegisterCredentials extends Record<string, unknown> {
   hostType: string;
   contactNumber: string;
   socialMedias: Array<{ platform: string; url: string }>;
+  yearsOfExperience: number;
   userType: string;
   provider: string;
 }

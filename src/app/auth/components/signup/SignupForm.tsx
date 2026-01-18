@@ -25,12 +25,14 @@ const SignupForm = () => {
   const [contactNumber, setContactNumber] = useState('')
   const [instagramLink, setInstagramLink] = useState('')
   const [websiteLink, setWebsiteLink] = useState('')
+  const [yearsOfExperience, setYearsOfExperience] = useState(0)
   const [otp, setOtp] = useState('')
   const [otpTimer, setOtpTimer] = useState(0)
   const [isOtpSent, setIsOtpSent] = useState(false)
   const [emailError, setEmailError] = useState('')
   const [instagramError, setInstagramError] = useState('')
   const [websiteError, setWebsiteError] = useState('')
+  const [yearsOfExperienceError, setYearsOfExperienceError] = useState('')
   const [passwordError, setPasswordError] = useState('')
   const [usernameError, setUsernameError] = useState('')
 
@@ -70,6 +72,7 @@ const SignupForm = () => {
           { platform: 'Instagram', url: instagramLink },
           ...(websiteLink ? [{ platform: 'Website', url: websiteLink }] : [])
         ],
+        yearsOfExperience,
         userType: 'Host',
         provider: 'credentials'
       })
@@ -130,6 +133,16 @@ const SignupForm = () => {
     }
   }
 
+  const validateYearsOfExperience = (years: number) => {
+    if (years < 0) {
+      setYearsOfExperienceError('Years of experience cannot be negative')
+    } else if (years > 50) {
+      setYearsOfExperienceError('Please enter a realistic number of years')
+    } else {
+      setYearsOfExperienceError('')
+    }
+  }
+
   const validatePassword = (password: string) => {
     const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/
     if (!passwordRegex.test(password)) {
@@ -156,7 +169,7 @@ const SignupForm = () => {
       case 2:
         return !!(username.trim() && email.trim() && contactNumber.length === 10 && !emailError && !usernameError)
       case 3:
-        return !!instagramLink.trim() && !instagramError && (!websiteLink || !websiteError)
+        return !!instagramLink.trim() && !instagramError && (!websiteLink || !websiteError) && yearsOfExperience >= 0 && !yearsOfExperienceError
       case 4:
         return !!(password && confirmPassword && password === confirmPassword && !passwordError)
       case 5:
@@ -197,12 +210,16 @@ const SignupForm = () => {
           <Step3SocialPresence
             instagramLink={instagramLink}
             websiteLink={websiteLink}
+            yearsOfExperience={yearsOfExperience}
             instagramError={instagramError}
             websiteError={websiteError}
+            yearsOfExperienceError={yearsOfExperienceError}
             onInstagramLinkChange={setInstagramLink}
             onWebsiteLinkChange={setWebsiteLink}
+            onYearsOfExperienceChange={setYearsOfExperience}
             onInstagramBlur={() => validateInstagram(instagramLink)}
             onWebsiteBlur={() => validateWebsite(websiteLink)}
+            onYearsOfExperienceBlur={() => validateYearsOfExperience(yearsOfExperience)}
           />
         )
       case 4:

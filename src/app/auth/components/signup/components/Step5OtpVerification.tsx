@@ -36,7 +36,7 @@ const Step5OtpVerification: React.FC<Step5OtpVerificationProps> = ({
       <div className="space-y-4">
         <div className="space-y-2">
           <label className="text-sm font-medium text-neutral-700">
-            Enter verification code 🔒
+            Enter verification code
           </label>
           <div className="relative">
             <Shield className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-neutral-400" />
