@@ -10,7 +10,6 @@ export const TRIP_CATEGORIES = [
   'Trek',
   'Desert',
   'Historical',
-  'Food & Culinary',
   'Camping',
   'Other',
 ] as const

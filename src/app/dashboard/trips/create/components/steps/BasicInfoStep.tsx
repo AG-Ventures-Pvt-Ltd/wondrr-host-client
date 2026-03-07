@@ -7,6 +7,7 @@ import { X } from 'lucide-react'
 import CustomInput from '@/common/components/composites/CustomInput'
 import CustomSelect from '@/common/components/composites/CustomSelect'
 import Button from '@/common/components/atoms/Button'
+import { Toggle } from '@/common/ui/toggle'
 import { useTripFormStore } from '../../store'
 import { useTagManager, useCategoryManager } from '../../hooks'
 import { TRIP_CATEGORIES, VALIDATION_RULES } from '../../constants'
@@ -16,7 +17,7 @@ interface BasicInfoStepProps {
 }
 
 const BasicInfoStep: React.FC<BasicInfoStepProps> = ({ isEditMode = false }) => {
-  const { title, description, location, updateField, updateLocationField } = useTripFormStore()
+  const { title, description, location, isFemaleOnly, updateField, updateLocationField } = useTripFormStore()
   const { tagInput, setTagInput, tags, handleAddTag, handleRemoveTag, handleKeyPress } = useTagManager()
   const { category, customCategory, handleCategoryChange, handleCustomCategoryChange } = useCategoryManager()
 
@@ -140,6 +141,24 @@ const BasicInfoStep: React.FC<BasicInfoStepProps> = ({ isEditMode = false }) => 
             ))}
           </div>
         )}
+      </div>
+
+      {/* Female Only */}
+      <div className="flex items-center justify-between py-3 px-4 rounded-lg border border-neutral-200 bg-neutral-50">
+        <div>
+          <Label htmlFor="isFemaleOnly" className="text-sm font-medium">
+            Female Only Trip
+          </Label>
+          <p className="text-xs text-muted-foreground mt-0.5">
+            Restrict this trip to female participants only
+          </p>
+        </div>
+        <Toggle
+          checked={isFemaleOnly}
+          onCheckedChange={(val) => updateField('isFemaleOnly', val)}
+          checkedLabel="Yes"
+          uncheckedLabel="No"
+        />
       </div>
 
       {/* Location Section */}

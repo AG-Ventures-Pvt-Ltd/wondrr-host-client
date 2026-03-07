@@ -59,6 +59,7 @@ export interface TripFormData {
   exclusions: Exclusion[]
   additionalInfo: string
   status: 'draft' | 'published'
+  isFemaleOnly: boolean
 }
 
 export interface TripFormState extends TripFormData {

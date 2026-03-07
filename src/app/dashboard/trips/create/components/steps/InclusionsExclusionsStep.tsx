@@ -32,7 +32,15 @@ const InclusionsExclusionsStep: React.FC<InclusionsExclusionsStepProps> = ({ isE
 
   return (
     <div className="space-y-8">
-      {/* Inclusions Section */}
+      <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+        <h4 className="text-sm font-medium text-blue-900 mb-2">💡 Important: Highlight these in inclusions/exclusions</h4>
+        <ul className="text-xs text-blue-800 space-y-1">
+          <li>• <strong>Meals:</strong> Specify inclusions/exclusions and veg/non-veg options</li>
+          <li>• <strong>Equipment:</strong> Mention any activity equipment (biking, trekking gear, etc.)</li>
+          <li>• <strong>Medical Support:</strong> Emergency medical assistance availability</li>
+          <li>• <strong>Liquor:</strong> Alcohol policy and allowances</li>
+        </ul>
+      </div>
       <div className="space-y-4">
         <div className="flex items-center justify-between">
           <h3 className="text-lg font-medium text-neutral-900">Inclusions</h3>
@@ -40,7 +48,6 @@ const InclusionsExclusionsStep: React.FC<InclusionsExclusionsStepProps> = ({ isE
             {inclusions.length}/{VALIDATION_RULES.MIN_INCLUSIONS} required
           </Badge>
         </div>
-
         <div className="space-y-3">
           <div className="flex gap-2">
             <CustomInput
@@ -66,7 +73,6 @@ const InclusionsExclusionsStep: React.FC<InclusionsExclusionsStepProps> = ({ isE
               Add {VALIDATION_RULES.MIN_INCLUSIONS - inclusions.length} more inclusion{VALIDATION_RULES.MIN_INCLUSIONS - inclusions.length !== 1 ? 's' : ''}
             </p>
           )}
-
           {inclusions.length > 0 && (
             <div className="space-y-2">
               {inclusions.map((inclusion) => (
@@ -86,7 +92,6 @@ const InclusionsExclusionsStep: React.FC<InclusionsExclusionsStepProps> = ({ isE
               ))}
             </div>
           )}
-
           <button
             type="button"
             onClick={handleAddInclusion}
@@ -97,8 +102,6 @@ const InclusionsExclusionsStep: React.FC<InclusionsExclusionsStepProps> = ({ isE
           </button>
         </div>
       </div>
-
-      {/* Exclusions Section */}
       <div className="space-y-4">
         <div className="flex items-center justify-between">
           <h3 className="text-lg font-medium text-neutral-900">Exclusions</h3>

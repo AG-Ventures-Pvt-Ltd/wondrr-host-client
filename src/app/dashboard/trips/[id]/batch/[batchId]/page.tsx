@@ -116,7 +116,7 @@ const BatchDetailsPage = () => {
                 <div className="flex items-center gap-2">
                   <div className="w-8 h-8 bg-linear-to-br from-blue-100 to-blue-50 rounded-full flex items-center justify-center">
                     <span className="text-xs text-blue-700">
-                      {batchDetails.batchInfo.pointOfContact.charAt(0)}
+                      {batchDetails.batchInfo.pointOfContact?.charAt(0)}
                     </span>
                   </div>
                   <span className="text-sm text-maintext">

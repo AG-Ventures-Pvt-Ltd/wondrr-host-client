@@ -2,9 +2,9 @@ import { useGetData } from '@/common/services/useGetData';
 import { API_ENDPOINTS } from '@/common/constants/apiEndpoints';
 import { TripBatchesResponse } from '../types';
 
-export const useTripBatchDetails = (slug: string, page: number = 1, limit: number = 2) => {
+export const useTripBatchDetails = (slug: string, page: number = 1, limit: number = 2, status?: string) => {
   const { data, isLoading, error, refetch } = useGetData<TripBatchesResponse>(
-    API_ENDPOINTS.TRIPS.GET_TRIP_BATCHES(slug, page, limit)
+    API_ENDPOINTS.TRIPS.GET_TRIP_BATCHES(slug, page, limit, status)
   );
 
   return {

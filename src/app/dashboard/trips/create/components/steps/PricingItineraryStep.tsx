@@ -69,8 +69,13 @@ const PricingItineraryStep: React.FC<PricingItineraryStepProps> = ({ isEditMode 
               disabled={isEditMode}
             />
             <p className="text-xs text-muted-foreground">
-              Base price for 2/3 sharing (depending on availability)
+              For the highest sharing option (e.g. triple/quad)
             </p>
+            <div className="flex items-center gap-1.5 mt-1">
+              <span className="inline-flex items-center gap-1 text-xs bg-blue-50 text-blue-600 rounded px-1.5 py-0.5 font-medium">Base price</span>
+              <span className="text-xs text-muted-foreground">+ sharing add-on =</span>
+              <span className="inline-flex items-center gap-1 text-xs bg-neutral-100 text-neutral-600 rounded px-1.5 py-0.5 font-medium">Final price</span>
+            </div>
           </div>
 
           {/* Max Price */}
@@ -90,7 +95,7 @@ const PricingItineraryStep: React.FC<PricingItineraryStepProps> = ({ isEditMode 
               disabled={isEditMode}
             />
             <p className="text-xs text-muted-foreground">
-              Price for this trip
+              Price per person for this trip
             </p>
           </div>
         </div>
@@ -105,7 +110,7 @@ const PricingItineraryStep: React.FC<PricingItineraryStepProps> = ({ isEditMode 
           <p className="text-xs text-muted-foreground">
             {isEditMode 
               ? "Current hotel sharing options for this trip." 
-              : "Add additional pricing for different hotel sharing options (e.g., single sharing). If you only offer the base price, you can skip this section."
+              : "Extra charge on top of base price for fewer people per room."
             }
           </p>
 

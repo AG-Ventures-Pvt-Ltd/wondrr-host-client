@@ -33,6 +33,7 @@ const initialFormData: TripFormData = {
   exclusions: [],
   additionalInfo: '',
   status: 'draft',
+  isFemaleOnly: false,
 }
 
 export const useTripFormStore = create<TripFormState>((set) => ({

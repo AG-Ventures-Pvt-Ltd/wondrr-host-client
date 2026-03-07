@@ -10,7 +10,11 @@ export const API_ENDPOINTS = {
     CHANGE_TRIP_STATUS: 'api/client/v1/trips/host/changestatus',
     GET_HOST_TRIPS: 'api/client/v1/trips/host/trips/me',
     GET_TRIP_DETAILS: (slug: string) => `api/client/v1/trips/host/trip/${slug}`,
-    GET_TRIP_BATCHES: (slug: string, page: number, limit: number) => `api/client/v1/trips/host/trip/${slug}/batches?page=${page}&limit=${limit}`,
+    GET_TRIP_BATCHES: (slug: string, page: number, limit: number, status?: string) => {
+      let url = `api/client/v1/trips/host/trip/${slug}/batches?page=${page}&limit=${limit}`;
+      if (status && status !== 'all') url += `&status=${status}`;
+      return url;
+    },
     GET_BATCH_DETAILS: (batchId: string) => `api/client/v1/trips/host/trip/batch/${batchId}`,
     EDIT_BATCH: (batchId: string) => `api/client/v1/trips/host/trip/batch/edit/${batchId}`,
   },

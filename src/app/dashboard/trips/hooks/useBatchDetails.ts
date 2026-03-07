@@ -59,8 +59,8 @@ export const useBatchDetails = (batchId: string) => {
       meetingPoint: data.meetingPoint,
       endPoint : data.endPoint,
       startTime: data.startTime,
-      pointOfContact: data.pointOfContact.name,
-      contactPhone: data.pointOfContact.phone,
+      pointOfContact: data.pointOfContact?.name,
+      contactPhone: data.pointOfContact?.phone,
     },
   } : null;
 

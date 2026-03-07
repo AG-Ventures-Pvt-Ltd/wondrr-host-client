@@ -15,7 +15,7 @@ export const useUpdateTripStatus = () => {
       const response = await baseAPI.post(API_ENDPOINTS.TRIPS.CHANGE_TRIP_STATUS, { tripId, status })
       return response.data
     },
-    onSuccess: (data: unknown) => {
+    onSuccess: () => {
       notify.success('Trip status updated successfully!')
     },
     onError: (error: Error) => {

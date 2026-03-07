@@ -136,6 +136,18 @@ const MediaAdditionalStep: React.FC = () => {
         <p className="text-xs text-muted-foreground">
           Add any additional details or special instructions that travelers should know about this trip.
         </p>
+
+        <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+          <h4 className="text-sm font-medium text-blue-900 mb-2">💡 Important: Highlight these in additional info</h4>
+          <ul className="text-xs text-blue-800 space-y-1">
+            <li>• <strong>Accommodation:</strong> Type (tent, hostel, homestay, hotel) and whether shared or private</li>
+            <li>• <strong>Age Restrictions:</strong> Min/max age if applicable</li>
+            <li>• <strong>What to Carry:</strong> Clothing, footwear, documents, cash recommendations</li>
+            <li>• <strong>Connectivity:</strong> Phone signal / wifi availability at the destination</li>
+            <li>• <strong>Female Trip Lead:</strong> Whether the trip has a female guide or lead (for female-only trips)</li>
+          </ul>
+        </div>
+
         <CustomInput
           id="additionalInfo"
           placeholder="e.g., Special requirements, packing tips, important notes..."
