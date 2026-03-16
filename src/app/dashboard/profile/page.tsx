@@ -56,7 +56,7 @@ const ProfilePage = () => {
 
   const navigateToPublicProfile = () => {
     const username = profileData?.username || '';
-    window.open(`${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/host/${username}`, '_blank');
+    window.open(`${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/${username}`, '_blank');
   }
 
   if (isLoading) {
