@@ -21,6 +21,7 @@ export interface BatchDetailsApiResponse {
     name: string;
     phone: string;
   };
+  closeBooking?: string;
 }
 
 interface BatchDetails {

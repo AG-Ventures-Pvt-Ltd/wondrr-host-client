@@ -13,6 +13,7 @@ const initialFormData: BatchFormData = {
   },
   totalSeats: null,
   status: 'draft',
+  closeBooking: '',
 }
 
 export const useBatchFormStore = create<BatchFormState>((set) => ({

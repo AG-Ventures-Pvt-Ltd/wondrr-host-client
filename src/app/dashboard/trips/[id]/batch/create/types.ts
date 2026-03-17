@@ -12,6 +12,7 @@ export interface BatchFormData {
   pointOfContact: PointOfContact
   totalSeats: number | null
   status: 'draft' | 'published' | 'cancelled'
+  closeBooking: string
 }
 
 export interface BatchFormState extends BatchFormData {

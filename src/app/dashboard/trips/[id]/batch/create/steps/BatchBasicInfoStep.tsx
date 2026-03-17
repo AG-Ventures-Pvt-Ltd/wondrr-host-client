@@ -15,11 +15,30 @@ const BatchBasicInfoStep: React.FC = () => {
     endPoint,
     pointOfContact,
     totalSeats,
+    closeBooking,
     updateField,
     updatePointOfContact
   } = useBatchFormStore()
 
   const today = new Date().toISOString().split('T')[0]
+
+  // Calculate min and max for closeBooking
+  const getCloseBookingConstraints = () => {
+    const now = new Date()
+    const todayStr = now.toISOString().slice(0, 16) // YYYY-MM-DDTHH:MM
+
+    if (!startDate) return { min: todayStr, max: '' }
+
+    const startDateTime = new Date(`${startDate}T${startTime || '00:00'}`)
+    const threeDaysBefore = new Date(startDateTime.getTime() - 3 * 24 * 60 * 60 * 1000)
+    const minDate = threeDaysBefore > now ? threeDaysBefore : now
+    const minStr = minDate.toISOString().slice(0, 16)
+    const maxStr = startDateTime.toISOString().slice(0, 16)
+
+    return { min: minStr, max: maxStr }
+  }
+
+  const { min: closeBookingMin, max: closeBookingMax } = getCloseBookingConstraints()
 
   return (
     <div className="space-y-6">
@@ -74,6 +93,27 @@ const BatchBasicInfoStep: React.FC = () => {
             required
           />
         </div>
+      </div>
+
+      {/* Close Booking DateTime */}
+      <div className="space-y-2">
+        <Label htmlFor="closeBooking" className="text-sm flex items-center gap-2">
+          <Calendar className="w-4 h-4 text-neutral-400" />
+          Close Booking Date & Time
+        </Label>
+        <CustomInput
+          id="closeBooking"
+          type="datetime-local"
+          value={closeBooking}
+          onChange={(e) => updateField('closeBooking', e.target.value)}
+          variant="input"
+          min={closeBookingMin}
+          max={closeBookingMax}
+          required
+        />
+        <p className="text-xs text-muted-foreground">
+          Date and time when booking for this batch will be closed
+        </p>
       </div>
 
       {/* Meeting Point */}

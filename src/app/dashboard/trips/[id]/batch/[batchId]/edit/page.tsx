@@ -37,6 +37,7 @@ const EditBatchPage = () => {
                 },
                 totalSeats: rawData.totalSeats || null,
                 status: (rawData.status?.toLowerCase() || 'draft') as 'draft' | 'published' | 'cancelled',
+                closeBooking: rawData.closeBooking ? new Date(rawData.closeBooking).toISOString().slice(0, 16) : '',
             }
 
             useBatchFormStore.getState().prefillFormData(formData)

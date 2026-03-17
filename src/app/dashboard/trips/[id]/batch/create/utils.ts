@@ -39,6 +39,10 @@ export const validateBatchForm = (formData: BatchFormData): ValidationResult => 
     errors.push('Total seats is required and must be greater than 0')
   }
 
+  if (!formData.closeBooking.trim()) {
+    errors.push('Close booking date and time is required')
+  }
+
   // Date validations
   if (formData.startDate && formData.endDate) {
     const startDate = new Date(formData.startDate)
@@ -46,6 +50,26 @@ export const validateBatchForm = (formData: BatchFormData): ValidationResult => 
     
     if (endDate < startDate) {
       errors.push('End date must be after start date')
+    }
+  }
+
+  // Close booking validations
+  if (formData.closeBooking && formData.startDate) {
+    const closeBookingDate = new Date(formData.closeBooking)
+    const startDateTime = new Date(`${formData.startDate}T${formData.startTime || '00:00'}`)
+    const now = new Date()
+    const threeDaysBeforeStart = new Date(startDateTime.getTime() - 3 * 24 * 60 * 60 * 1000)
+
+    if (closeBookingDate >= startDateTime) {
+      errors.push('Close booking must be before the start date and time')
+    }
+
+    if (closeBookingDate < now) {
+      errors.push('Close booking cannot be in the past')
+    }
+
+    if (closeBookingDate < threeDaysBeforeStart) {
+      errors.push('Close booking cannot be more than 3 days before the start date')
     }
   }
 
