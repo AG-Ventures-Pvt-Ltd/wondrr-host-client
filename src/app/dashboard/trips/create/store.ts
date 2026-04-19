@@ -8,6 +8,7 @@ const initialFormData: TripFormData = {
   type: '',
   difficulty: '',
   category: [],
+  customCategories: [],
   tags: [],
   location: {
     address: '',
@@ -87,6 +88,23 @@ export const useTripFormStore = create<TripFormState>((set) => ({
         validationErrors: state.validationErrors.length > 0 ? [] : state.validationErrors,
       }
     }),
+
+  setCategory: (categories) =>
+    set((state) => ({
+      category: categories,
+      validationErrors: state.validationErrors.length > 0 ? [] : state.validationErrors,
+    })),
+
+  addCustomCategory: (category) =>
+    set((state) => ({
+      customCategories: [...state.customCategories, category],
+    })),
+
+  removeCustomCategory: (category) =>
+    set((state) => ({
+      customCategories: state.customCategories.filter((c) => c !== category),
+      category: state.category.filter((c) => c !== category), // also remove from selected if it was selected
+    })),
 
   addFAQ: (question, answer) =>
     set((state) => ({

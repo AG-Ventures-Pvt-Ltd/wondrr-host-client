@@ -11,8 +11,107 @@ export const TRIP_CATEGORIES = [
   'Desert',
   'Historical',
   'Camping',
+
+  // Core extensions
+  'Nature',
+  'Eco / Sustainable',
+  'Luxury',
+  'Budget',
+  'Family',
+  'Romantic / Honeymoon',
+  'Solo Travel',
+  'Group Travel',
+  'Backpacking',
+
+  // Experience-heavy
+  'Food & Culinary',
+  'Festival & Events',
+  'Nightlife & Party',
+  'Shopping',
+  'Photography',
+  'Local Experiences',
+  'Art & Museums',
+  'Architecture',
+
+  // Activity-specific
+  'Water Sports',
+  'Winter Sports',
+  'Skiing',
+  'Scuba Diving',
+  'Snorkeling',
+  'Surfing',
+  'Cycling',
+  'Motorbike Trip',
+  'Safari',
+  'Bird Watching',
+  'Stargazing',
+
+  // Purpose-driven
+  'Wellness & Retreat',
+  'Yoga',
+  'Meditation',
+  'Medical',
+  'Educational',
+  'Business',
+  'Workation',
+  'Volunteer',
+
+  // Format / style
+  'Weekend Getaway',
+  'Long Stay',
+  'City Exploration',
+  'Rural / Village',
+  'Offbeat / Hidden Gems',
+  'Luxury Train',
+  'Cruise',
+
+  // Social vibe
+  'Party Trip',
+  'Digital Nomad',
+  'Influencer / Content',
+
   'Other',
 ] as const
+
+export const INDIAN_STATES = [
+    'Andhra Pradesh',
+    'Arunachal Pradesh',
+    'Assam',
+    'Bihar',
+    'Chhattisgarh',
+    'Goa',
+    'Gujarat',
+    'Haryana',
+    'Himachal Pradesh',
+    'Jharkhand',
+    'Karnataka',
+    'Kerala',
+    'Madhya Pradesh',
+    'Maharashtra',
+    'Manipur',
+    'Meghalaya',
+    'Mizoram',
+    'Nagaland',
+    'Odisha',
+    'Punjab',
+    'Rajasthan',
+    'Sikkim',
+    'Tamil Nadu',
+    'Telangana',
+    'Tripura',
+    'Uttar Pradesh',
+    'Uttarakhand',
+    'West Bengal',
+    'Andaman and Nicobar Islands',
+    'Chandigarh',
+    'Dadra and Nagar Haveli and Daman and Diu',
+    'Delhi',
+    'Jammu and Kashmir',
+    'Ladakh',
+    'Lakshadweep',
+    'Puducherry'
+  ] as const
+
 
 export const TRIP_TYPES = [
   { value: 'group_tour', label: 'Group Tour' },

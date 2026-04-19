@@ -291,6 +291,7 @@ export interface TripFormData {
   type: TripType | ''
   difficulty: TripDifficulty | ''
   category: string[]
+  customCategories: string[]
   tags: string[]
   location: LocationData
   tripImages: TripImage[]
@@ -320,6 +321,9 @@ export interface TripFormState extends TripFormData {
   addTag: (tag: string) => void
   removeTag: (tag: string) => void
   toggleCategory: (category: string) => void
+  setCategory: (categories: string[]) => void
+  addCustomCategory: (category: string) => void
+  removeCustomCategory: (category: string) => void
   addFAQ: (question: string, answer: string) => void
   removeFAQ: (id: number) => void
   addItineraryDay: () => void
