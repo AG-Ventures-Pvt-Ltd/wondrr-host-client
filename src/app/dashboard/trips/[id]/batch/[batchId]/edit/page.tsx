@@ -17,7 +17,7 @@ const EditBatchPage = () => {
 
     useEffect(() => {
         if (rawData) {
-            // Format date to YYYY-MM-DD for input fields
+            // Extract just the date part (YYYY-MM-DD) for the date input
             const formatDateForInput = (dateStr: string) => {
                 if (!dateStr) return ''
                 const date = new Date(dateStr)
@@ -25,19 +25,35 @@ const EditBatchPage = () => {
                 return date.toISOString().split('T')[0]
             }
 
+            // meetingPoint.location may be a populated object or a plain ID string
+            const meetingPoints: { location: string; pickupPrice: number | null }[] =
+                rawData.meetingPoint?.length
+                    ? rawData.meetingPoint.map(point => ({
+                          location: typeof point.location === 'object' && point.location !== null
+                              ? point.location._id
+                              : String(point.location ?? ''),
+                          pickupPrice: point.pickupPrice || null
+                      }))
+                    : [{ location: '', pickupPrice: null }]
+
+            // dropPoint may be populated objects or plain ID strings
+            const dropPoints: string[] =
+                rawData.dropPoint?.map(dp =>
+                    typeof dp === 'object' && dp !== null ? dp._id : String(dp)
+                ) ?? []
+
             const formData = {
-                startDate: formatDateForInput(rawData.startDate),
-                startTime: rawData.startTime || '',
-                endDate: formatDateForInput(rawData.endDate),
-                meetingPoint: rawData.meetingPoint || '',
-                endPoint: rawData.endPoint || '',
+                startDateTime: formatDateForInput(rawData.startDate),
+                endDateTime: formatDateForInput(rawData.endDate),
+                meetingPoint: meetingPoints,
+                dropPoint: dropPoints,
                 pointOfContact: {
                     name: rawData.pointOfContact?.name || '',
                     phone: rawData.pointOfContact?.phone || '',
                 },
                 totalSeats: rawData.totalSeats || null,
                 status: (rawData.status?.toLowerCase() || 'draft') as 'draft' | 'published' | 'cancelled',
-                closeBooking: rawData.closeBooking ? new Date(rawData.closeBooking).toISOString().slice(0, 16) : '',
+                closeBooking: rawData.closeBooking ? new Date(rawData.closeBooking).toISOString().split('T')[0] : '',
             }
 
             useBatchFormStore.getState().prefillFormData(formData)

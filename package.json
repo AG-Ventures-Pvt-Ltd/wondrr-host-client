@@ -16,6 +16,7 @@
     "axios": "^1.13.2",
     "bcrypt": "^6.0.0",
     "lucide-react": "^0.554.0",
+    "maplibre-gl": "^3.6.2",
     "mongoose": "^8.19.3",
     "next": "^16.0.7",
     "next-auth": "^4.24.13",

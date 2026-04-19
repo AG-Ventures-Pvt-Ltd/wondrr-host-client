@@ -4,20 +4,20 @@ import { useTripFormStore } from '../store'
 const stripBulletPrefix = (text: string): string =>
   text.trim().replace(/^[-*•·●▪▸>]\s+/, '').replace(/^\d+[.):]\s+/, '')
 
-export const useExclusionManager = () => {
-  const [exclusionInput, setExclusionInput] = useState('')
-  const { exclusions, addExclusion, removeExclusion } = useTripFormStore()
+export const useThingsToCarryManager = () => {
+  const [thingToCarryInput, setThingToCarryInput] = useState('')
+  const { thingsToCarry, addThingToCarry, removeThingToCarry } = useTripFormStore()
 
-  const handleAddExclusion = () => {
-    const lines = exclusionInput.split('\n').map(stripBulletPrefix).filter(Boolean)
-    lines.forEach((line) => addExclusion(line))
-    setExclusionInput('')
+  const handleAddThingToCarry = () => {
+    const lines = thingToCarryInput.split('\n').map(stripBulletPrefix).filter(Boolean)
+    lines.forEach((line) => addThingToCarry(line))
+    setThingToCarryInput('')
   }
 
   const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter') {
       e.preventDefault()
-      handleAddExclusion()
+      handleAddThingToCarry()
     }
   }
 
@@ -26,16 +26,16 @@ export const useExclusionManager = () => {
     const lines = pasted.split('\n').map(stripBulletPrefix).filter(Boolean)
     if (lines.length > 1) {
       e.preventDefault()
-      lines.forEach((line) => addExclusion(line))
+      lines.forEach((line) => addThingToCarry(line))
     }
   }
 
   return {
-    exclusionInput,
-    setExclusionInput,
-    exclusions,
-    handleAddExclusion,
-    handleRemoveExclusion: removeExclusion,
+    thingToCarryInput,
+    setThingToCarryInput,
+    thingsToCarry,
+    handleAddThingToCarry,
+    handleRemoveThingToCarry: removeThingToCarry,
     handleKeyPress,
     handlePaste,
   }

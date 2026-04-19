@@ -3,6 +3,7 @@ import { useRouter } from 'next/navigation'
 import Card from '@/common/components/composites/Card'
 import MyImage from '@/common/components/atoms/Image'
 import { Toggle } from '@/common/ui/toggle'
+import { cn } from '@/common/ui/utils'
 import { TripList } from '../types'
 
 interface TripCardProps {
@@ -59,19 +60,39 @@ const TripCard = ({ trip, onStatusToggle, isUpdating }: TripCardProps) => {
                     </div>
                     <div className="flex items-center gap-3">
                         <div onClick={(e) => e.stopPropagation()}>
-                            <Toggle
-                                checked={trip.status === 'published'}
-                                onCheckedChange={(checked) => {
-                                    onStatusToggle(
-                                        { id: trip.id, name: trip.name, status: trip.status || 'draft' },
-                                        checked ? 'published' : 'draft'
-                                    )
-                                }}
-                                checkedLabel="Published"
-                                uncheckedLabel="Draft"
-                                size="sm"
-                                disabled={isUpdating}
-                            />
+                            <div className={cn(
+                                "p-1 rounded-lg transition-colors",
+                                trip.status === 'in_review' && "bg-yellow-100"
+                            )}>
+                                <Toggle
+                                    checked={trip.status === 'in_review' || trip.status === 'published'}
+                                    onCheckedChange={(checked) => {
+                                        const currentStatus = trip.status || 'draft'
+                                        let targetStatus = 'draft'
+                                        
+                                        if (checked) {
+                                            // When toggling on, go to in_review (hosts apply for review)
+                                            targetStatus = 'in_review'
+                                        } else {
+                                            // When toggling off, go back to draft
+                                            targetStatus = 'draft'
+                                        }
+                                        
+                                        onStatusToggle(
+                                            { id: trip.id, name: trip.name, status: currentStatus },
+                                            targetStatus
+                                        )
+                                    }}
+                                    checkedLabel={
+                                        trip.status === 'published' ? 'Published' : 
+                                        trip.status === 'in_review' ? 'In Review' : 
+                                        'Apply for Review'
+                                    }
+                                    uncheckedLabel="Draft"
+                                    size="sm"
+                                    disabled={isUpdating || trip.status === 'published'}
+                                />
+                            </div>
                         </div>
                     </div>
                 </div>

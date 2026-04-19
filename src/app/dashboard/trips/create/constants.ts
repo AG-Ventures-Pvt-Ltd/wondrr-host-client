@@ -14,11 +14,32 @@ export const TRIP_CATEGORIES = [
   'Other',
 ] as const
 
+export const TRIP_TYPES = [
+  { value: 'group_tour', label: 'Group Tour' },
+  { value: 'group_trek', label: 'Group Trek' },
+  { value: 'bike_trip', label: 'Bike Trip' },
+] as const
+
+export const TRIP_DIFFICULTIES = [
+  { value: 'easy', label: 'Easy' },
+  { value: 'moderate', label: 'Moderate' },
+  { value: 'challenging', label: 'Challenging' },
+] as const
+
+export const ADD_ON_CATEGORIES = [
+  { value: 'extra_activity', label: 'Extra Activity' },
+  { value: 'room_upgrade', label: 'Room Upgrade' },
+  { value: 'bike_upgrade', label: 'Bike Upgrade' },
+  { value: 'service', label: 'Service' },
+  { value: 'others', label: 'Others' },
+] as const
+
 export const FORM_STEPS = [
   { id: 1, title: 'Basic Information', description: 'Trip details and location' },
-  { id: 2, title: 'Pricing & Itinerary', description: 'Pricing and day-wise plan' },
-  { id: 3, title: 'Inclusions & Exclusions', description: "What's included and excluded" },
-  { id: 4, title: 'Media & FAQ', description: 'Images and questions' },
+  { id: 2, title: 'Pricing', description: 'Pricing tiers and add-ons' },
+  { id: 3, title: 'Itinerary', description: 'Day-wise trip plan' },
+  { id: 4, title: 'Inclusions & Exclusions', description: "What's included and excluded" },
+  { id: 5, title: 'Media & FAQ', description: 'Images and questions' },
 ] as const
 
 export const VALIDATION_RULES = {
@@ -30,6 +51,7 @@ export const VALIDATION_RULES = {
   MIN_ITINERARY_DAYS: 1,
   MIN_INCLUSIONS: 3,
   MIN_EXCLUSIONS: 2,
+  MIN_HIGHLIGHTS: 2,
   MAX_ITINERARY_WORDS: 100,
   MIN_BASE_PRICE: 0,
   MIN_MAX_PRICE: 0,

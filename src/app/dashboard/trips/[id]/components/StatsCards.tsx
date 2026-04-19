@@ -1,16 +1,17 @@
 import React from 'react';
 import Card from '@/common/components/composites/Card';
-import { TrendingUp, Calendar, Tag } from 'lucide-react';
+import { TrendingUp, Calendar, Tag, Mountain } from 'lucide-react';
 
 interface StatsCardsProps {
     totalRevenue: string;
     batches: number;
-    category: string;
+    category: string[];
+    difficulty?: string;
 }
 
-const StatsCards: React.FC<StatsCardsProps> = ({ totalRevenue, batches, category }) => {
+const StatsCards: React.FC<StatsCardsProps> = ({ totalRevenue, batches, category, difficulty }) => {
     return (
-        <div className="grid grid-cols-3 gap-4">
+        <div className="grid grid-cols-4 gap-4">
             <Card className="flex flex-col gap-2">
                 <div className="flex justify-between items-start">
                     <span className="text-neutral-500 capitalize">Total Revenue</span>
@@ -44,9 +45,28 @@ const StatsCards: React.FC<StatsCardsProps> = ({ totalRevenue, batches, category
                         <Tag className="w-4 h-4 text-amber-600" />
                     </div>
                 </div>
+                <div className="flex flex-wrap gap-2 mt-1">
+                    {category.map((cat, index) => (
+                        <span
+                            key={index}
+                            className="px-2.5 py-1 bg-amber-50 text-amber-700 rounded-lg text-sm capitalize"
+                        >
+                            {cat}
+                        </span>
+                    ))}
+                </div>
+            </Card>
+            
+            <Card className="flex flex-col gap-2">
+                <div className="flex justify-between items-start">
+                    <span className="text-neutral-500 capitalize">Difficulty</span>
+                    <div className="w-7 h-7 bg-blue-50 rounded-[10px] flex items-center justify-center">
+                        <Mountain className="w-4 h-4 text-blue-600" />
+                    </div>
+                </div>
                 <div className="flex flex-col">
-                    <div className="text-3xl text-maintext tracking-tight">{category}</div>
-                    <div className="text-neutral-500 mt-2">type</div>
+                    <div className="text-3xl text-maintext tracking-tight capitalize">{difficulty || 'N/A'}</div>
+                    <div className="text-neutral-500 mt-2">level</div>
                 </div>
             </Card>
         </div>

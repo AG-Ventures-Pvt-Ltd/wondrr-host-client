@@ -40,6 +40,7 @@ const MediaAdditionalStep: React.FC = () => {
           images={tripImages}
           onImagesChange={(images) => updateField('tripImages', images)}
           minRequired={VALIDATION_RULES.MIN_IMAGES}
+          uploadKey="trips"
         />
       </div>
       <div className="space-y-3">

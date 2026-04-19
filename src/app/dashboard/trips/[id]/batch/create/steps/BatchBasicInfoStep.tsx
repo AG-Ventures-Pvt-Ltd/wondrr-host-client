@@ -1,196 +1,431 @@
 'use client'
 
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { Label } from '@/common/ui/label'
-import { Calendar, Clock, MapPin, User, Phone, Users } from 'lucide-react'
+import { MapPin, User, Phone, Users, Plus, Trash2, CheckCircle2, Pencil } from 'lucide-react'
 import CustomInput from '@/common/components/composites/CustomInput'
+import Button from '@/common/components/atoms/Button'
+import LocationPickerModal, {
+  type LocationPickerLocation,
+} from '@/common/components/modals/LocationPickerModal'
 import { useBatchFormStore } from '../store'
+import { useTripBatchResources } from '../hooks'
+import { useParams } from 'next/navigation'
+import { SavedLocation } from '../types'
+
+const LocationCard: React.FC<{
+  location: SavedLocation
+  isSelected: boolean
+  onClick: () => void
+  onEdit?: () => void
+}> = ({ location, isSelected, onClick, onEdit }) => (
+  <div className="relative">
+    <button
+      type="button"
+      onClick={onClick}
+      className={`w-full text-left rounded-lg border-2 p-3 pb-7 transition-all ${
+        isSelected
+          ? 'border-blue-500 bg-blue-50 ring-1 ring-blue-300'
+          : 'border-neutral-200 bg-white hover:border-neutral-400 hover:bg-neutral-50'
+      }`}
+    >
+      {isSelected && (
+        <CheckCircle2 className="absolute top-2 right-2 w-4 h-4 text-blue-500 pointer-events-none" />
+      )}
+      <p className="text-sm font-medium text-neutral-900 pr-6 truncate">{location.name}</p>
+      {(location.geo?.city || location.geo?.state) && (
+        <p className="text-xs text-neutral-500 mt-0.5 truncate">
+          {[location.geo.city, location.geo.state].filter(Boolean).join(', ')}
+        </p>
+      )}
+      <span
+        className={`mt-1 inline-block text-xs px-1.5 py-0.5 rounded font-medium ${
+          location.category === 'meeting_point'
+            ? 'bg-green-100 text-green-700'
+            : 'bg-orange-100 text-orange-700'
+        }`}
+      >
+        {location.category === 'meeting_point' ? 'Meeting' : 'Drop'}
+      </span>
+    </button>
+    {onEdit && (
+      <button
+        type="button"
+        onClick={onEdit}
+        className="absolute bottom-2 right-2 p-1 rounded-md bg-white border border-neutral-200 hover:bg-neutral-100 text-neutral-500 hover:text-neutral-700 transition-colors shadow-sm z-10"
+        title="Edit location"
+      >
+        <Pencil className="w-3 h-3" />
+      </button>
+    )}
+  </div>
+)
 
 const BatchBasicInfoStep: React.FC = () => {
-  const { 
-    startDate, 
-    startTime, 
-    endDate, 
+  const params = useParams()
+  const tripSlug = params?.id as string
+
+  const {
+    startDateTime,
+    endDateTime,
     meetingPoint,
-    endPoint,
+    dropPoint,
     pointOfContact,
     totalSeats,
     closeBooking,
     updateField,
-    updatePointOfContact
+    updatePointOfContact,
+    updateMeetingPoint,
+    addMeetingPoint,
+    removeMeetingPoint,
+    addDropPoint,
+    removeDropPoint,
   } = useBatchFormStore()
 
-  const today = new Date().toISOString().split('T')[0]
+  const { locations, totalDays, isLoading: loadingResources, refetch } =
+    useTripBatchResources(tripSlug)
 
-  // Calculate min and max for closeBooking
-  const getCloseBookingConstraints = () => {
-    const now = new Date()
-    const todayStr = now.toISOString().slice(0, 16) // YYYY-MM-DDTHH:MM
+  const [locationModalOpen, setLocationModalOpen] = useState(false)
+  const [lockCategory, setLockCategory] = useState(false)
+  const [editingLocation, setEditingLocation] = useState<LocationPickerLocation | null>(null)
+  const [modalDefaultCategory, setModalDefaultCategory] = useState<string>('meeting_point')
 
-    if (!startDate) return { min: todayStr, max: '' }
-
-    const startDateTime = new Date(`${startDate}T${startTime || '00:00'}`)
-    const threeDaysBefore = new Date(startDateTime.getTime() - 3 * 24 * 60 * 60 * 1000)
-    const minDate = threeDaysBefore > now ? threeDaysBefore : now
-    const minStr = minDate.toISOString().slice(0, 16)
-    const maxStr = startDateTime.toISOString().slice(0, 16)
-
-    return { min: minStr, max: maxStr }
+  const openAddModal = (category: string) => {
+    setLockCategory(true)
+    setEditingLocation(null)
+    setModalDefaultCategory(category)
+    setLocationModalOpen(true)
   }
 
-  const { min: closeBookingMin, max: closeBookingMax } = getCloseBookingConstraints()
+  const openEditModal = (loc: SavedLocation) => {
+    setLockCategory(false)
+    setEditingLocation(loc as LocationPickerLocation)
+    setModalDefaultCategory(loc.category)
+    setLocationModalOpen(true)
+  }
+
+  const handleLocationSaved = () => {
+    refetch()
+  }
+
+  // Auto-fill endDateTime when startDateTime changes and totalDays is known
+  useEffect(() => {
+    if (startDateTime && totalDays > 0) {
+      const start = new Date(startDateTime)
+      if (!isNaN(start.getTime())) {
+        const end = new Date(start.getTime() + (totalDays - 1) * 24 * 60 * 60 * 1000)
+        const endStr = end.toISOString().slice(0, 10)
+        if (!endDateTime || endDateTime <= startDateTime) {
+          updateField('endDateTime', endStr)
+        }
+      }
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [startDateTime, totalDays])
+
+  const now = new Date()
+  const todayStr = now.toISOString().slice(0, 10)
+
+  const getCloseBookingConstraints = () => {
+    const today = now.toISOString().split('T')[0]
+    if (!startDateTime) return { min: today, max: '' }
+    const startDate = new Date(startDateTime)
+    const oneDayBefore = new Date(startDate.getTime() - 24 * 60 * 60 * 1000)
+    const threeDaysBefore = new Date(startDate.getTime() - 3 * 24 * 60 * 60 * 1000)
+    const minDate = threeDaysBefore > now ? threeDaysBefore : now
+    return {
+      min: minDate.toISOString().split('T')[0],
+      max: oneDayBefore.toISOString().split('T')[0],
+    }
+  }
+
+  const { max: closeBookingMax } = getCloseBookingConstraints()
+
+  const meetingPointLocations = locations.filter((l) => l.category === 'meeting_point')
+  const dropPointLocations = locations.filter((l) => l.category === 'drop_point')
 
   return (
     <div className="space-y-6">
-      {/* Date and Time Row */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        {/* Start Date */}
+      {/* Start and End Date Row */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div className="space-y-2">
-          <Label htmlFor="startDate" className="text-sm flex items-center gap-2">
-            <Calendar className="w-4 h-4 text-neutral-400" />
-            Start Date
+          <Label htmlFor="startDateTime" className="text-sm flex items-center gap-2">
+            📅 Start Date
           </Label>
           <CustomInput
-            id="startDate"
+            id="startDateTime"
             type="date"
-            value={startDate}
-            onChange={(e) => updateField('startDate', e.target.value)}
+            value={startDateTime}
+            onChange={(e) => updateField('startDateTime', e.target.value)}
             variant="input"
-            min={today}
+            min={todayStr}
             required
           />
         </div>
 
-        {/* Start Time */}
         <div className="space-y-2">
-          <Label htmlFor="startTime" className="text-sm flex items-center gap-2">
-            <Clock className="w-4 h-4 text-neutral-400" />
-            Start Time
+          <Label htmlFor="endDateTime" className="text-sm flex items-center gap-2">
+            📅 End Date
+            {totalDays > 0 && (
+              <span className="text-xs text-blue-600 font-normal ml-1">
+                (auto-filled from {totalDays}-day itinerary)
+              </span>
+            )}
           </Label>
           <CustomInput
-            id="startTime"
-            type="time"
-            value={startTime}
-            onChange={(e) => updateField('startTime', e.target.value)}
-            variant="input"
-            required
-          />
-        </div>
-
-        {/* End Date */}
-        <div className="space-y-2">
-          <Label htmlFor="endDate" className="text-sm flex items-center gap-2">
-            <Calendar className="w-4 h-4 text-neutral-400" />
-            End Date
-          </Label>
-          <CustomInput
-            id="endDate"
+            id="endDateTime"
             type="date"
-            value={endDate}
-            onChange={(e) => updateField('endDate', e.target.value)}
+            value={endDateTime}
+            onChange={(e) => updateField('endDateTime', e.target.value)}
             variant="input"
-            min={startDate || today}
+            min={startDateTime || todayStr}
             required
           />
         </div>
       </div>
 
-      {/* Close Booking DateTime */}
+      {/* Meeting Points */}
+      <div className="space-y-4">
+        <div className="flex items-center justify-between">
+          <Label className="text-sm flex items-center gap-2">
+            <MapPin className="w-4 h-4 text-neutral-400" />
+            Meeting Points
+          </Label>
+          <div className="flex items-center gap-2">
+            <Button
+              onClick={() => openAddModal('meeting_point')}
+              variant="outlined"
+              className="text-xs"
+            >
+              <Plus className="w-4 h-4 mr-1" />
+              Add Location
+            </Button>
+            <Button onClick={addMeetingPoint} variant="outlined" className="text-xs">
+              <Plus className="w-4 h-4 mr-1" />
+              Add Meeting Point
+            </Button>
+          </div>
+        </div>
+
+        {meetingPoint.map((point, index) => (
+          <div key={index} className="border rounded-lg p-4 space-y-4 bg-neutral-50">
+            <div className="flex items-end justify-between gap-2 mb-2">
+              <h4 className="text-sm font-medium text-neutral-700">
+                Meeting Point {index + 1}
+              </h4>
+              {meetingPoint.length > 1 && (
+                <Button
+                  onClick={() => removeMeetingPoint(index)}
+                  variant="text"
+                  className="text-red-600 hover:text-red-700 hover:bg-red-50 text-xs"
+                >
+                  <Trash2 className="w-4 h-4 mr-1" />
+                  Remove
+                </Button>
+              )}
+            </div>
+
+            {/* Location card picker */}
+            {loadingResources ? (
+              <p className="text-xs text-neutral-400">Loading saved locations…</p>
+            ) : meetingPointLocations.length > 0 ? (
+              <div className="space-y-2">
+                <Label className="text-xs text-neutral-600">Select Location</Label>
+                <div className="grid grid-cols-2 md:grid-cols-3 gap-2 max-h-48 overflow-y-auto pr-1">
+                  {meetingPointLocations.map((loc) => (
+                    <LocationCard
+                      key={loc._id}
+                      location={loc}
+                      isSelected={point.location === loc._id}
+                      onClick={() => updateMeetingPoint(index, 'location', loc._id)}
+                      onEdit={() => openEditModal(loc)}
+                    />
+                  ))}
+                </div>
+                {point.location && (
+                  <p className="text-xs text-blue-600">
+                    Selected:{' '}
+                    {locations.find((l) => l._id === point.location)?.name ?? point.location}
+                  </p>
+                )}
+              </div>
+            ) : (
+              <div className="rounded-lg border border-dashed border-neutral-300 p-4 text-center">
+                <p className="text-xs text-neutral-500 mb-2">
+                  No meeting point locations saved yet
+                </p>
+                <button
+                  type="button"
+                  onClick={() => openAddModal('meeting_point')}
+                  className="text-xs text-blue-600 hover:text-blue-700 font-medium"
+                >
+                  + Add a meeting point location
+                </button>
+              </div>
+            )}
+
+            {/* Pickup Price */}
+            <div className="space-y-2">
+              <Label htmlFor={`meetingPoint-pickupPrice-${index}`} className="text-sm">
+                Pickup Price (₹)
+              </Label>
+              <CustomInput
+                id={`meetingPoint-pickupPrice-${index}`}
+                type="number"
+                placeholder="e.g., 500"
+                value={point.pickupPrice === null ? '' : point.pickupPrice}
+                onChange={(e) => updateMeetingPoint(index, 'pickupPrice', e.target.value)}
+                variant="input"
+                min={0}
+                step={100}
+                required
+              />
+            </div>
+          </div>
+        ))}
+
+        <p className="text-xs text-muted-foreground">
+          Add multiple meeting points where participants can be picked up
+        </p>
+      </div>
+
+      {/* Drop Points */}
+      <div className="space-y-4">
+        <div className="flex items-center justify-between">
+          <Label className="text-sm flex items-center gap-2">
+            <MapPin className="w-4 h-4 text-neutral-400" />
+            Drop Points
+          </Label>
+          <Button
+            onClick={() => openAddModal('drop_point')}
+            variant="outlined"
+            className="text-xs"
+          >
+            <Plus className="w-4 h-4 mr-1" />
+            Add Location
+          </Button>
+        </div>
+
+        {loadingResources ? (
+          <p className="text-xs text-neutral-400">Loading saved locations…</p>
+        ) : dropPointLocations.length > 0 ? (
+          <div className="space-y-2">
+            <p className="text-xs text-neutral-500">Click cards to select / deselect drop-off points</p>
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-2 max-h-48 overflow-y-auto pr-1">
+              {dropPointLocations.map((loc) => (
+                <LocationCard
+                  key={loc._id}
+                  location={loc}
+                  isSelected={dropPoint.includes(loc._id)}
+                  onClick={() => {
+                    if (dropPoint.includes(loc._id)) {
+                      removeDropPoint(loc._id)
+                    } else {
+                      addDropPoint(loc._id)
+                    }
+                  }}
+                  onEdit={() => openEditModal(loc)}
+                />
+              ))}
+            </div>
+            {dropPoint.length > 0 && (
+              <div className="flex flex-wrap gap-2 mt-2">
+                {dropPoint.map((id) => {
+                  const loc = locations.find((l) => l._id === id)
+                  return (
+                    <span
+                      key={id}
+                      className="inline-flex items-center gap-1 bg-orange-100 text-orange-800 text-xs px-2 py-1 rounded-full"
+                    >
+                      {loc?.name ?? id}
+                      <button
+                        type="button"
+                        onClick={() => removeDropPoint(id)}
+                        className="ml-0.5 hover:text-red-600 font-bold"
+                      >
+                        ×
+                      </button>
+                    </span>
+                  )
+                })}
+              </div>
+            )}
+          </div>
+        ) : (
+          <div className="rounded-lg border border-dashed border-neutral-300 p-4 text-center">
+            <p className="text-xs text-neutral-500 mb-2">No drop point locations saved yet</p>
+            <button
+              type="button"
+              onClick={() => openAddModal('drop_point')}
+              className="text-xs text-blue-600 hover:text-blue-700 font-medium"
+            >
+              + Add a drop point location
+            </button>
+          </div>
+        )}
+
+        <p className="text-xs text-muted-foreground">Select drop-off locations for this batch</p>
+      </div>
+
+      {/* Close Booking Date */}
       <div className="space-y-2">
         <Label htmlFor="closeBooking" className="text-sm flex items-center gap-2">
-          <Calendar className="w-4 h-4 text-neutral-400" />
-          Close Booking Date & Time
+          Stop Bookings Date
         </Label>
         <CustomInput
           id="closeBooking"
-          type="datetime-local"
+          type="date"
           value={closeBooking}
           onChange={(e) => updateField('closeBooking', e.target.value)}
           variant="input"
-          min={closeBookingMin}
           max={closeBookingMax}
           required
         />
         <p className="text-xs text-muted-foreground">
-          Date and time when booking for this batch will be closed
-        </p>
-      </div>
-
-      {/* Meeting Point */}
-      <div className="space-y-2">
-        <Label htmlFor="meetingPoint" className="text-sm flex items-center gap-2">
-          <MapPin className="w-4 h-4 text-neutral-400" />
-          Meeting Point
-        </Label>
-        <CustomInput
-          id="meetingPoint"
-          placeholder="e.g., Majnu Ka Tilla, Delhi"
-          value={meetingPoint}
-          onChange={(e) => updateField('meetingPoint', e.target.value)}
-          variant="input"
-          required
-        />
-        <p className="text-xs text-muted-foreground">
-          Specify where participants should meet for the trip
-        </p>
-      </div>
-
-      {/* End Point */}
-      <div className="space-y-2">
-        <Label htmlFor="endPoint" className="text-sm flex items-center gap-2">
-          <MapPin className="w-4 h-4 text-neutral-400" />
-          End Point
-        </Label>
-        <CustomInput
-          id="endPoint"
-          placeholder="e.g., Connaught Place, Delhi"
-          value={endPoint}
-          onChange={(e) => updateField('endPoint', e.target.value)}
-          variant="input"
-          required
-        />
-        <p className="text-xs text-muted-foreground">
-          Specify where the trip will end
+          Last date for participants to book this batch
         </p>
       </div>
 
       {/* Point of Contact */}
-      <div className="space-y-2">
-        <Label htmlFor="pointOfContactName" className="text-sm flex items-center gap-2">
+      <div className="space-y-4">
+        <div className="flex items-center gap-2">
           <User className="w-4 h-4 text-neutral-400" />
-          Point of Contact Name
-        </Label>
-        <CustomInput
-          id="pointOfContactName"
-          placeholder="e.g., Rajesh Kumar"
-          value={pointOfContact.name}
-          onChange={(e) => updatePointOfContact('name', e.target.value)}
-          variant="input"
-          required
-        />
-        <p className="text-xs text-muted-foreground">
-          Name of the person participants can contact for this batch
-        </p>
-      </div>
+          <h3 className="text-sm font-medium text-neutral-700">Point of Contact</h3>
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="space-y-2">
+            <Label htmlFor="pointOfContactName" className="text-sm">
+              Name
+            </Label>
+            <CustomInput
+              id="pointOfContactName"
+              placeholder="e.g., Rajesh Kumar"
+              value={pointOfContact.name}
+              onChange={(e) => updatePointOfContact('name', e.target.value)}
+              variant="input"
+              required
+            />
+          </div>
 
-      {/* Phone Number */}
-      <div className="space-y-2">
-        <Label htmlFor="pointOfContactPhone" className="text-sm flex items-center gap-2">
-          <Phone className="w-4 h-4 text-neutral-400" />
-          Point of Contact Phone Number
-        </Label>
-        <CustomInput
-          id="pointOfContactPhone"
-          type="tel"
-          placeholder="e.g., 9876543210"
-          value={pointOfContact.phone}
-          onChange={(e) => updatePointOfContact('phone', e.target.value.replace(/\D/g, ''))}
-          variant="input"
-          maxLength={10}
-          required
-        />
+          <div className="space-y-2">
+            <Label htmlFor="pointOfContactPhone" className="text-sm flex items-center gap-2">
+              <Phone className="w-4 h-4 text-neutral-400" />
+              Phone Number
+            </Label>
+            <CustomInput
+              id="pointOfContactPhone"
+              type="tel"
+              placeholder="e.g., 9876543210"
+              value={pointOfContact.phone}
+              onChange={(e) => updatePointOfContact('phone', e.target.value.replace(/\D/g, ''))}
+              variant="input"
+              maxLength={10}
+              required
+            />
+          </div>
+        </div>
         <p className="text-xs text-muted-foreground">
-          10-digit phone number for the point of contact
+          Contact details for the person participants can reach for this batch
         </p>
       </div>
 
@@ -214,6 +449,16 @@ const BatchBasicInfoStep: React.FC = () => {
           Total number of available seats for this batch
         </p>
       </div>
+
+      {/* Location Picker Modal */}
+      <LocationPickerModal
+        open={locationModalOpen}
+        onClose={() => setLocationModalOpen(false)}
+        onSaved={handleLocationSaved}
+        editingLocation={editingLocation}
+        defaultCategory={modalDefaultCategory}
+        lockCategory={lockCategory}
+      />
     </div>
   )
 }

@@ -57,7 +57,7 @@ export const useDocumentUpload = (options?: DocumentUploadOptions) => {
       }
 
       // Upload all files to S3
-      const uploadResults = await uploadImages(filesToUpload);
+      const uploadResults = await uploadImages(filesToUpload.map(file => ({ file })));
 
       const failedUploads = uploadResults.filter(result => !result.success);
       if (failedUploads.length > 0) {

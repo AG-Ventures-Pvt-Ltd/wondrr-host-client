@@ -8,6 +8,14 @@ import Loader from '@/common/components/composites/Loader';
 import { Loader2 } from 'lucide-react';
 import BatchFilters, { FilterType, BATCH_FILTERS } from './components/BatchFilters';
 import BatchCard from './components/BatchCard';
+import { DuplicateBatchModal } from './components/DuplicateBatchModal';
+import { useDuplicateBatch } from '../../hooks/useDuplicateBatch';
+import SuccessModal from '@/common/components/modals/SuccessModal';
+
+interface DuplicateTarget {
+    batchId: string;
+    durationDays: number;
+}
 
 const Batches = () => {
     const params = useParams();
@@ -15,6 +23,9 @@ const Batches = () => {
     const [activeFilter, setActiveFilter] = useState<FilterType>('active');
     const limit = 10;
     const sentinelRef = useRef<HTMLDivElement>(null);
+
+    const [duplicateTarget, setDuplicateTarget] = useState<DuplicateTarget | null>(null);
+    const [successCount, setSuccessCount] = useState<number | null>(null);
 
     const handleFilterChange = (filter: FilterType) => {
         setActiveFilter(filter);
@@ -24,6 +35,14 @@ const Batches = () => {
 
     const { tripBatches, isLoading, isFetchingNextPage, hasNextPage, fetchNextPage, title, location } =
         useInfiniteTripBatches(tripId, limit, activeStatus);
+
+    const { duplicateBatch, isPending } = useDuplicateBatch({
+        tripSlug: tripId,
+        onSuccess: (count) => {
+            setDuplicateTarget(null);
+            setSuccessCount(count);
+        },
+    });
 
     useEffect(() => {
         const el = sentinelRef.current;
@@ -57,15 +76,39 @@ const Batches = () => {
             <BatchFilters activeFilter={activeFilter} onChange={handleFilterChange} />
             <div className="grid grid-cols-2 gap-6">
                 {tripBatches.map((batch) => (
-                    <BatchCard key={batch._id} batch={batch} tripId={tripId} />
+                    <BatchCard
+                        key={batch._id}
+                        batch={batch}
+                        tripId={tripId}
+                        onDuplicate={(batchId, durationDays) => setDuplicateTarget({ batchId, durationDays })}
+                    />
                 ))}
             </div>
             <div ref={sentinelRef} className="h-8 mt-4 flex items-center justify-center">
                 {isFetchingNextPage && <Loader2 className="w-5 h-5 animate-spin text-primary" />}
             </div>
+
+            {duplicateTarget && (
+                <DuplicateBatchModal
+                    open={!!duplicateTarget}
+                    onClose={() => setDuplicateTarget(null)}
+                    sourceBatchId={duplicateTarget.batchId}
+                    durationDays={duplicateTarget.durationDays}
+                    onDuplicate={duplicateBatch}
+                    isPending={isPending}
+                />
+            )}
+
+            <SuccessModal
+                open={successCount !== null}
+                onClose={() => setSuccessCount(null)}
+                title="Batches Created!"
+                description={`${successCount} new batch${successCount !== 1 ? 'es were' : ' was'} successfully created as drafts.`}
+            />
         </div>
     );
 };
 
 export default Batches;
+
 

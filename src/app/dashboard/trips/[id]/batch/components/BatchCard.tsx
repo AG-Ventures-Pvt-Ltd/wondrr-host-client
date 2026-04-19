@@ -1,5 +1,5 @@
 import { useRouter } from 'next/navigation';
-import { Calendar, Star, Users } from 'lucide-react';
+import { Calendar, Copy, Star, Users } from 'lucide-react';
 import Card from '@/common/components/composites/Card';
 import { formatDate, formatDateRangeWithDuration } from '@/common/utils/dateUtils';
 import { BATCH_STATUS } from '../../../constants/batchStatus';
@@ -8,6 +8,7 @@ import { TripBatchDetails } from '../../../types';
 interface BatchCardProps {
     batch: TripBatchDetails;
     tripId: string;
+    onDuplicate?: (batchId: string, durationDays: number) => void;
 }
 
 const getStatusColor = (status: string) => {
@@ -33,10 +34,22 @@ const STATUS_TEXT: Record<string, string> = {
     gray: 'text-gray-600',
 };
 
-const BatchCard = ({ batch, tripId }: BatchCardProps) => {
+const BatchCard = ({ batch, tripId, onDuplicate }: BatchCardProps) => {
     const router = useRouter();
     const occupancyPercent = Math.round((batch.totalBookings / batch.totalSeats) * 100);
     const color = getStatusColor(batch.status);
+
+    const durationDays = (() => {
+        if (!batch.startDate || !batch.endDate) return 0;
+        const start = new Date(batch.startDate);
+        const end = new Date(batch.endDate);
+        return Math.round((end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24));
+    })();
+
+    const handleDuplicateClick = (e: React.MouseEvent) => {
+        e.stopPropagation();
+        onDuplicate?.(batch._id, durationDays);
+    };
 
     return (
         <Card
@@ -57,9 +70,18 @@ const BatchCard = ({ batch, tripId }: BatchCardProps) => {
                             {formatDateRangeWithDuration(batch.startDate, batch.endDate)}
                         </span>
                     </div>
-                    <span className={`px-3 py-1 rounded-xl text-xs ${STATUS_BG[color]} ${STATUS_TEXT[color]}`}>
-                        {batch.status}
-                    </span>
+                    <div className="flex items-center gap-2">
+                        <span className={`px-3 py-1 rounded-xl text-xs ${STATUS_BG[color]} ${STATUS_TEXT[color]}`}>
+                            {batch.status}
+                        </span>
+                        <button
+                            title="Duplicate batch"
+                            onClick={handleDuplicateClick}
+                            className="p-1.5 rounded-lg hover:bg-gray-100 text-subtext hover:text-primary transition-colors"
+                        >
+                            <Copy size={14} />
+                        </button>
+                    </div>
                 </div>
                 <div className="grid grid-cols-2 gap-4">
                     <div className="flex flex-col gap-1">

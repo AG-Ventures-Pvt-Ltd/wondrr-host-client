@@ -4,7 +4,7 @@ import axios from "axios";
 import { baseAPI } from "../services/baseApi";
 import { notify } from "@/common/utils/notify";
 import { logError } from "@/common/utils/logError";
-import { PresignedUrlResponse, UploadResult, UseS3UploadReturn } from '@/types/common'
+import { PresignedUrlResponse, UploadFile, UploadResult, UseS3UploadReturn } from '@/types/common'
 
 
 const generateRandomString = (length: number = 16): string => {
@@ -25,12 +25,13 @@ const generateUniqueFilename = (originalFile: File): string => {
 
 const getPresignedUrl = async (
   fileName: string,
-  fileType: string
+  fileType: string,
+  key?: string
 ): Promise<PresignedUrlResponse> => {
   try {
-
+    const query = key ? `?key=${encodeURIComponent(key)}` : "";
     const response = await baseAPI.post<{ data: PresignedUrlResponse }>(
-      "/api/client/v1/s3upload/geturl",
+      `/api/client/v1/s3upload/geturl${query}`,
       {
         fileName,
         fileType,
@@ -93,7 +94,7 @@ const useS3Upload = (): UseS3UploadReturn => {
    * Upload single or multiple images to S3
    * @param files - Array of files to upload (can be a single file in an array)
    */
-  const uploadImages = async (files: File[]): Promise<UploadResult[]> => {
+  const uploadImages = async (files: UploadFile[]): Promise<UploadResult[]> => {
     if (!files || files.length === 0) {
       notify.error("No files provided for upload");
       return [];
@@ -108,7 +109,7 @@ const useS3Upload = (): UseS3UploadReturn => {
 
     try {
       // Upload all files in parallel
-      const uploadPromises = files.map(async (file, index) => {
+      const uploadPromises = files.map(async ({ file, key }, index) => {
         try {
           // Generate unique filename
           const uniqueFilename = generateUniqueFilename(file);
@@ -116,7 +117,8 @@ const useS3Upload = (): UseS3UploadReturn => {
           // Get presigned URL from backend
           const { url: presignedUrl } = await getPresignedUrl(
             uniqueFilename,
-            file.type
+            file.type,
+            key
           );
 
           // Upload to S3

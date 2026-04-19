@@ -3,25 +3,25 @@
 import React from 'react'
 import { Label } from '@/common/ui/label'
 import { Badge } from '@/common/ui/badge'
-import { X } from 'lucide-react'
+import { Check, X } from 'lucide-react'
 import CustomInput from '@/common/components/composites/CustomInput'
 import CustomSelect from '@/common/components/composites/CustomSelect'
 import Button from '@/common/components/atoms/Button'
 import { Toggle } from '@/common/ui/toggle'
 import { useTripFormStore } from '../../store'
-import { useTagManager, useCategoryManager } from '../../hooks'
-import { TRIP_CATEGORIES, VALIDATION_RULES } from '../../constants'
+import { useTagManager } from '../../hooks'
+import { TRIP_CATEGORIES, TRIP_DIFFICULTIES, VALIDATION_RULES } from '../../constants'
+import type { TripDifficulty } from '../../types'
 
 interface BasicInfoStepProps {
   isEditMode?: boolean
 }
 
 const BasicInfoStep: React.FC<BasicInfoStepProps> = ({ isEditMode = false }) => {
-  const { title, description, location, isFemaleOnly, updateField, updateLocationField } = useTripFormStore()
+  const { title, description, location, isFemaleOnly, difficulty, updateField, updateLocationField, category, toggleCategory } = useTripFormStore()
   const { tagInput, setTagInput, tags, handleAddTag, handleRemoveTag, handleKeyPress } = useTagManager()
-  const { category, customCategory, handleCategoryChange, handleCustomCategoryChange } = useCategoryManager()
 
-  const categoryOptions = TRIP_CATEGORIES.map(cat => ({ value: cat, label: cat }))
+  const difficultyOptions = TRIP_DIFFICULTIES.map(d => ({ value: d.value, label: d.label }))
 
   return (
     <div className="space-y-6">
@@ -36,7 +36,6 @@ const BasicInfoStep: React.FC<BasicInfoStepProps> = ({ isEditMode = false }) => 
           onChange={(e) => updateField('title', e.target.value)}
           variant="input"
           required
-          disabled={isEditMode}
         />
         <p className="text-xs text-subtext">
           Choose a catchy and descriptive title for your trip
@@ -46,7 +45,7 @@ const BasicInfoStep: React.FC<BasicInfoStepProps> = ({ isEditMode = false }) => 
       {/* Description */}
       <div className="space-y-2">
         <Label htmlFor="description" className="text-sm">
-          Description
+          Trip Vibe 
         </Label>
         <CustomInput
           id="description"
@@ -62,39 +61,60 @@ const BasicInfoStep: React.FC<BasicInfoStepProps> = ({ isEditMode = false }) => 
         </p>
       </div>
 
-      {/* Category */}
+      {/* Category — multi-select chips */}
       <div className="space-y-2">
-        <Label htmlFor="category" className="text-sm">
-          Category
-        </Label>
-        <CustomSelect
-          id="category"
-          value={category}
-          placeholder='Select Category'
-          onChange={handleCategoryChange}
-          options={categoryOptions}
-          className="w-full"
-          required
-          disabled={isEditMode}
-        />
-
-        {category === 'Other' && (
-          <div className="space-y-2">
-            <Label htmlFor="customCategory" className="text-sm">
-              Specify Category <span className="text-red-500">*</span>
-            </Label>
-            <CustomInput
-              id="customCategory"
-              placeholder="Enter your custom category"
-              value={customCategory}
-              onChange={(e) => handleCustomCategoryChange(e.target.value)}
-              variant="input"
-              required
-              disabled={isEditMode}
-            />
-          </div>
+        <div className="flex items-center gap-2">
+          <Label className="text-sm">
+            Experience Type <span className="text-red-500">*</span>
+          </Label>
+          {category.length > 0 && (
+            <Badge variant="secondary">{category.length} selected</Badge>
+          )}
+        </div>
+        <p className="text-xs text-muted-foreground">Select all that apply</p>
+        <div className="flex flex-wrap gap-2">
+          {TRIP_CATEGORIES.filter(c => c !== 'Other').map((cat) => {
+            const isSelected = category.includes(cat)
+            return (
+              <button
+                key={cat}
+                type="button"
+                onClick={() => toggleCategory(cat)}
+                className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm border transition-colors
+                  ${isSelected
+                    ? 'bg-primary text-white border-primary'
+                    : 'bg-white text-neutral-600 border-neutral-300 hover:border-primary hover:text-primary'
+                  }
+                  cursor-pointer
+                `}
+              >
+                {isSelected && <Check className="w-3 h-3" />}
+                {cat}
+              </button>
+            )
+          })}
+        </div>
+        {category.length === 0 && (
+          <p className="text-xs text-amber-600">Please select at least one category</p>
         )}
       </div>
+
+      {/* Difficulty */}
+      <div className="space-y-2">
+        <Label htmlFor="difficulty" className="text-sm">
+          Difficulty
+        </Label>
+        <CustomSelect
+          id="difficulty"
+          value={difficulty}
+          placeholder="Select Difficulty"
+          onChange={(val) => updateField('difficulty', val as TripDifficulty)}
+          options={difficultyOptions}
+          className="w-full"
+        />
+      </div>
+
+      {/* Tags */}
       <div className="space-y-2">
         <Label htmlFor="tags" className="text-sm font-medium">
           Tags
@@ -164,22 +184,6 @@ const BasicInfoStep: React.FC<BasicInfoStepProps> = ({ isEditMode = false }) => 
       {/* Location Section */}
       <div className="space-y-4 pt-4 border-t border-neutral-200">
         <h3 className="text-lg font-medium text-neutral-900">Location Details</h3>
-        
-        {/* Address */}
-        <div className="space-y-2">
-          <Label htmlFor="address" className="text-sm">
-            Address 
-          </Label>
-          <CustomInput
-            id="address"
-            placeholder="Enter trip address"
-            value={location.address || ''}
-            onChange={(e) => updateLocationField('address', e.target.value)}
-            variant="input"
-            required
-            disabled={isEditMode}
-          />
-        </div>
 
         {/* City and State */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -194,7 +198,6 @@ const BasicInfoStep: React.FC<BasicInfoStepProps> = ({ isEditMode = false }) => 
               onChange={(e) => updateLocationField('city', e.target.value)}
               variant="input"
               required
-              disabled={isEditMode}
             />
           </div>
 
@@ -209,7 +212,6 @@ const BasicInfoStep: React.FC<BasicInfoStepProps> = ({ isEditMode = false }) => 
               onChange={(e) => updateLocationField('state', e.target.value)}
               variant="input"
               required
-              disabled={isEditMode}
             />
           </div>
         </div>

@@ -6,9 +6,9 @@ export const useItineraryManager = () => {
     addItineraryDay, 
     updateItineraryDay, 
     updateItineraryTitle,
-    addItineraryActivity,
-    removeItineraryActivity,
-    removeItineraryDay 
+    removeItineraryDay,
+    itineraryStartDay,
+    setItineraryStartDay,
   } = useTripFormStore()
 
   return {
@@ -16,8 +16,8 @@ export const useItineraryManager = () => {
     addItineraryDay,
     updateItineraryDay,
     updateItineraryTitle,
-    addItineraryActivity,
-    removeItineraryActivity,
     removeItineraryDay,
+    itineraryStartDay,
+    setItineraryStartDay,
   }
 }

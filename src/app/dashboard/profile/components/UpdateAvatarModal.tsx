@@ -7,6 +7,7 @@ import Image from '@/common/components/atoms/Image';
 import useS3Upload from '@/common/hooks/useS3Upload';
 import usePostData from '@/common/services/usePostData';
 import { API_ENDPOINTS } from '@/common/constants/apiEndpoints';
+import { useSession } from 'next-auth/react';
 
 interface UpdateAvatarModalProps {
   open: boolean;
@@ -21,6 +22,7 @@ const UpdateAvatarModal: React.FC<UpdateAvatarModalProps> = ({
   currentAvatar,
   onSuccess,
 }) => {
+  const { data: session } = useSession();
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -67,7 +69,9 @@ const UpdateAvatarModal: React.FC<UpdateAvatarModalProps> = ({
 
     try {
       // Upload to S3
-      const results = await uploadImages([selectedFile]);
+      const userId = session?.user?.id;
+      const key = userId ? `${userId}/avatar` : undefined;
+      const results = await uploadImages([{ file: selectedFile, key }]);
       
       if (results.length > 0 && results[0].success) {
         // Update avatar via API

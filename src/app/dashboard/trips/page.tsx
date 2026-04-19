@@ -75,11 +75,19 @@ const Trips = () => {
                 onClose={() => setShowStatusModal(false)}
                 title="Change Trip Status"
                 description={
-                    selectedTrip?.targetStatus === 'published'
+                    selectedTrip?.targetStatus === 'in_review'
+                        ? `Are you sure you want to submit "${selectedTrip?.name}" for review? It will be reviewed by our team before publishing.`
+                        : selectedTrip?.targetStatus === 'published'
                         ? `Are you sure you want to publish "${selectedTrip?.name}"? It will be visible to travellers.`
-                        : `Are you sure you want to unpublish "${selectedTrip?.name}"? It will no longer be visible to travellers.`
+                        : `Are you sure you want to move "${selectedTrip?.name}" back to draft status?`
                 }
-                submitText={selectedTrip?.targetStatus === 'published' ? 'Publish Trip' : 'Unpublish Trip'}
+                submitText={
+                    selectedTrip?.targetStatus === 'in_review'
+                        ? 'Submit for Review'
+                        : selectedTrip?.targetStatus === 'published'
+                        ? 'Publish Trip'
+                        : 'Move to Draft'
+                }
                 onSubmit={handleConfirmStatusChange}
                 cancelText="Cancel"
                 disabled={updateTripStatusMutation.isPending}

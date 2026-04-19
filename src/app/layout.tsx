@@ -1,6 +1,7 @@
 'use client'
 
 import "./globals.css";
+import 'maplibre-gl/dist/maplibre-gl.css';
 import React from 'react';
 import { Providers } from './providers';
 import { ToastContainer } from 'react-toastify';

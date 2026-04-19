@@ -18,8 +18,8 @@ export const validateTripForm = (formData: TripFormData): ValidationResult => {
     errors.push('Trip description is required')
   }
 
-  if (!formData.category.trim()) {
-    errors.push('Trip category is required')
+  if (formData.category.length === 0) {
+    errors.push('At least one category is required')
   }
 
   if (formData.tags.length < VALIDATION_RULES.MIN_TAGS) {
@@ -27,10 +27,6 @@ export const validateTripForm = (formData: TripFormData): ValidationResult => {
   }
 
   // Location validations
-  if (!formData.location.address.trim()) {
-    errors.push('Address is required')
-  }
-
   if (!formData.location.city.trim()) {
     errors.push('City is required')
   }
@@ -49,21 +45,36 @@ export const validateTripForm = (formData: TripFormData): ValidationResult => {
   }
 
   // Pricing validations
-  if (formData.basePrice === null || formData.basePrice < VALIDATION_RULES.MIN_BASE_PRICE) {
-    errors.push('Base price per person is required and must be a positive number')
+  if (formData.pricings.length === 0) {
+    errors.push('At least one pricing tier is required')
   }
 
-  if (formData.price === null || formData.price < VALIDATION_RULES.MIN_MAX_PRICE) {
-    errors.push('Price per person is required and must be a positive number')
+  formData.pricings.forEach((tier, index) => {
+    if (!tier.label.trim()) {
+      errors.push(`Pricing tier ${index + 1}: Label is required`)
+    }
+    if (tier.pricePerPerson < 0) {
+      errors.push(`Pricing tier ${index + 1}: Price per person cannot be negative`)
+    }
+    if (tier.maxQuantity !== undefined && tier.maxQuantity < 1) {
+      errors.push(`Pricing tier ${index + 1}: Max quantity must be at least 1`)
+    }
+  })
+
+  // Advance booking validations
+  if (formData.isAdvanceBookingAllowed && formData.advanceBookingPrice <= 0) {
+    errors.push('Advance booking price must be greater than 0 when advance booking is enabled')
   }
 
-  if (
-    formData.basePrice !== null &&
-    formData.price !== null &&
-    formData.price < formData.basePrice
-  ) {
-    errors.push('Price must be greater than or equal to base price')
-  }
+  // Add-on validations
+  formData.addOns.forEach((addon, index) => {
+    if (!addon.label.trim()) {
+      errors.push(`Add-on ${index + 1}: Label is required`)
+    }
+    if (addon.pricePerPerson < 0) {
+      errors.push(`Add-on ${index + 1}: Price per person cannot be negative`)
+    }
+  })
 
   // Itinerary validations
   if (formData.itinerary.length < VALIDATION_RULES.MIN_ITINERARY_DAYS) {
@@ -89,20 +100,18 @@ export const validateTripForm = (formData: TripFormData): ValidationResult => {
     errors.push(`At least ${VALIDATION_RULES.MIN_INCLUSIONS} inclusions are required`)
   }
 
+  // Highlights validations
+  if (formData.highlights.length < VALIDATION_RULES.MIN_HIGHLIGHTS) {
+    errors.push(`At least ${VALIDATION_RULES.MIN_HIGHLIGHTS} highlights are required`)
+  }
+
   // Exclusions validations
   if (formData.exclusions.length < VALIDATION_RULES.MIN_EXCLUSIONS) {
     errors.push(`At least ${VALIDATION_RULES.MIN_EXCLUSIONS} exclusions are required`)
   }
 
   // Sharing Price validations
-  formData.sharingPrice.forEach((sp, index) => {
-    if (sp.people < 1) {
-      errors.push(`Sharing option ${index + 1}: Number of people must be at least 1`)
-    }
-    if (sp.additionalPricePerPerson < 0) {
-      errors.push(`Sharing option ${index + 1}: Additional price cannot be negative`)
-    }
-  })
+  // (removed — sharingPrice replaced by pricings tiers)
 
   return {
     isValid: errors.length === 0,
@@ -115,30 +124,64 @@ export const prepareSubmissionData = (formData: TripFormData) => {
     try {
       const urlWithoutQuery = url.split('?')[0];
       const urlObj = new URL(urlWithoutQuery);
-      return urlObj.pathname.slice(1); // Remove leading slash to get path after domain
+      return urlObj.pathname.slice(1);
     } catch {
-      // Fallback: if URL parsing fails, return the original without query
       return url.split('?')[0];
     }
   };
 
   return {
-    ...formData,
+    title: formData.title,
+    description: formData.description,
+    type: formData.type || undefined,
+    difficulty: formData.difficulty || undefined,
+    category: formData.category,
+    tags: formData.tags,
+    location: {
+      city: formData.location.city,
+      state: formData.location.state,
+      latitude: formData.location.latitude,
+      longitude: formData.location.longitude,
+    },
+    isFemaleOnly: formData.isFemaleOnly,
+    isAdvanceBookingAllowed: formData.isAdvanceBookingAllowed,
+    advanceBookingPrice: formData.advanceBookingPrice,
+    additionalInfo: formData.additionalInfo,
+    status: formData.status,
     tripImages: formData.tripImages.map((img) => extractS3Path(img.url)),
+    faqs: formData.faqs.map((faq) => ({
+      question: faq.question,
+      answer: faq.answer,
+    })),
     itinerary: formData.itinerary.map((day) => ({
       day: day.dayNumber,
       title: day.title,
-      description: day.description,
-      activities: day.activities,
+      description: Array.isArray(day.description) ? day.description : [day.description],
     })),
     inclusions: formData.inclusions.map((item) => item.text),
     exclusions: formData.exclusions.map((item) => item.text),
-    sharingPrice: formData.sharingPrice.map((sp) => ({
-      people: sp.people,
-      additionalPricePerPerson: sp.additionalPricePerPerson,
+    thingsToCarry: formData.thingsToCarry.map((item) => item.text),
+    highlights: formData.highlights.map((item) => ({
+      title: item.title,
+      image: item.image,
     })),
-    additionalInfo: formData.additionalInfo,
-    status: 'draft',
+    pricings: formData.pricings.map((tier) => ({
+      label: tier.label,
+      description: tier.description,
+      pricePerPerson: tier.pricePerPerson,
+    })),
+    addOns: formData.addOns.map((addon) => ({
+      label: addon.label,
+      description: addon.description,
+      category: addon.category,
+      pricePerPerson: addon.pricePerPerson,
+    })),
+    cancellationPolicy: {
+      refundTiers: (formData.cancellationPolicy || []).map((tier) => ({
+        daysBeforeCancellation: tier.daysBeforeCancellation,
+        refundPercentage: tier.refundPercentage,
+      })),
+    },
   }
 }
 

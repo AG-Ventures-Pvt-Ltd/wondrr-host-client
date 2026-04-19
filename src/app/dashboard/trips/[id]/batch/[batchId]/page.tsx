@@ -4,7 +4,7 @@ import React from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import Card from '@/common/components/composites/Card';
 import Button from '@/common/components/atoms/Button';
-import { TrendingUp, Users, IndianRupee, MapPin, Clock, Share2, Edit } from 'lucide-react';
+import { TrendingUp, Users, IndianRupee, MapPin, Share2, Edit } from 'lucide-react';
 import { useBatchDetails } from '../../../hooks/useBatchDetails';
 import Loader from '@/common/components/composites/Loader'
 import BackButton from '@/common/ui/BackButton';
@@ -17,6 +17,8 @@ const BatchDetailsPage = () => {
   const tripId = params.id as string;
 
   const { batchDetails, isLoading, error } = useBatchDetails(batchId);
+
+  console.log(batchDetails)
 
   const handleEditBatch = () => {
     router.push(`/dashboard/trips/${tripId}/batch/${batchId}/edit`);
@@ -89,25 +91,33 @@ const BatchDetailsPage = () => {
                 <div className="flex items-center gap-2">
                   <MapPin className="w-4 h-4 text-neutral-400" />
                   <span className="text-sm text-maintext">
-                    {batchDetails.batchInfo.meetingPoint}
+                    {Array.isArray(batchDetails.batchInfo.meetingPoint) && batchDetails.batchInfo.meetingPoint.length > 0
+                      ? batchDetails.batchInfo.meetingPoint.map((point, idx) => {
+                          const loc = point.location
+                          const locName = typeof loc === 'object' && loc !== null ? loc.name : String(loc)
+                          return (
+                            <div key={idx} className="text-sm text-maintext">
+                              {locName}{point.pickupPrice ? ` — ₹${point.pickupPrice}` : ''}
+                            </div>
+                          )
+                        })
+                      : 'No meeting points set'
+                    }
                   </span>
                 </div>
               </div>
               <div className="flex flex-col gap-2">
-                <span className="text-xs text-neutral-500">Start Time</span>
-                <div className="flex items-center gap-2">
-                  <Clock className="w-4 h-4 text-neutral-400" />
-                  <span className="text-sm text-maintext">
-                    {batchDetails.batchInfo.startTime}
-                  </span>
-                </div>
-              </div>
-              <div className="flex flex-col gap-2">
-                <span className="text-xs text-neutral-500">End Point</span>
+                <span className="text-xs text-neutral-500">Drop Points</span>
                 <div className="flex items-center gap-2">
                   <MapPin className="w-4 h-4 text-neutral-400" />
                   <span className="text-sm text-maintext">
-                    {batchDetails.batchInfo.endPoint}
+                    {Array.isArray(batchDetails.batchInfo.dropPoint) && batchDetails.batchInfo.dropPoint.length > 0
+                      ? batchDetails.batchInfo.dropPoint.map((dp, idx) => {
+                          const name = typeof dp === 'object' && dp !== null ? dp.name : String(dp)
+                          return <div key={idx}>{name}</div>
+                        })
+                      : 'No drop points set'
+                    }
                   </span>
                 </div>
               </div>
@@ -120,7 +130,7 @@ const BatchDetailsPage = () => {
                     </span>
                   </div>
                   <span className="text-sm text-maintext">
-                    {batchDetails.batchInfo.pointOfContact} - {batchDetails.batchInfo.contactPhone}
+                    {batchDetails.batchInfo.pointOfContact} — {batchDetails.batchInfo.contactPhone}
                   </span>
                 </div>
               </div>

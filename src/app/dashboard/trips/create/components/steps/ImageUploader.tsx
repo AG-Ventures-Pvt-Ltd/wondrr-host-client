@@ -8,6 +8,7 @@ import { Upload, X, Image as ImageIcon } from 'lucide-react'
 import useS3Upload from '@/common/hooks/useS3Upload'
 import { notify } from '@/common/utils/notify'
 import MyImage from '@/common/components/atoms/Image'
+import { useSession } from 'next-auth/react'
 
 interface ImagePreview {
   file?: File
@@ -20,13 +21,16 @@ interface ImageUploaderProps {
   images?: ImagePreview[]
   onImagesChange: (images: ImagePreview[]) => void
   minRequired?: number
+  uploadKey?: string
 }
 
 const ImageUploader: React.FC<ImageUploaderProps> = ({
   images = [],
   onImagesChange,
-  minRequired = 5
+  minRequired = 5,
+  uploadKey,
 }) => {
+  const { data: session } = useSession()
   const fileInputRef = useRef<HTMLInputElement>(null)
   const { uploadImages, isUploading, progress, error } = useS3Upload()
   const [previewImages, setPreviewImages] = useState<ImagePreview[]>(images)
@@ -57,8 +61,7 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({
     }
   }
 
-  const handleRemoveImage = (index: number, isStaged: boolean) => {
-    if (isStaged) {
+  const handleRemoveImage = (index: number, isStaged: boolean) => {    if (isStaged) {
       const imageToRemove = stagedImages[index]
       const newStagedImages = stagedImages.filter((_, i) => i !== index)
       
@@ -77,6 +80,15 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({
       setPreviewImages(newImages)
       onImagesChange(newImages)
     }
+  }
+
+  const handleSetCover = (index: number) => {
+    if (index === 0) return
+    const newImages = [...previewImages]
+    const [cover] = newImages.splice(index, 1)
+    newImages.unshift(cover)
+    setPreviewImages(newImages)
+    onImagesChange(newImages)
   }
 
   const handleDragOver = (e: React.DragEvent<HTMLDivElement>) => {
@@ -122,7 +134,9 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({
     setStagedImages(prev => prev.map(img => ({ ...img, isUploading: true })))
 
     try {
-      const results = await uploadImages(filesToUpload)
+      const userId = session?.user?.id;
+      const key = userId ? (uploadKey ? `${userId}/${uploadKey}` : userId) : uploadKey;
+      const results = await uploadImages(filesToUpload.map(file => ({ file, key })))
       
       const uploadedImages = results
         .filter(result => result.success)
@@ -236,7 +250,13 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({
               <p className="text-sm font-medium text-gray-700 mb-2">Uploaded Images</p>
               <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
                 {previewImages.map((preview, index) => (
-                  <Card key={`uploaded-${index}`} className="relative group overflow-hidden p-2">
+                  <Card 
+                    key={`uploaded-${index}`} 
+                    className={`relative group overflow-hidden p-2 cursor-pointer transition-all ${
+                      index === 0 ? 'ring-2 ring-primary ring-offset-2' : ''
+                    }`}
+                    onClick={() => handleSetCover(index)}
+                  >
                     <div className="aspect-video bg-gray-100 rounded-md overflow-hidden">
                       <MyImage
                         src={preview.url}
@@ -260,7 +280,10 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({
                     {/* Remove Button */}
                     <button
                       type="button"
-                      onClick={() => handleRemoveImage(index, false)}
+                      onClick={(e) => {
+                        e.stopPropagation()
+                        handleRemoveImage(index, false)
+                      }}
                       className="absolute top-4 right-4 z-10 w-6 h-6 bg-white rounded-full flex items-center justify-center shadow-md opacity-0 group-hover:opacity-100 transition-opacity hover:bg-red-50"
                     >
                       <X className="w-4 h-4 text-red-600" />

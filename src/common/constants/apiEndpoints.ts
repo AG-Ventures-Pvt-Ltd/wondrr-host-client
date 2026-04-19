@@ -17,6 +17,8 @@ export const API_ENDPOINTS = {
     },
     GET_BATCH_DETAILS: (batchId: string) => `api/client/v1/trips/host/trip/batch/${batchId}`,
     EDIT_BATCH: (batchId: string) => `api/client/v1/trips/host/trip/batch/edit/${batchId}`,
+    GET_TRIP_BATCH_RESOURCES: (tripSlug: string) => `api/client/v1/trips/host/trip/${tripSlug}/batch-resources`,
+    DUPLICATE_BATCH: 'api/client/v1/trips/host/trip/batch/duplicate',
   },
   BOOKINGS: {
     GET_HOST_BOOKINGS: (page: number, limit: number, tripId?: string, batchId?: string) => {
@@ -51,5 +53,9 @@ export const API_ENDPOINTS = {
   },
   SCHEDULE: {
     GET_MONTH_SCHEDULE: (month: string) => `api/client/v1/trips/host/schedule/${month}`,
-  }
+  },
+  LOCATIONS: {
+    ADD_LOCATION: 'api/client/v1/trips/host/location/add',
+    EDIT_LOCATION: (locationId: string) => `api/client/v1/trips/host/location/edit/${locationId}`,
+  },
 };

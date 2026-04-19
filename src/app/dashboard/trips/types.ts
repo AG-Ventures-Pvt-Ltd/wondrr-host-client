@@ -56,15 +56,24 @@ export interface TripBatchesResponse {
 export interface TripDetailsApiResponse {
   _id: string
   title: string
+  status?: string
   location: {
     address: string
     city: string
     state: string
   }
   description: string
-  images: string[]
+  tripImages: string[]
   tags: string[]
-  category: string
+  category: string[]
+  highlights: Array<{
+    title: string
+    image?: string
+  }>
+  isFemaleOnly: boolean
+  difficulty?: string
+  rating?: number
+  totalReviews?: number
   faqs: [{ question: string; answer: string }]
   itinerary: Array<{
     day: string
@@ -74,13 +83,34 @@ export interface TripDetailsApiResponse {
   }>
   inclusions: string[]
   exclusions: string[]
-  basePrice?: number
-  price?: number
-  sharingPrice?: [{
-      additionalPricePerPerson : number;
-      people : number;
-  }]
+  thingsToCarry?: string[]
+  pricing?: {
+    currency: string
+    pricings: Array<{
+      label: string
+      description: string
+      pricePerPerson: number
+      maxQuantity: number
+      bookedQuantity: number
+    }>
+    addOns: Array<{
+      label: string
+      description: string
+      category: string
+      pricePerPerson: number
+      maxQuantity: number
+      bookedQuantity: number
+    }>
+    isAdvanceBookingAllowed?: boolean
+    advanceBookingPrice?: number
+  }
   additionalInfo?:string;
+  cancellationPolicy?: {
+    refundTiers: Array<{
+      daysBeforeCancellation: number
+      refundPercentage: number
+    }>
+  }
   stats: {
     tripBatchesCount: number
     totalRevenue: number
@@ -98,10 +128,18 @@ export interface TripDetails {
     state: string
   }
   description: string
-  image: string
-  images: string[]
+  status?: string
+  tripImages: string[]
   tags: string[]
-  category: string
+  category: string[]
+  highlights: Array<{
+    title: string
+    image?: string
+  }>
+  isFemaleOnly: boolean
+  difficulty?: string
+  rating?: number
+  totalReviews?: number
   faqs: [{ question: string; answer: string }]
   itinerary: Array<{
     day: string
@@ -111,15 +149,38 @@ export interface TripDetails {
   }>
   inclusions: string[]
   exclusions: string[]
-  basePrice?: number
-  price?: number
-  sharingPrice?: [{
-      additionalPricePerPerson : number;
-      people : number;
-  }]
+  thingsToCarry?: string[]
+  pricing?: {
+    currency: string
+    pricings: Array<{
+      label: string
+      description: string
+      pricePerPerson: number
+      maxQuantity: number
+      bookedQuantity: number
+    }>
+    addOns: Array<{
+      label: string
+      description: string
+      category: string
+      pricePerPerson: number
+      maxQuantity: number
+      bookedQuantity: number
+    }>
+    isAdvanceBookingAllowed?: boolean
+    advanceBookingPrice?: number
+  }
   additionalInfo?: string;
+  cancellationPolicy?: {
+    refundTiers: Array<{
+      daysBeforeCancellation: number
+      refundPercentage: number
+    }>
+  }
   stats: {
     batches: number
     totalRevenue: string
   }
+  isAdvanceBookingAllowed?: boolean
+  advanceBookingPrice?: number
 }

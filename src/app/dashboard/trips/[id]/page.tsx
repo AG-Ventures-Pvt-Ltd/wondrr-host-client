@@ -14,6 +14,9 @@ import FAQ from './components/FAQ';
 import TripSidebar from './components/TripSidebar';
 import ShareTripModal from './components/ShareTripModal';
 import Loader from '@/common/components/composites/Loader';
+import Button from '@/common/components/atoms/Button';
+import { Share2, BarChart3, Eye } from 'lucide-react';
+import Card from '@/common/components/composites/Card';
 
 
 const TripDetailsPage = () => {
@@ -26,6 +29,8 @@ const TripDetailsPage = () => {
     const { tripDetails, isLoading, error } = useTripDetails(tripId);
     const { tripBatches } = useTripBatchDetails(tripId, 1, 2);
 
+    console.log(tripDetails?.highlights)
+
     const handleEditTrip = () => {
         router.push(`/dashboard/trips/${tripId}/edit`);
     };
@@ -37,19 +42,54 @@ const TripDetailsPage = () => {
     return (
         <div className="min-h-screen">
             <BackButton />
-            <div className="pt-10">
-                <TripHero
-                    image={tripDetails!.image}
-                    title={tripDetails!.title}
-                    location={tripDetails!.location}
-                    onEdit={handleEditTrip}
-                />
+            <div className="flex pt-6 gap-8">
+                <div className='flex-3'>
+                    <TripHero
+                        images={tripDetails!.tripImages}
+                        title={tripDetails!.title}
+                        location={tripDetails!.location}
+                        onEdit={handleEditTrip}
+                    />
+                </div>
+                <Card className="flex-1 flex flex-col gap-4">
+                    <h2 className="text-base text-maintext">Quick Actions</h2>
+                    <div className="flex flex-col gap-2">
+                        <Button
+                            variant="text"
+                            className="h-10 px-4 rounded-2xl flex items-center gap-2 hover:bg-gray-50 text-left justify-start"
+                            onClick={() => {
+                                const tripLink = `${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/trip/${tripId}`;
+                                window.open(tripLink, '_blank');
+                            }}
+                        >
+                            <Eye className="w-4 h-4 text-neutral-600" />
+                            <span className="text-sm text-neutral-600">View Public Page</span>
+                        </Button>
+                        <Button
+                            variant="text"
+                            className="h-10 px-4 rounded-2xl flex items-center gap-2 hover:bg-gray-50 text-left justify-start"
+                            onClick={() => router.push(`/dashboard/bookings?tripId=${tripId}`)}
+                        >
+                            <BarChart3 className="w-4 h-4 text-neutral-600" />
+                            <span className="text-sm text-neutral-600">View All Bookings</span>
+                        </Button>
+                        <Button
+                            variant="text"
+                            className="h-10 px-4 rounded-2xl flex items-center gap-2 hover:bg-gray-50 text-left justify-start"
+                            onClick={() => setIsShareModalOpen(true)}
+                        >
+                            <Share2 className="w-4 h-4 text-neutral-600" />
+                            <span className="text-sm text-neutral-600">Share Trip</span>
+                        </Button>
+                    </div>
+                </Card>
             </div>
             <div className="pt-8">
                 <StatsCards
                     totalRevenue={tripDetails!.stats.totalRevenue}
                     batches={tripDetails!.stats.batches}
                     category={tripDetails!.category}
+                    difficulty={tripDetails!.difficulty}
                 />
             </div>
             <div className="pt-6">
@@ -64,12 +104,12 @@ const TripDetailsPage = () => {
                         tags={tripDetails!.tags}
                         inclusions={tripDetails!.inclusions}
                         exclusions={tripDetails!.exclusions}
-                        tripSlug={tripId}
-                        tripId={tripId}
-                        onShareClick={() => setIsShareModalOpen(true)}
-                        basePrice={tripDetails!.basePrice}
-                        price={tripDetails!.price}
-                        sharingPrice={tripDetails!.sharingPrice}
+                        highlights={tripDetails!.highlights}
+                        pricing={tripDetails!.pricing}
+                        isFemaleOnly={tripDetails!.isFemaleOnly}
+                        difficulty={tripDetails!.difficulty}
+                        rating={tripDetails!.rating}
+                        totalReviews={tripDetails!.totalReviews}
                     />
                 </div>
             </div>

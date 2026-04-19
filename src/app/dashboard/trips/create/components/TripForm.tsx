@@ -1,10 +1,11 @@
 'use client'
 
-import React, { useState } from 'react'
-import { ChevronLeft, ChevronRight, Check, AlertTriangle, CheckCircle } from 'lucide-react'
+import React, { useState, useRef, useCallback } from 'react'
+import { ChevronLeft, ChevronRight, Check, AlertTriangle, CheckCircle, Loader2 } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import BasicInfoStep from './steps/BasicInfoStep'
-import PricingItineraryStep from './steps/PricingItineraryStep'
+import PricingStep from './steps/PricingStep'
+import ItineraryStep from './steps/ItineraryStep'
 import InclusionsExclusionsStep from './steps/InclusionsExclusionsStep'
 import MediaAdditionalStep from './steps/MediaAdditionalStep'
 import ConfirmDiscardModal from './ConfirmDiscardModal'
@@ -14,6 +15,9 @@ import Modal from '@/common/components/composites/Modal'
 import { useTripFormStore } from '../store'
 import { useFormSubmission } from '../hooks'
 import { FORM_STEPS } from '../constants'
+import { prepareSubmissionData } from '../utils'
+import { baseAPI } from '@/common/services/baseApi'
+import { API_ENDPOINTS } from '@/common/constants/apiEndpoints'
 
 interface TripFormProps {
   isEditMode?: boolean
@@ -27,8 +31,68 @@ const TripForm: React.FC<TripFormProps> = ({ isEditMode = false, tripId }) => {
   const [showSubmitConfirmModal, setShowSubmitConfirmModal] = useState(false)
   const [showResultModal, setShowResultModal] = useState(false)
   const [submissionResult, setSubmissionResult] = useState<{ success: boolean; error?: string; tripId?: string } | null>(null)
+  const [isSavingStep, setIsSavingStep] = useState(false)
 
-  const { currentStep, validationErrors, nextStep, previousStep, title, description, category, tags, location, tripImages, faqs, basePrice, price, sharingPrice, itinerary, inclusions, exclusions, additionalInfo } = useTripFormStore()
+  // Tracks the slug of an auto-saved draft for new trips so subsequent steps can update it
+  const savedTripSlugRef = useRef<string | null>(isEditMode ? (tripId ?? null) : null)
+  // Per-step JSON snapshots of the last successfully saved data for each step
+  const stepSnapshotsRef = useRef<Record<number, string>>({})
+
+  /** Extract only the fields that belong to a given step */
+  const getStepFields = (step: number, formState: ReturnType<typeof useTripFormStore.getState>) => {
+    switch (step) {
+      case 1:
+        return {
+          title: formState.title,
+          description: formState.description,
+          type: formState.type,
+          difficulty: formState.difficulty,
+          category: formState.category,
+          tags: formState.tags,
+          location: formState.location,
+          isFemaleOnly: formState.isFemaleOnly,
+        }
+      case 2:
+        return {
+          pricings: formState.pricings,
+          addOns: formState.addOns,
+          cancellationPolicy: formState.cancellationPolicy,
+          isAdvanceBookingAllowed: formState.isAdvanceBookingAllowed,
+          advanceBookingPrice: formState.advanceBookingPrice,
+        }
+      case 3:
+        return { itinerary: formState.itinerary }
+      case 4:
+        return {
+          inclusions: formState.inclusions,
+          exclusions: formState.exclusions,
+          highlights: formState.highlights,
+          thingsToCarry: formState.thingsToCarry,
+        }
+      case 5:
+        return {
+          tripImages: formState.tripImages,
+          faqs: formState.faqs,
+          additionalInfo: formState.additionalInfo,
+        }
+      default:
+        return {}
+    }
+  }
+
+  const { currentStep, validationErrors, nextStep, previousStep, title, description, category, tags, location, tripImages, faqs, pricings, itinerary, inclusions, exclusions, additionalInfo, cancellationPolicy } = useTripFormStore()
+
+  // When entering a step, snapshot its current state as the saved baseline.
+  // This ensures visiting a step without editing it never triggers an API call.
+  React.useEffect(() => {
+    const formState = useTripFormStore.getState()
+    const stepFields = getStepFields(currentStep, formState)
+    const snapshot = JSON.stringify(stepFields)
+    // Only set if no saved snapshot yet for this step (don't overwrite a post-save baseline)
+    if (!stepSnapshotsRef.current[currentStep]) {
+      stepSnapshotsRef.current[currentStep] = snapshot
+    }
+  }, [currentStep]) // eslint-disable-line react-hooks/exhaustive-deps
 
   const { handleSubmit, isSubmitting } = useFormSubmission({ 
     onSuccess: (tripId?: string) => {
@@ -45,11 +109,52 @@ const TripForm: React.FC<TripFormProps> = ({ isEditMode = false, tripId }) => {
     tripId 
   })
 
+  /** Attempt a silent background save only if the current step's fields have changed. */
+  const autoSaveStep = useCallback(async (): Promise<void> => {
+    const formState = useTripFormStore.getState()
+    const step = formState.currentStep
+    const stepFields = getStepFields(step, formState)
+    const currentSnapshot = JSON.stringify(stepFields)
+
+    // Skip if nothing changed in this step since last save
+    if (currentSnapshot === (stepSnapshotsRef.current[step] ?? '')) return
+
+    setIsSavingStep(true)
+    try {
+      const submissionData = prepareSubmissionData(formState)
+      if (!savedTripSlugRef.current) {
+        // First save for a new trip — create the draft
+        const res = await baseAPI.post(API_ENDPOINTS.TRIPS.CREATE_HOST_TRIP, submissionData as Record<string, unknown>)
+        const slug = res.data?.data?.slug as string | undefined
+        if (slug) {
+          savedTripSlugRef.current = slug
+        }
+      } else {
+        // Subsequent saves — update the existing trip
+        await baseAPI.post(
+          API_ENDPOINTS.TRIPS.EDIT_HOST_TRIP(savedTripSlugRef.current),
+          submissionData as Record<string, unknown>
+        )
+      }
+      // Update snapshot only for the current step on success
+      stepSnapshotsRef.current[step] = currentSnapshot
+    } catch {
+      // Silent fail — local state is intact, no need to block navigation
+    } finally {
+      setIsSavingStep(false)
+    }
+  }, [getStepFields])
+
+  const handleNext = useCallback(async () => {
+    await autoSaveStep()
+    nextStep()
+  }, [autoSaveStep, nextStep])
+
   const hasFormData = () => {
     return (
       title.trim() !== '' ||
       description.trim() !== '' ||
-      category !== '' ||
+      category.length > 0 ||
       tags.length > 0 ||
       location.address.trim() !== '' ||
       location.city.trim() !== '' ||
@@ -58,12 +163,11 @@ const TripForm: React.FC<TripFormProps> = ({ isEditMode = false, tripId }) => {
       location.longitude !== null ||
       tripImages.length > 0 ||
       faqs.length > 0 ||
-      basePrice !== null ||
-      price !== null ||
-      sharingPrice.length > 0 ||
-      itinerary.some(day => day.title.trim() !== '' || day.description.trim() !== '' || day.activities.length > 0) ||
+      pricings.length > 0 ||
+      itinerary.some(day => day.title.trim() !== '' || day.description.trim() !== '') ||
       inclusions.length > 0 ||
       exclusions.length > 0 ||
+      cancellationPolicy.length > 0 ||
       additionalInfo.trim() !== ''
     )
   }
@@ -106,10 +210,12 @@ const TripForm: React.FC<TripFormProps> = ({ isEditMode = false, tripId }) => {
       case 1:
         return <BasicInfoStep isEditMode={isEditMode} />
       case 2:
-        return <PricingItineraryStep isEditMode={isEditMode} />
+        return <PricingStep isEditMode={isEditMode} />
       case 3:
-        return <InclusionsExclusionsStep isEditMode={isEditMode} />
+        return <ItineraryStep isEditMode={isEditMode} />
       case 4:
+        return <InclusionsExclusionsStep isEditMode={isEditMode} />
+      case 5:
         return <MediaAdditionalStep />
       default:
         return null
@@ -163,6 +269,12 @@ const TripForm: React.FC<TripFormProps> = ({ isEditMode = false, tripId }) => {
               </React.Fragment>
             ))}
           </div>
+          {isSavingStep && (
+            <div className="flex items-center gap-1.5 ml-4 text-xs text-muted-foreground">
+              <Loader2 className="w-3.5 h-3.5 animate-spin" />
+              Saving…
+            </div>
+          )}
         </div>
         {validationErrors.length > 0 && (
           <div className="mb-6 bg-red-50 border border-red-200 rounded-lg p-4">
@@ -197,9 +309,18 @@ const TripForm: React.FC<TripFormProps> = ({ isEditMode = false, tripId }) => {
 
           <div className="flex items-center gap-2">
             {currentStep < FORM_STEPS.length ? (
-              <Button onClick={nextStep} className="text-white">
-                Next
-                <ChevronRight className="w-4 h-4 ml-1" />
+              <Button onClick={handleNext} className="text-white" disabled={isSavingStep}>
+                {isSavingStep ? (
+                  <>
+                    <Loader2 className="w-4 h-4 mr-1 animate-spin" />
+                    Saving…
+                  </>
+                ) : (
+                  <>
+                    Next
+                    <ChevronRight className="w-4 h-4 ml-1" />
+                  </>
+                )}
               </Button>
             ) : (
               <Button

@@ -1,11 +1,13 @@
 import { create } from 'zustand'
-import { TripFormState, TripFormData } from './types'
+import { TripFormState, TripFormData, AddOnCategory } from './types'
 import { FORM_STEPS } from './constants'
 
 const initialFormData: TripFormData = {
   title: '',
   description: '',
-  category: '',
+  type: '',
+  difficulty: '',
+  category: [],
   tags: [],
   location: {
     address: '',
@@ -16,30 +18,34 @@ const initialFormData: TripFormData = {
   },
   tripImages: [],
   faqs: [],
-  basePrice: null,
-  price: null,
-  sharingPrice: [],
+  pricings: [],
+  addOns: [],
+  cancellationPolicy: [],
   itinerary: [
     {
       id: Date.now(),
       dayNumber: 1,
       title: '',
       description: '',
-      activities: [],
       wordCount: 0,
     },
   ],
   inclusions: [],
   exclusions: [],
+  thingsToCarry: [],
+  highlights: [],
   additionalInfo: '',
   status: 'draft',
   isFemaleOnly: false,
+  isAdvanceBookingAllowed: false,
+  advanceBookingPrice: 0,
 }
 
 export const useTripFormStore = create<TripFormState>((set) => ({
   ...initialFormData,
   currentStep: 1,
   validationErrors: [],
+  itineraryStartDay: 1,
 
   setCurrentStep: (step) => set({ currentStep: step }),
 
@@ -71,6 +77,17 @@ export const useTripFormStore = create<TripFormState>((set) => ({
       tags: state.tags.filter((t) => t !== tag),
     })),
 
+  toggleCategory: (category) =>
+    set((state) => {
+      const exists = state.category.includes(category)
+      return {
+        category: exists
+          ? state.category.filter((c) => c !== category)
+          : [...state.category, category],
+        validationErrors: state.validationErrors.length > 0 ? [] : state.validationErrors,
+      }
+    }),
+
   addFAQ: (question, answer) =>
     set((state) => ({
       faqs: [
@@ -91,7 +108,7 @@ export const useTripFormStore = create<TripFormState>((set) => ({
 
   addItineraryDay: () =>
     set((state) => {
-      const newDayNumber = state.itinerary.length + 1
+      const newDayNumber = state.itinerary.length + state.itineraryStartDay
       return {
         itinerary: [
           ...state.itinerary,
@@ -100,7 +117,6 @@ export const useTripFormStore = create<TripFormState>((set) => ({
             dayNumber: newDayNumber,
             title: '',
             description: '',
-            activities: [],
             wordCount: 0,
           },
         ],
@@ -127,28 +143,17 @@ export const useTripFormStore = create<TripFormState>((set) => ({
       validationErrors: state.validationErrors.length > 0 ? [] : state.validationErrors,
     })),
 
-  addItineraryActivity: (id, activity) =>
-    set((state) => ({
-      itinerary: state.itinerary.map((day) =>
-        day.id === id ? { ...day, activities: [...day.activities, activity] } : day
-      ),
-      validationErrors: state.validationErrors.length > 0 ? [] : state.validationErrors,
-    })),
-
-  removeItineraryActivity: (id, activityIndex) =>
-    set((state) => ({
-      itinerary: state.itinerary.map((day) =>
-        day.id === id
-          ? { ...day, activities: day.activities.filter((_, index) => index !== activityIndex) }
-          : day
-      ),
-    })),
-
   removeItineraryDay: (id) =>
     set((state) => ({
       itinerary: state.itinerary
         .filter((day) => day.id !== id)
-        .map((day, index) => ({ ...day, dayNumber: index + 1 })),
+        .map((day, index) => ({ ...day, dayNumber: index + state.itineraryStartDay })),
+    })),
+
+  setItineraryStartDay: (startDay) =>
+    set((state) => ({
+      itineraryStartDay: startDay,
+      itinerary: state.itinerary.map((day, index) => ({ ...day, dayNumber: index + startDay })),
     })),
 
   addInclusion: (text) =>
@@ -158,7 +163,7 @@ export const useTripFormStore = create<TripFormState>((set) => ({
           inclusions: [
             ...state.inclusions,
             {
-              id: Date.now(),
+              id: Date.now() + Math.random(),
               text: text.trim(),
             },
           ],
@@ -173,6 +178,29 @@ export const useTripFormStore = create<TripFormState>((set) => ({
       inclusions: state.inclusions.filter((inclusion) => inclusion.id !== id),
     })),
 
+  addHighlight: (title, image) =>
+    set((state) => {
+      if (title.trim()) {
+        return {
+          highlights: [
+            ...state.highlights,
+            {
+              id: Date.now() + Math.random(),
+              title: title.trim(),
+              image: image?.trim() || undefined,
+            },
+          ],
+          validationErrors: state.validationErrors.length > 0 ? [] : state.validationErrors,
+        }
+      }
+      return state
+    }),
+
+  removeHighlight: (id) =>
+    set((state) => ({
+      highlights: state.highlights.filter((h) => h.id !== id),
+    })),
+
   addExclusion: (text) =>
     set((state) => {
       if (text.trim()) {
@@ -180,7 +208,7 @@ export const useTripFormStore = create<TripFormState>((set) => ({
           exclusions: [
             ...state.exclusions,
             {
-              id: Date.now(),
+              id: Date.now() + Math.random(),
               text: text.trim(),
             },
           ],
@@ -195,28 +223,101 @@ export const useTripFormStore = create<TripFormState>((set) => ({
       exclusions: state.exclusions.filter((exclusion) => exclusion.id !== id),
     })),
 
-  addSharingPrice: (people, additionalPricePerPerson) =>
+  addThingToCarry: (text) =>
+    set((state) => {
+      if (text.trim()) {
+        return {
+          thingsToCarry: [
+            ...state.thingsToCarry,
+            {
+              id: Date.now() + Math.random(),
+              text: text.trim(),
+            },
+          ],
+          validationErrors: state.validationErrors.length > 0 ? [] : state.validationErrors,
+        }
+      }
+      return state
+    }),
+
+  removeThingToCarry: (id) =>
     set((state) => ({
-      sharingPrice: [
-        ...state.sharingPrice,
+      thingsToCarry: state.thingsToCarry.filter((item) => item.id !== id),
+    })),
+
+  addPricingTier: (label, pricePerPerson, description) =>
+    set((state) => ({
+      pricings: [
+        ...state.pricings,
         {
-          id: Date.now(),
-          people,
-          additionalPricePerPerson,
+          id: Date.now() + Math.random(),
+          label: label.trim(),
+          description,
+          pricePerPerson,
         },
       ],
       validationErrors: state.validationErrors.length > 0 ? [] : state.validationErrors,
     })),
 
-  removeSharingPrice: (id) =>
+  removePricingTier: (id) =>
     set((state) => ({
-      sharingPrice: state.sharingPrice.filter((sp) => sp.id !== id),
+      pricings: state.pricings.filter((t) => t.id !== id),
     })),
 
-  updateSharingPrice: (id, field, value) =>
+  updatePricingTier: (id, field, value) =>
     set((state) => ({
-      sharingPrice: state.sharingPrice.map((sp) =>
-        sp.id === id ? { ...sp, [field]: value } : sp
+      pricings: state.pricings.map((t) =>
+        t.id === id ? { ...t, [field]: value } : t
+      ),
+      validationErrors: state.validationErrors.length > 0 ? [] : state.validationErrors,
+    })),
+
+  addAddOn: (label: string, pricePerPerson: number, category?: AddOnCategory, description?: string) =>
+    set((state) => ({
+      addOns: [
+        ...state.addOns,
+        {
+          id: Date.now() + Math.random(),
+          label: label.trim(),
+          description,
+          category: category || undefined,
+          pricePerPerson,
+        },
+      ],
+      validationErrors: state.validationErrors.length > 0 ? [] : state.validationErrors,
+    })),
+
+  removeAddOn: (id) =>
+    set((state) => ({
+      addOns: state.addOns.filter((a) => a.id !== id),
+    })),
+
+  updateAddOn: (id, field, value) =>
+    set((state) => ({
+      addOns: state.addOns.map((a) =>
+        a.id === id ? { ...a, [field]: value } : a
+      ),
+      validationErrors: state.validationErrors.length > 0 ? [] : state.validationErrors,
+    })),
+
+  addRefundTier: (daysBeforeCancellation, refundPercentage) =>
+    set((state) => ({
+      cancellationPolicy: [
+        ...state.cancellationPolicy,
+        { id: Date.now(), daysBeforeCancellation, refundPercentage },
+      ],
+      validationErrors: state.validationErrors.length > 0 ? [] : state.validationErrors,
+    })),
+
+  removeRefundTier: (id) =>
+    set((state) => ({
+      cancellationPolicy: state.cancellationPolicy.filter((t) => t.id !== id),
+    })),
+
+  updateRefundTier: (id, field, value) =>
+    set((state) => ({
+      cancellationPolicy: state.cancellationPolicy.map((t) =>
+        t.id === id ? { ...t, [field]: value } : t
       ),
       validationErrors: state.validationErrors.length > 0 ? [] : state.validationErrors,
     })),
@@ -230,6 +331,7 @@ export const useTripFormStore = create<TripFormState>((set) => ({
       ...initialFormData,
       currentStep: 1,
       validationErrors: [],
+      itineraryStartDay: 1,
     }),
 
   prefillFormData: (data: Partial<TripFormData>) =>
