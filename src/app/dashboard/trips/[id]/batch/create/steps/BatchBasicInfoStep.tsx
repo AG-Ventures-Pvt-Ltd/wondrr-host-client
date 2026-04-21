@@ -115,7 +115,7 @@ const BatchBasicInfoStep: React.FC = () => {
       if (!isNaN(start.getTime())) {
         const end = new Date(start.getTime() + (totalDays - 1) * 24 * 60 * 60 * 1000)
         const endStr = end.toISOString().slice(0, 10)
-        if (!endDateTime || endDateTime <= startDateTime) {
+        if (!endDateTime || endDateTime <= startDateTime.split('T')[0]) {
           updateField('endDateTime', endStr)
         }
       }
@@ -146,19 +146,19 @@ const BatchBasicInfoStep: React.FC = () => {
 
   return (
     <div className="space-y-6">
-      {/* Start and End Date Row */}
+      {/* Start Date and Time Row */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div className="space-y-2">
           <Label htmlFor="startDateTime" className="text-sm flex items-center gap-2">
-            📅 Start Date
+            📅 Start Date & Time
           </Label>
           <CustomInput
             id="startDateTime"
-            type="date"
+            type="datetime-local"
             value={startDateTime}
             onChange={(e) => updateField('startDateTime', e.target.value)}
             variant="input"
-            min={todayStr}
+            min={`${todayStr}T00:00`}
             required
           />
         </div>
@@ -178,7 +178,7 @@ const BatchBasicInfoStep: React.FC = () => {
             value={endDateTime}
             onChange={(e) => updateField('endDateTime', e.target.value)}
             variant="input"
-            min={startDateTime || todayStr}
+            min={startDateTime ? startDateTime.split('T')[0] : todayStr}
             required
           />
         </div>

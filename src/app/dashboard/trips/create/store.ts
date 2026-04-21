@@ -40,6 +40,8 @@ const initialFormData: TripFormData = {
   isFemaleOnly: false,
   isAdvanceBookingAllowed: false,
   advanceBookingPrice: 0,
+  closeAdvanceBookingDays: 0,
+  bestTimeToVisit: '',
 }
 
 export const useTripFormStore = create<TripFormState>((set) => ({
@@ -281,6 +283,16 @@ export const useTripFormStore = create<TripFormState>((set) => ({
     set((state) => ({
       pricings: state.pricings.filter((t) => t.id !== id),
     })),
+
+  setDisplayPricingTier: (id) =>
+    set((state) => {
+      const index = state.pricings.findIndex((t) => t.id === id)
+      if (index <= 0) return state
+      const newPricings = [...state.pricings]
+      const [display] = newPricings.splice(index, 1)
+      newPricings.unshift(display)
+      return { pricings: newPricings }
+    }),
 
   updatePricingTier: (id, field, value) =>
     set((state) => ({

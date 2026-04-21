@@ -1,18 +1,27 @@
 'use client'
 
-import React from 'react'
+import React, { useState } from 'react'
 import { Label } from '@/common/ui/label'
 import { Badge } from '@/common/ui/badge'
 import { Plus, Trash2 } from 'lucide-react'
 import CustomInput from '@/common/components/composites/CustomInput'
 import { useItineraryManager } from '../../hooks'
 import { VALIDATION_RULES } from '../../constants'
+import { useTripFormStore } from '../../store'
+import CustomSelect from '@/common/components/composites/CustomSelect'
 
 interface ItineraryStepProps {
   isEditMode?: boolean
 }
 
-const ItineraryStep: React.FC<ItineraryStepProps> = ({ isEditMode = false }) => {
+const MONTHS = [
+  'January', 'February', 'March', 'April', 'May', 'June',
+  'July', 'August', 'September', 'October', 'November', 'December',
+]
+
+const MONTH_OPTIONS = MONTHS.map(month => ({ value: month, label: month }))
+
+const ItineraryStep: React.FC<ItineraryStepProps> = () => {
   const {
     itinerary,
     addItineraryDay,
@@ -22,6 +31,33 @@ const ItineraryStep: React.FC<ItineraryStepProps> = ({ isEditMode = false }) => 
     itineraryStartDay,
     setItineraryStartDay,
   } = useItineraryManager()
+
+  const { bestTimeToVisit, updateField } = useTripFormStore()
+
+  const [startMonth, setStartMonth] = useState(() =>
+    bestTimeToVisit ? bestTimeToVisit.split(' - ')[0] ?? '' : ''
+  )
+  const [endMonth, setEndMonth] = useState(() =>
+    bestTimeToVisit ? bestTimeToVisit.split(' - ')[1] ?? '' : ''
+  )
+
+  const handleStartMonthChange = (value: string) => {
+    setStartMonth(value)
+    if (value && endMonth) {
+      updateField('bestTimeToVisit', `${value} - ${endMonth}`)
+    } else {
+      updateField('bestTimeToVisit', '')
+    }
+  }
+
+  const handleEndMonthChange = (value: string) => {
+    setEndMonth(value)
+    if (startMonth && value) {
+      updateField('bestTimeToVisit', `${startMonth} - ${value}`)
+    } else {
+      updateField('bestTimeToVisit', '')
+    }
+  }
 
   return (
     <div className="space-y-6">
@@ -129,6 +165,43 @@ const ItineraryStep: React.FC<ItineraryStepProps> = ({ isEditMode = false }) => 
         <Plus className="w-4 h-4" />
         Add Another Day
       </button>
+
+      {/* ── Best Time to Visit ──────────────────────────────────────────────── */}
+      <div className="space-y-4 pt-6 border-t border-neutral-200">
+        <div>
+          <h3 className="text-lg font-medium text-neutral-900">Best Time to Visit</h3>
+          <p className="text-xs text-muted-foreground mt-0.5">
+            Indicate the ideal months for this trip.
+          </p>
+        </div>
+        <div className="grid grid-cols-2 gap-3">
+          <div className="space-y-1">
+            <Label className="text-xs">Start Month</Label>
+            <CustomSelect
+              value={startMonth}
+              onChange={handleStartMonthChange}
+              placeholder="Select month"
+              options={MONTH_OPTIONS}
+              className="w-full"
+            />
+          </div>
+          <div className="space-y-1">
+            <Label className="text-xs">End Month</Label>
+            <CustomSelect
+              value={endMonth}
+              onChange={handleEndMonthChange}
+              placeholder="Select month"
+              options={MONTH_OPTIONS}
+              className="w-full"
+            />
+          </div>
+        </div>
+        {bestTimeToVisit && (
+          <p className="text-xs text-neutral-500">
+            Best time: <span className="font-medium text-neutral-700">{bestTimeToVisit}</span>
+          </p>
+        )}
+      </div>
     </div>
   )
 }

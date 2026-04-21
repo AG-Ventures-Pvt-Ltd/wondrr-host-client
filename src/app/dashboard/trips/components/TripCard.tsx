@@ -62,20 +62,36 @@ const TripCard = ({ trip, onStatusToggle, isUpdating }: TripCardProps) => {
                         <div onClick={(e) => e.stopPropagation()}>
                             <div className={cn(
                                 "p-1 rounded-lg transition-colors",
-                                trip.status === 'in_review' && "bg-yellow-100"
+                                trip.status === 'in_review' && "bg-yellow-100",
+                                trip.status === 'published' && "bg-green-100",
+                                trip.status === 'archived' && "bg-gray-100"
                             )}>
                                 <Toggle
-                                    checked={trip.status === 'in_review' || trip.status === 'published'}
+                                    checked={trip.status === 'published' || trip.status === 'in_review'}
                                     onCheckedChange={(checked) => {
                                         const currentStatus = trip.status || 'draft'
                                         let targetStatus = 'draft'
                                         
-                                        if (checked) {
-                                            // When toggling on, go to in_review (hosts apply for review)
-                                            targetStatus = 'in_review'
-                                        } else {
-                                            // When toggling off, go back to draft
-                                            targetStatus = 'draft'
+                                        if (currentStatus === 'draft' || currentStatus === 'in_review') {
+                                            if (checked) {
+                                                targetStatus = 'in_review'
+                                            } else {
+                                                targetStatus = 'draft'
+                                            }
+                                        } else if (currentStatus === 'published') {
+                                            if (checked) {
+                                                // Stay published or no change
+                                                return
+                                            } else {
+                                                targetStatus = 'archived'
+                                            }
+                                        } else if (currentStatus === 'archived') {
+                                            if (checked) {
+                                                targetStatus = 'published'
+                                            } else {
+                                                // Stay archived or no change
+                                                return
+                                            }
                                         }
                                         
                                         onStatusToggle(
@@ -84,13 +100,13 @@ const TripCard = ({ trip, onStatusToggle, isUpdating }: TripCardProps) => {
                                         )
                                     }}
                                     checkedLabel={
-                                        trip.status === 'published' ? 'Published' : 
-                                        trip.status === 'in_review' ? 'In Review' : 
-                                        'Apply for Review'
+                                        (trip.status === 'published' || trip.status === 'archived') ? 'Published' : 'In Review'
                                     }
-                                    uncheckedLabel="Draft"
+                                    uncheckedLabel={
+                                        (trip.status === 'published' || trip.status === 'archived') ? 'Archived' : 'Draft'
+                                    }
                                     size="sm"
-                                    disabled={isUpdating || trip.status === 'published'}
+                                    disabled={isUpdating}
                                 />
                             </div>
                         </div>

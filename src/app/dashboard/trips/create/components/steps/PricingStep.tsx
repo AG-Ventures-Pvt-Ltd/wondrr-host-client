@@ -3,7 +3,7 @@
 import React, { useState } from 'react'
 import { Label } from '@/common/ui/label'
 import { Badge } from '@/common/ui/badge'
-import { IndianRupee, Plus, Trash2 } from 'lucide-react'
+import { IndianRupee, Plus, Trash2, Star } from 'lucide-react'
 import { Toggle } from '@/common/ui/toggle'
 import CustomInput from '@/common/components/composites/CustomInput'
 // import CustomSelect from '@/common/components/composites/CustomSelect'
@@ -15,7 +15,7 @@ interface PricingStepProps {
 }
 
 const PricingStep: React.FC<PricingStepProps> = () => {
-  const { pricings, addPricingTier, removePricingTier, updatePricingTier, addOns, addAddOn, removeAddOn, updateAddOn, cancellationPolicy, addRefundTier, removeRefundTier, updateRefundTier, isAdvanceBookingAllowed, advanceBookingPrice, updateField } = useTripFormStore()
+  const { pricings, addPricingTier, removePricingTier, updatePricingTier, setDisplayPricingTier, addOns, addAddOn, removeAddOn, updateAddOn, cancellationPolicy, addRefundTier, removeRefundTier, updateRefundTier, isAdvanceBookingAllowed, advanceBookingPrice, closeAdvanceBookingDays, updateField } = useTripFormStore()
 
   // New pricing tier form state
   const [newTierLabel, setNewTierLabel] = useState('')
@@ -91,13 +91,31 @@ const PricingStep: React.FC<PricingStepProps> = () => {
         {/* Existing tiers */}
         {pricings.length > 0 && (
           <div className="space-y-3">
-            {pricings.map((tier) => (
-              <div key={tier.id} className="bg-white rounded-xl border border-neutral-200/60 p-4 space-y-3">
+            {pricings.map((tier, index) => (
+              <div key={tier.id} className={`bg-white rounded-xl border p-4 space-y-3 ${index === 0 ? 'border-blue-300 ring-1 ring-blue-200' : 'border-neutral-200/60'}`}>
                 <div className="flex items-center justify-between">
-                  <Label className="text-sm font-medium">{tier.label || 'Pricing Tier'}</Label>
-                  <button type="button" onClick={() => removePricingTier(tier.id)} className="text-neutral-400 hover:text-red-500 transition-colors">
-                    <Trash2 className="w-4 h-4" />
-                  </button>
+                  <div className="flex items-center gap-2">
+                    <Label className="text-sm font-medium">{tier.label || 'Pricing Tier'}</Label>
+                    {index === 0 && (
+                      <Badge variant="default" className="text-xs gap-1">
+                        <Star className="w-3 h-3" /> Display Price
+                      </Badge>
+                    )}
+                  </div>
+                  <div className="flex items-center gap-2">
+                    {index !== 0 && (
+                      <button
+                        type="button"
+                        onClick={() => setDisplayPricingTier(tier.id)}
+                        className="text-xs text-blue-600 hover:text-blue-700 border border-blue-200 rounded-md px-2 py-1 transition-colors"
+                      >
+                        Set as Display Price
+                      </button>
+                    )}
+                    <button type="button" onClick={() => removePricingTier(tier.id)} className="text-neutral-400 hover:text-red-500 transition-colors">
+                      <Trash2 className="w-4 h-4" />
+                    </button>
+                  </div>
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                   <div className="space-y-1">
@@ -184,23 +202,43 @@ const PricingStep: React.FC<PricingStepProps> = () => {
           </div>
 
           {isAdvanceBookingAllowed && (
-            <div className="space-y-2">
-              <Label htmlFor="advanceBookingPrice" className="text-sm">
-                Advance Booking Price <span className="text-red-500">*</span>
-              </Label>
-              <CustomInput
-                id="advanceBookingPrice"
-                type="number"
-                min="1"
-                placeholder="e.g., 2000"
-                value={advanceBookingPrice || ''}
-                onChange={(e) => updateField('advanceBookingPrice', e.target.value ? Number(e.target.value) : 0)}
-                variant="input"
-              />
-              <p className="text-xs text-muted-foreground">
-                Minimum deposit amount required for advance booking
-              </p>
-            </div>
+            <>
+              <div className="space-y-2">
+                <Label htmlFor="advanceBookingPrice" className="text-sm">
+                  Advance Booking Amount (% of total price) <span className="text-red-500">*</span>
+                </Label>
+                <CustomInput
+                  id="advanceBookingPrice"
+                  type="number"
+                  min="1"
+                  placeholder="e.g., 20%"
+                  value={advanceBookingPrice || ''}
+                  onChange={(e) => updateField('advanceBookingPrice', e.target.value ? Number(e.target.value) : 0)}
+                  variant="input"
+                />
+                <p className="text-xs text-muted-foreground">
+                  Advance booking amount will be % of the total trip cost.
+                </p>
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="closeAdvanceBookingDays" className="text-sm">
+                  Close Booking Deadline (days before trip)
+                </Label>
+                <CustomInput
+                  id="closeAdvanceBookingDays"
+                  type="number"
+                  min="0"
+                  placeholder="e.g., 7"
+                  value={closeAdvanceBookingDays || ''}
+                  onChange={(e) => updateField('closeAdvanceBookingDays', e.target.value ? Number(e.target.value) : 0)}
+                  variant="input"
+                />
+                <p className="text-xs text-muted-foreground">
+                  Advance bookings will close this many days before the trip starts.
+                </p>
+              </div>
+            </>
           )}
         </div>
       </div>

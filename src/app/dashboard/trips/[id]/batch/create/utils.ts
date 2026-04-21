@@ -51,7 +51,7 @@ export const validateBatchForm = (formData: BatchFormData): ValidationResult => 
     const endDate = new Date(formData.endDateTime)
     
     if (endDate <= startDate) {
-      errors.push('End date and time must be after start date and time')
+      errors.push('End date must be after start date and time')
     }
   }
 
@@ -84,11 +84,12 @@ export const validateBatchForm = (formData: BatchFormData): ValidationResult => 
 }
 
 export const prepareSubmissionData = (formData: BatchFormData, tripId: string) => {
-  // Form stores date-only strings (YYYY-MM-DD); append midnight time for the API
+  // Form stores startDateTime as local datetime (YYYY-MM-DDTHH:MM); keep as local time for API
   const toDateTime = (date: string) => date ? `${date}T00:00` : date
+
   return {
     tripId,
-    startDateTime: toDateTime(formData.startDateTime),
+    startDateTime: formData.startDateTime, // Keep as local datetime string
     endDateTime: toDateTime(formData.endDateTime),
     meetingPoint: formData.meetingPoint.map(point => ({
       location: point.location,

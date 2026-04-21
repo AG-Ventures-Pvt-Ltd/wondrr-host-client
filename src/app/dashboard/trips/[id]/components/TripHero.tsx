@@ -26,7 +26,7 @@ const TripHero: React.FC<TripHeroProps> = ({ images, title, location, onEdit }) 
                 width={1093}
                 height={286}
             />
-            <div className="absolute inset-0 bg-linear-to-l from-black/70 via-black/30 to-black/0" />
+            <div className="absolute inset-0 bg-linear-to-t from-black/70 via-black/30 to-black/0" />
 
             {total > 1 && (
                 <>

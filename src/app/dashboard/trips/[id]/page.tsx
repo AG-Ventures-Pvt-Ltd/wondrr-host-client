@@ -29,8 +29,6 @@ const TripDetailsPage = () => {
     const { tripDetails, isLoading, error } = useTripDetails(tripId);
     const { tripBatches } = useTripBatchDetails(tripId, 1, 2);
 
-    console.log(tripDetails?.highlights)
-
     const handleEditTrip = () => {
         router.push(`/dashboard/trips/${tripId}/edit`);
     };
@@ -90,6 +88,8 @@ const TripDetailsPage = () => {
                     batches={tripDetails!.stats.batches}
                     category={tripDetails!.category}
                     difficulty={tripDetails!.difficulty}
+                    totalViews={tripDetails!.totalViews}
+                    totalShares={tripDetails!.totalShares}
                 />
             </div>
             <div className="pt-6">
@@ -104,8 +104,10 @@ const TripDetailsPage = () => {
                         tags={tripDetails!.tags}
                         inclusions={tripDetails!.inclusions}
                         exclusions={tripDetails!.exclusions}
+                        thingsToCarry={tripDetails!.thingsToCarry}
                         highlights={tripDetails!.highlights}
                         pricing={tripDetails!.pricing}
+                        cancellationPolicy={tripDetails!.cancellationPolicy}
                         isFemaleOnly={tripDetails!.isFemaleOnly}
                         difficulty={tripDetails!.difficulty}
                         rating={tripDetails!.rating}

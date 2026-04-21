@@ -1,14 +1,13 @@
-'use client';
-
 import React from 'react';
 import Card from '@/common/components/composites/Card';
 import MyImage from '@/common/components/atoms/Image';
-import { Star, Users, Zap } from 'lucide-react';
+import { Star, Users, Zap, Backpack, ShieldAlert } from 'lucide-react';
 
 interface TripSidebarProps {
     tags: string[];
     inclusions: string[];
     exclusions: string[];
+    thingsToCarry?: string[];
     highlights?: Array<{
         title: string;
         image?: string;
@@ -19,16 +18,18 @@ interface TripSidebarProps {
             label: string;
             description: string;
             pricePerPerson: number;
-            maxQuantity: number;
-            bookedQuantity: number;
         }>;
         addOns: Array<{
             label: string;
             description: string;
             category: string;
             pricePerPerson: number;
-            maxQuantity: number;
-            bookedQuantity: number;
+        }>;
+    };
+    cancellationPolicy?: {
+        refundTiers: Array<{
+            daysBeforeCancellation: number;
+            refundPercentage: number;
         }>;
     };
     isFemaleOnly?: boolean;
@@ -41,8 +42,10 @@ const TripSidebar: React.FC<TripSidebarProps> = ({
     tags,
     inclusions,
     exclusions,
+    thingsToCarry = [],
     highlights = [],
     pricing,
+    cancellationPolicy,
     isFemaleOnly,
     difficulty,
     rating,
@@ -163,6 +166,20 @@ const TripSidebar: React.FC<TripSidebarProps> = ({
                 </div>
             </Card>
 
+            {thingsToCarry.length > 0 && (
+                <Card className="flex flex-col gap-3">
+                    <h3 className="text-sm text-maintext">Things to Carry</h3>
+                    <div className="flex flex-col gap-2">
+                        {thingsToCarry.map((item, index) => (
+                            <div key={index} className="flex items-center gap-2">
+                                <Backpack className="w-4 h-4 text-blue-500 shrink-0" />
+                                <span className="text-sm text-neutral-700">{item}</span>
+                            </div>
+                        ))}
+                    </div>
+                </Card>
+            )}
+
             {highlights && highlights.length > 0 && (
                 <Card className="flex flex-col gap-3">
                     <h3 className="text-sm text-maintext">Highlights</h3>
@@ -228,9 +245,12 @@ const TripSidebar: React.FC<TripSidebarProps> = ({
                 </Card>
             )}
 
-            {/* {cancellationPolicy && cancellationPolicy.refundTiers.length > 0 && (
+            {cancellationPolicy && cancellationPolicy.refundTiers && cancellationPolicy.refundTiers.length > 0 && (
                 <Card className="flex flex-col gap-3">
-                    <h3 className="text-sm text-maintext">Cancellation Policy</h3>
+                    <div className="flex items-center gap-2">
+                        <ShieldAlert className="w-4 h-4 text-orange-500" />
+                        <h3 className="text-sm text-maintext">Cancellation Policy</h3>
+                    </div>
                     <div className="flex flex-col gap-2">
                         {cancellationPolicy.refundTiers.map((tier, index) => (
                             <div key={index} className="flex justify-between items-center text-sm">
@@ -246,7 +266,7 @@ const TripSidebar: React.FC<TripSidebarProps> = ({
                         ))}
                     </div>
                 </Card>
-            )} */}
+            )}
         </div>
     );
 };

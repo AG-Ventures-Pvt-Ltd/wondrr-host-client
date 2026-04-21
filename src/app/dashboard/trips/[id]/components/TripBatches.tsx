@@ -10,9 +10,9 @@ interface Batch {
     startDate: string;
     endDate: string;
     status: string;
-    duration: string;
     totalSeats: number;
     totalBookings: number;
+    occupancyPercent: number;
 }
 
 interface TripBatchesProps {
@@ -81,7 +81,7 @@ const TripBatches: React.FC<TripBatchesProps> = ({ batches, tripId }) => {
                                                 {batch.status}
                                             </span>
                                         </div>
-                                        <p className="text-sm text-neutral-500">{batch.duration}</p>
+                                        <p className="text-sm text-neutral-500">{formatDateRangeWithDuration(batch.startDate, batch.endDate)}</p>
                                     </div>
                                 </div>
                                 <div className='text-subtext font-light text-sm -mt-2'>
@@ -99,14 +99,14 @@ const TripBatches: React.FC<TripBatchesProps> = ({ batches, tripId }) => {
                                     <div className="flex flex-col gap-1">
                                         <span className="text-sm text-neutral-500">Occupancy</span>
                                         <span className="text-sm text-maintext">
-                                            {Math.round((batch.totalBookings / batch.totalSeats) * 100)}%
+                                            {batch.occupancyPercent}%
                                         </span>
                                     </div>
                                 </div>
                                 <div className="h-2 mb-4 bg-gray-200 rounded-full overflow-hidden">
                                     <div 
                                         className="h-2 bg-primary rounded-full" 
-                                        style={{ width: `${Math.round((batch.totalBookings / batch.totalSeats) * 100)}%` }} 
+                                        style={{ width: `${batch.occupancyPercent}%` }} 
                                     />
                                 </div>
                             </div>

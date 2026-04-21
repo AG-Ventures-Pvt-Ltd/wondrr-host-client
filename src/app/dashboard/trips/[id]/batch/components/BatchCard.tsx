@@ -36,19 +36,11 @@ const STATUS_TEXT: Record<string, string> = {
 
 const BatchCard = ({ batch, tripId, onDuplicate }: BatchCardProps) => {
     const router = useRouter();
-    const occupancyPercent = Math.round((batch.totalBookings / batch.totalSeats) * 100);
     const color = getStatusColor(batch.status);
-
-    const durationDays = (() => {
-        if (!batch.startDate || !batch.endDate) return 0;
-        const start = new Date(batch.startDate);
-        const end = new Date(batch.endDate);
-        return Math.round((end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24));
-    })();
 
     const handleDuplicateClick = (e: React.MouseEvent) => {
         e.stopPropagation();
-        onDuplicate?.(batch._id, durationDays);
+        onDuplicate?.(batch._id, batch.durationDays);
     };
 
     return (
@@ -100,7 +92,7 @@ const BatchCard = ({ batch, tripId, onDuplicate }: BatchCardProps) => {
                     </div>
                     <div className="flex flex-col gap-1">
                         <span className="text-xs text-subtext">Occupancy</span>
-                        <span className="text-sm text-maintext">{occupancyPercent}%</span>
+                        <span className="text-sm text-maintext">{batch.occupancyPercent}%</span>
                     </div>
                 </div>
                 {batch.rating && (
@@ -115,7 +107,7 @@ const BatchCard = ({ batch, tripId, onDuplicate }: BatchCardProps) => {
                 <div className="h-1.5 bg-gray-200 rounded-full overflow-hidden">
                     <div
                         className="h-1.5 bg-primary rounded-full"
-                        style={{ width: `${occupancyPercent}%` }}
+                        style={{ width: `${batch.occupancyPercent}%` }}
                     />
                 </div>
                 <div className="flex items-center gap-2">

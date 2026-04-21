@@ -1,8 +1,14 @@
 import { create } from 'zustand'
-import { BatchFormState, BatchFormData, MeetingPoint } from './types'
+import { BatchFormState, BatchFormData } from './types'
 
 const initialFormData: BatchFormData = {
-  startDateTime: '',
+  startDateTime: (() => {
+    const now = new Date()
+    const year = now.getFullYear()
+    const month = String(now.getMonth() + 1).padStart(2, '0')
+    const day = String(now.getDate()).padStart(2, '0')
+    return `${year}-${month}-${day}T00:00` // Current date with time set to 00:00
+  })(), // Current local date with default time 00:00
   endDateTime: '',
   meetingPoint: [
     {

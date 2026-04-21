@@ -79,6 +79,8 @@ const Trips = () => {
                         ? `Are you sure you want to submit "${selectedTrip?.name}" for review? It will be reviewed by our team before publishing.`
                         : selectedTrip?.targetStatus === 'published'
                         ? `Are you sure you want to publish "${selectedTrip?.name}"? It will be visible to travellers.`
+                        : selectedTrip?.targetStatus === 'archived'
+                        ? `Are you sure you want to archive "${selectedTrip?.name}"? It will no longer be visible to travellers.`
                         : `Are you sure you want to move "${selectedTrip?.name}" back to draft status?`
                 }
                 submitText={
@@ -86,6 +88,8 @@ const Trips = () => {
                         ? 'Submit for Review'
                         : selectedTrip?.targetStatus === 'published'
                         ? 'Publish Trip'
+                        : selectedTrip?.targetStatus === 'archived'
+                        ? 'Archive Trip'
                         : 'Move to Draft'
                 }
                 onSubmit={handleConfirmStatusChange}

@@ -146,6 +146,8 @@ export const prepareSubmissionData = (formData: TripFormData) => {
     isFemaleOnly: formData.isFemaleOnly,
     isAdvanceBookingAllowed: formData.isAdvanceBookingAllowed,
     advanceBookingPrice: formData.advanceBookingPrice,
+    closeAdvanceBookingDays: formData.closeAdvanceBookingDays || undefined,
+    bestTimeToVisit: formData.bestTimeToVisit || undefined,
     additionalInfo: formData.additionalInfo,
     status: formData.status,
     tripImages: formData.tripImages.map((img) => extractS3Path(img.url)),

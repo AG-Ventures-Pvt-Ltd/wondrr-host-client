@@ -25,18 +25,15 @@ export interface TripList {
 
 export interface TripBatchDetails {
   _id: string
-  id: string
-  date: string
   startDate: string
   endDate: string
   status: string
-  duration: string
-  priceRange: string
-  seats: string
   totalSeats: number
   totalBookings: number
   revenue: string
-  occupancy: string
+  priceRange: string
+  durationDays: number
+  occupancyPercent: number
   rating?: number
   reviewCount?: number
 }
@@ -90,31 +87,28 @@ export interface TripDetailsApiResponse {
       label: string
       description: string
       pricePerPerson: number
-      maxQuantity: number
-      bookedQuantity: number
     }>
     addOns: Array<{
       label: string
       description: string
       category: string
       pricePerPerson: number
-      maxQuantity: number
-      bookedQuantity: number
     }>
     isAdvanceBookingAllowed?: boolean
     advanceBookingPrice?: number
   }
-  additionalInfo?:string;
+  additionalInfo?: string
   cancellationPolicy?: {
     refundTiers: Array<{
       daysBeforeCancellation: number
       refundPercentage: number
     }>
   }
+  totalViews?: number
+  totalShares?: number
   stats: {
     tripBatchesCount: number
     totalRevenue: number
-    category: string
   }
 }
 
@@ -156,27 +150,25 @@ export interface TripDetails {
       label: string
       description: string
       pricePerPerson: number
-      maxQuantity: number
-      bookedQuantity: number
     }>
     addOns: Array<{
       label: string
       description: string
       category: string
       pricePerPerson: number
-      maxQuantity: number
-      bookedQuantity: number
     }>
     isAdvanceBookingAllowed?: boolean
     advanceBookingPrice?: number
   }
-  additionalInfo?: string;
+  additionalInfo?: string
   cancellationPolicy?: {
     refundTiers: Array<{
       daysBeforeCancellation: number
       refundPercentage: number
     }>
   }
+  totalViews?: number
+  totalShares?: number
   stats: {
     batches: number
     totalRevenue: string

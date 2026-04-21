@@ -46,7 +46,7 @@ const EditTripPage = () => {
                     })),
                 pricings: (tripDetails.pricing?.pricings || [])
                     .filter((pricing) => pricing && pricing.label)
-                    .map((pricing: { label: string; description: string; pricePerPerson: number; maxQuantity: number; bookedQuantity: number }, index: number) => ({
+                    .map((pricing: { label: string; description: string; pricePerPerson: number }, index: number) => ({
                         id: Date.now() + 5000 + index * 100,
                         label: pricing.label,
                         description: pricing.description,
@@ -54,7 +54,7 @@ const EditTripPage = () => {
                     })),
                 addOns: (tripDetails.pricing?.addOns || [])
                     .filter((addOn) => addOn && addOn.label)
-                    .map((addOn: { label: string; description: string; category: string; pricePerPerson: number; maxQuantity: number; bookedQuantity: number }, index: number) => ({
+                    .map((addOn: { label: string; description: string; category: string; pricePerPerson: number }, index: number) => ({
                         id: Date.now() + 6000 + index * 100,
                         label: addOn.label,
                         description: addOn.description,
@@ -128,6 +128,8 @@ const EditTripPage = () => {
                 additionalInfo: tripDetails.additionalInfo || '',
                 isAdvanceBookingAllowed: tripDetails.isAdvanceBookingAllowed ?? false,
                 advanceBookingPrice: tripDetails.advanceBookingPrice ?? 0,
+                closeAdvanceBookingDays: tripDetails.closeAdvanceBookingDays ?? 0,
+                bestTimeToVisit: tripDetails.bestTimeToVisit || '',
                 status: (tripDetails.status || 'draft') as 'draft' | 'published',
             }
             useTripFormStore.getState().prefillFormData(formData)

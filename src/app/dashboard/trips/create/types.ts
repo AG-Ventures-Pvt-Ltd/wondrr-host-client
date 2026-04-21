@@ -309,6 +309,8 @@ export interface TripFormData {
   isFemaleOnly: boolean
   isAdvanceBookingAllowed: boolean
   advanceBookingPrice: number
+  closeAdvanceBookingDays: number
+  bestTimeToVisit?: string
 }
 
 export interface TripFormState extends TripFormData {
@@ -342,6 +344,7 @@ export interface TripFormState extends TripFormData {
   addPricingTier: (label: string, pricePerPerson: number, description?: string, maxQuantity?: number) => void
   removePricingTier: (id: number) => void
   updatePricingTier: (id: number, field: keyof Omit<FormPricingTier, 'id'>, value: string | number | undefined) => void
+  setDisplayPricingTier: (id: number) => void
   addAddOn: (label: string, pricePerPerson: number, category?: AddOnCategory, description?: string, maxQuantity?: number) => void
   removeAddOn: (id: number) => void
   updateAddOn: (id: number, field: keyof Omit<FormAddOn, 'id'>, value: string | number | undefined) => void
