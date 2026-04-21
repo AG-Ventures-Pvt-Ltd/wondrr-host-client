@@ -175,4 +175,6 @@ export interface TripDetails {
   }
   isAdvanceBookingAllowed?: boolean
   advanceBookingPrice?: number
+  closeAdvanceBookingDays?: number
+  bestTimeToVisit?: string
 }
