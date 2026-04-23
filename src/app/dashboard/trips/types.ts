@@ -71,7 +71,7 @@ export interface TripDetailsApiResponse {
   difficulty?: string
   rating?: number
   totalReviews?: number
-  faqs: [{ question: string; answer: string }]
+  faqs: FAQs[]
   itinerary: Array<{
     day: string
     title?: string
@@ -98,12 +98,7 @@ export interface TripDetailsApiResponse {
     advanceBookingPrice?: number
   }
   additionalInfo?: string
-  cancellationPolicy?: {
-    refundTiers: Array<{
-      daysBeforeCancellation: number
-      refundPercentage: number
-    }>
-  }
+  cancellationPolicy?: CancellationPolicy
   totalViews?: number
   totalShares?: number
   stats: {
@@ -134,7 +129,7 @@ export interface TripDetails {
   difficulty?: string
   rating?: number
   totalReviews?: number
-  faqs: [{ question: string; answer: string }]
+  faqs: FAQs[]
   itinerary: Array<{
     day: string
     title?: string
@@ -146,27 +141,13 @@ export interface TripDetails {
   thingsToCarry?: string[]
   pricing?: {
     currency: string
-    pricings: Array<{
-      label: string
-      description: string
-      pricePerPerson: number
-    }>
-    addOns: Array<{
-      label: string
-      description: string
-      category: string
-      pricePerPerson: number
-    }>
+    pricings: Array<PricingTier>
+    addOns: Array<addOns>
     isAdvanceBookingAllowed?: boolean
     advanceBookingPrice?: number
   }
   additionalInfo?: string
-  cancellationPolicy?: {
-    refundTiers: Array<{
-      daysBeforeCancellation: number
-      refundPercentage: number
-    }>
-  }
+  cancellationPolicy?: CancellationPolicy
   totalViews?: number
   totalShares?: number
   stats: {
@@ -177,4 +158,101 @@ export interface TripDetails {
   advanceBookingPrice?: number
   closeAdvanceBookingDays?: number
   bestTimeToVisit?: string
+}
+
+
+
+export interface Itinerary {
+  day: string
+  title?: string
+  description: string
+}
+
+export interface RefundTier { 
+  daysBeforeCancellation : number
+  refundPercentage : number
+}
+
+export interface CancellationPolicy {
+  refundTiers: RefundTier[]
+}
+
+export interface FAQs { 
+  question: string; 
+  answer: string;
+  priority?: number;
+}
+
+export interface PricingTier {
+  label : string;
+  description : string;
+  pricePerPerson : string;
+  bookedQuantity?: string;
+}
+
+export interface addOns {
+  label : string;
+  description : string;
+  pricePerPerson : string;
+  category : 'extra_activity' | 'room_upgrade' | 'bike_upgrade' | 'service' | 'others';
+  bookedQuantity?: string;
+}
+
+export interface AdvanceBookings {
+  isAdvanceBookingAllowed : boolean;
+  advanceBookingPrice : number;
+  closeAdvanceBookingDays : number;
+}
+
+
+export interface TripBatches {
+  _id: string
+  startDateTime : string;
+  endDateTime : string;
+  meetingPoint : {
+    location : string;
+    pickupPrice : number;
+  }
+  dropPoint : string;
+  pointOfContact : {
+    name : string;
+    phone : string;
+  }
+  totalBookings : number;
+  totalSeats : number;
+  status : 'draft' | 'available' | 'filling-fast' | 'sold-out' | 'closed' | 'cancelled';
+  closeBooking : string;
+  isCompleted : boolean;
+}
+
+export interface Trips {
+  title : string ;
+  description : string;
+  location : {
+    address: string
+    city: string
+    state: string
+  };
+  tripImages : Array<string>;
+  host : string;
+  inclusions : Array<string>;
+  exclusions : Array<string>;
+  highlights : [{ title : string; image?: string; }]
+  thingsToCarry : Array<string>;
+  rating : number;
+  totalReviews : number;
+  category : Array<string>;
+  difficulty : string;
+  bestTimeToVisit : string;
+  status : 'draft' | 'in_review' | 'published' | 'archived';
+  isFemaleOnly : boolean;
+  slug : string;
+  additionalInfo : string;
+}
+
+export interface reviews {
+  userId : string;
+  rating : number ;
+  comment : string;
+  helpful : number;
 }

@@ -31,6 +31,7 @@ export const useTripDetails = (slug: string) => {
     difficulty: data.difficulty,
     rating: data.rating,
     totalReviews: data.totalReviews,
+    bestTimeToVisit: data.bestTimeToVisit || '',
     cancellationPolicy: data.cancellationPolicy,
     pricing: data.pricing,
     additionalInfo: data?.additionalInfo,

@@ -302,6 +302,17 @@ export const useTripFormStore = create<TripFormState>((set) => ({
       validationErrors: state.validationErrors.length > 0 ? [] : state.validationErrors,
     })),
 
+  movePricingTier: (id, direction) =>
+    set((state) => {
+      const idx = state.pricings.findIndex((t) => t.id === id)
+      if (idx < 0) return state
+      const swapIdx = direction === 'up' ? idx - 1 : idx + 1
+      if (swapIdx < 0 || swapIdx >= state.pricings.length) return state
+      const newPricings = [...state.pricings]
+      ;[newPricings[idx], newPricings[swapIdx]] = [newPricings[swapIdx], newPricings[idx]]
+      return { pricings: newPricings }
+    }),
+
   addAddOn: (label: string, pricePerPerson: number, category?: AddOnCategory, description?: string) =>
     set((state) => ({
       addOns: [
@@ -329,6 +340,40 @@ export const useTripFormStore = create<TripFormState>((set) => ({
       ),
       validationErrors: state.validationErrors.length > 0 ? [] : state.validationErrors,
     })),
+
+  moveAddOn: (id, direction) =>
+    set((state) => {
+      const addon = state.addOns.find((a) => a.id === id)
+      if (!addon) return state
+      // Work within items of the same category
+      const category = addon.category
+      const categoryItems = state.addOns.filter((a) => a.category === category)
+      const catIdx = categoryItems.findIndex((a) => a.id === id)
+      const swapCatIdx = direction === 'up' ? catIdx - 1 : catIdx + 1
+      if (swapCatIdx < 0 || swapCatIdx >= categoryItems.length) return state
+      const swapId = categoryItems[swapCatIdx].id
+      // Swap in the global addOns array
+      const newAddOns = [...state.addOns]
+      const globalIdx = newAddOns.findIndex((a) => a.id === id)
+      const globalSwapIdx = newAddOns.findIndex((a) => a.id === swapId)
+      ;[newAddOns[globalIdx], newAddOns[globalSwapIdx]] = [newAddOns[globalSwapIdx], newAddOns[globalIdx]]
+      return { addOns: newAddOns }
+    }),
+
+  setDefaultAddOn: (id) =>
+    set((state) => {
+      const addon = state.addOns.find((a) => a.id === id)
+      if (!addon) return state
+      const category = addon.category
+      // Find first item of this category in global array
+      const firstCatGlobalIdx = state.addOns.findIndex((a) => a.category === category)
+      const targetGlobalIdx = state.addOns.findIndex((a) => a.id === id)
+      if (firstCatGlobalIdx === targetGlobalIdx) return state
+      const newAddOns = [...state.addOns]
+      const [item] = newAddOns.splice(targetGlobalIdx, 1)
+      newAddOns.splice(firstCatGlobalIdx, 0, item)
+      return { addOns: newAddOns }
+    }),
 
   addRefundTier: (daysBeforeCancellation, refundPercentage) =>
     set((state) => ({

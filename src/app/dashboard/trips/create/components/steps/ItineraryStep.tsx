@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState } from 'react'
+import React from 'react'
 import { Label } from '@/common/ui/label'
 import { Badge } from '@/common/ui/badge'
 import { Plus, Trash2 } from 'lucide-react'
@@ -34,41 +34,40 @@ const ItineraryStep: React.FC<ItineraryStepProps> = () => {
 
   const { bestTimeToVisit, updateField } = useTripFormStore()
 
-  const [startMonth, setStartMonth] = useState(() =>
-    bestTimeToVisit ? bestTimeToVisit.split(' - ')[0] ?? '' : ''
-  )
-  const [endMonth, setEndMonth] = useState(() =>
-    bestTimeToVisit ? bestTimeToVisit.split(' - ')[1] ?? '' : ''
-  )
+  // Derive start and end months directly from the store value
+  const startMonth = bestTimeToVisit ? bestTimeToVisit.split(' - ')[0] ?? '' : ''
+  const endMonth = bestTimeToVisit ? bestTimeToVisit.split(' - ')[1] ?? '' : ''
 
   const handleStartMonthChange = (value: string) => {
-    setStartMonth(value)
-    if (value && endMonth) {
-      updateField('bestTimeToVisit', `${value} - ${endMonth}`)
+    const currentEndMonth = bestTimeToVisit ? bestTimeToVisit.split(' - ')[1] ?? '' : ''
+    if (value && currentEndMonth) {
+      updateField('bestTimeToVisit', `${value} - ${currentEndMonth}`)
     } else {
       updateField('bestTimeToVisit', '')
     }
   }
 
   const handleEndMonthChange = (value: string) => {
-    setEndMonth(value)
-    if (startMonth && value) {
-      updateField('bestTimeToVisit', `${startMonth} - ${value}`)
+    const currentStartMonth = bestTimeToVisit ? bestTimeToVisit.split(' - ')[0] ?? '' : ''
+    if (currentStartMonth && value) {
+      updateField('bestTimeToVisit', `${currentStartMonth} - ${value}`)
     } else {
       updateField('bestTimeToVisit', '')
     }
   }
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
+    <div className="space-y-6 max-w-3xl">
+      <div className="flex items-start justify-between gap-4">
         <div>
-          <h3 className="text-lg font-medium text-neutral-900">Trip Itinerary</h3>
+          <h3 className="text-sm font-semibold text-neutral-900">Trip Itinerary</h3>
           <p className="text-xs text-muted-foreground mt-0.5">Describe what happens on each day of the trip.</p>
         </div>
-        <Badge variant="secondary">
-          {itinerary.length} day{itinerary.length !== 1 ? 's' : ''}
-        </Badge>
+        {itinerary.length > 0 && (
+          <Badge variant="secondary" className="shrink-0">
+            {itinerary.length} day{itinerary.length !== 1 ? 's' : ''}
+          </Badge>
+        )}
       </div>
 
       <div className="flex items-center gap-3">
@@ -160,16 +159,16 @@ const ItineraryStep: React.FC<ItineraryStepProps> = () => {
       <button
         type="button"
         onClick={addItineraryDay}
-        className="flex items-center gap-2 text-blue-600 hover:text-blue-700 text-sm transition-colors"
+        className="flex items-center gap-1.5 text-xs text-primary border border-primary/30 rounded-lg px-3 py-1.5 hover:bg-primary/5 transition-colors font-medium"
       >
-        <Plus className="w-4 h-4" />
-        Add Another Day
+        <Plus className="w-3.5 h-3.5" />
+        Add Day
       </button>
 
       {/* ── Best Time to Visit ──────────────────────────────────────────────── */}
-      <div className="space-y-4 pt-6 border-t border-neutral-200">
+      <div className="space-y-4 pt-8 border-t border-neutral-100">
         <div>
-          <h3 className="text-lg font-medium text-neutral-900">Best Time to Visit</h3>
+          <h3 className="text-sm font-semibold text-neutral-900">Best Time to Visit</h3>
           <p className="text-xs text-muted-foreground mt-0.5">
             Indicate the ideal months for this trip.
           </p>

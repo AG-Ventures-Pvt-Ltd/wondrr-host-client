@@ -24,6 +24,48 @@ interface TripFormProps {
   tripId?: string
 }
 
+/** Extract only the fields that belong to a given step — stable, defined outside the component */
+function getStepFields(step: number, formState: ReturnType<typeof useTripFormStore.getState>) {
+  switch (step) {
+    case 1:
+      return {
+        title: formState.title,
+        description: formState.description,
+        type: formState.type,
+        difficulty: formState.difficulty,
+        category: formState.category,
+        tags: formState.tags,
+        location: formState.location,
+        isFemaleOnly: formState.isFemaleOnly,
+      }
+    case 2:
+      return {
+        pricings: formState.pricings,
+        addOns: formState.addOns,
+        cancellationPolicy: formState.cancellationPolicy,
+        isAdvanceBookingAllowed: formState.isAdvanceBookingAllowed,
+        advanceBookingPrice: formState.advanceBookingPrice,
+      }
+    case 3:
+      return { itinerary: formState.itinerary }
+    case 4:
+      return {
+        inclusions: formState.inclusions,
+        exclusions: formState.exclusions,
+        highlights: formState.highlights,
+        thingsToCarry: formState.thingsToCarry,
+      }
+    case 5:
+      return {
+        tripImages: formState.tripImages,
+        faqs: formState.faqs,
+        additionalInfo: formState.additionalInfo,
+      }
+    default:
+      return {}
+  }
+}
+
 const TripForm: React.FC<TripFormProps> = ({ isEditMode = false, tripId }) => {
 
   const router = useRouter()
@@ -38,48 +80,6 @@ const TripForm: React.FC<TripFormProps> = ({ isEditMode = false, tripId }) => {
   // Per-step JSON snapshots of the last successfully saved data for each step
   const stepSnapshotsRef = useRef<Record<number, string>>({})
 
-  /** Extract only the fields that belong to a given step */
-  const getStepFields = (step: number, formState: ReturnType<typeof useTripFormStore.getState>) => {
-    switch (step) {
-      case 1:
-        return {
-          title: formState.title,
-          description: formState.description,
-          type: formState.type,
-          difficulty: formState.difficulty,
-          category: formState.category,
-          tags: formState.tags,
-          location: formState.location,
-          isFemaleOnly: formState.isFemaleOnly,
-        }
-      case 2:
-        return {
-          pricings: formState.pricings,
-          addOns: formState.addOns,
-          cancellationPolicy: formState.cancellationPolicy,
-          isAdvanceBookingAllowed: formState.isAdvanceBookingAllowed,
-          advanceBookingPrice: formState.advanceBookingPrice,
-        }
-      case 3:
-        return { itinerary: formState.itinerary }
-      case 4:
-        return {
-          inclusions: formState.inclusions,
-          exclusions: formState.exclusions,
-          highlights: formState.highlights,
-          thingsToCarry: formState.thingsToCarry,
-        }
-      case 5:
-        return {
-          tripImages: formState.tripImages,
-          faqs: formState.faqs,
-          additionalInfo: formState.additionalInfo,
-        }
-      default:
-        return {}
-    }
-  }
-
   const { currentStep, validationErrors, nextStep, previousStep, title, description, category, tags, location, tripImages, faqs, pricings, itinerary, inclusions, exclusions, additionalInfo, cancellationPolicy } = useTripFormStore()
 
   // When entering a step, snapshot its current state as the saved baseline.
@@ -92,7 +92,7 @@ const TripForm: React.FC<TripFormProps> = ({ isEditMode = false, tripId }) => {
     if (!stepSnapshotsRef.current[currentStep]) {
       stepSnapshotsRef.current[currentStep] = snapshot
     }
-  }, [currentStep]) // eslint-disable-line react-hooks/exhaustive-deps
+  }, [currentStep])
 
   const { handleSubmit, isSubmitting } = useFormSubmission({ 
     onSuccess: (tripId?: string) => {
@@ -143,7 +143,7 @@ const TripForm: React.FC<TripFormProps> = ({ isEditMode = false, tripId }) => {
     } finally {
       setIsSavingStep(false)
     }
-  }, [getStepFields])
+  }, [])
 
   const handleNext = useCallback(async () => {
     await autoSaveStep()
@@ -229,7 +229,7 @@ const TripForm: React.FC<TripFormProps> = ({ isEditMode = false, tripId }) => {
           <BackButton onClick={handleBackToTrips} iconSize={32} className='mr-4' label="" />
           <h1 className="text-xl font-normal text-neutral-900">{isEditMode ? 'Edit Trip' : 'Create New Trip'}</h1>
         </div>
-        <div className="mb-8 bg-white border-b border-b-[#d9d7d7] p-6 sticky -top-10 flex justify-between items-center z-10">
+        <div className="mb-8 bg-white border-b border-b-[#d9d7d7] px-6 py-4 sticky top-0 flex justify-between items-center z-10">
           <div className="flex-1 flex items-center gap-2">
             {FORM_STEPS.map((step, index) => (
               <React.Fragment key={step.id}>
@@ -287,11 +287,11 @@ const TripForm: React.FC<TripFormProps> = ({ isEditMode = false, tripId }) => {
             </ul>
           </div>
         )}
-        <div className='px-12 pr-12'>
+        <div className='px-6'>
           {renderStepContent()}
         </div>
       </div>
-      <div className="py-6 px-12 pr-24">
+      <div className="py-6 px-6">
         <div className="flex w-full justify-end gap-4">
           <div>
             {currentStep === 1 && (

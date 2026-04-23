@@ -345,9 +345,12 @@ export interface TripFormState extends TripFormData {
   removePricingTier: (id: number) => void
   updatePricingTier: (id: number, field: keyof Omit<FormPricingTier, 'id'>, value: string | number | undefined) => void
   setDisplayPricingTier: (id: number) => void
+  movePricingTier: (id: number, direction: 'up' | 'down') => void
   addAddOn: (label: string, pricePerPerson: number, category?: AddOnCategory, description?: string, maxQuantity?: number) => void
   removeAddOn: (id: number) => void
   updateAddOn: (id: number, field: keyof Omit<FormAddOn, 'id'>, value: string | number | undefined) => void
+  moveAddOn: (id: number, direction: 'up' | 'down') => void
+  setDefaultAddOn: (id: number) => void
   addRefundTier: (daysBeforeCancellation: number, refundPercentage: number) => void
   removeRefundTier: (id: number) => void
   updateRefundTier: (id: number, field: keyof Omit<FormRefundTier, 'id'>, value: number) => void
