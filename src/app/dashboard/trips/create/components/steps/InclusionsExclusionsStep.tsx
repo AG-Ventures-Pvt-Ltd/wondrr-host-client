@@ -149,7 +149,7 @@ const InclusionsExclusionsStep: React.FC<InclusionsExclusionsStepProps> = () => 
         <div className="flex items-start justify-between gap-4">
           <div>
             <h3 className="text-sm font-semibold text-neutral-900">Inclusions <span className="text-red-500">*</span></h3>
-            <p className="text-xs text-muted-foreground mt-0.5">What's included in the trip price</p>
+            <p className="text-xs text-muted-foreground mt-0.5">What&apos;s included in the trip price</p>
           </div>
           {inclusions.length > 0 && (
             <Badge variant={inclusions.length >= VALIDATION_RULES.MIN_INCLUSIONS ? 'default' : 'secondary'}
@@ -193,7 +193,7 @@ const InclusionsExclusionsStep: React.FC<InclusionsExclusionsStepProps> = () => 
         <div className="flex items-start justify-between gap-4">
           <div>
             <h3 className="text-sm font-semibold text-neutral-900">Exclusions <span className="text-red-500">*</span></h3>
-            <p className="text-xs text-muted-foreground mt-0.5">What's not included and travellers should arrange separately</p>
+            <p className="text-xs text-muted-foreground mt-0.5">What&apos;s not included and travellers should arrange separately</p>
           </div>
           {exclusions.length > 0 && (
             <Badge variant={exclusions.length >= VALIDATION_RULES.MIN_EXCLUSIONS ? 'default' : 'secondary'}
