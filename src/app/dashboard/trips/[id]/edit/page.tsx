@@ -25,7 +25,7 @@ const EditTripPage = () => {
                 difficulty: (tripDetails.difficulty as TripDifficulty) || '',
                 category: (tripDetails.category || []).map(cat => 
                   cat.split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()).join(' ')
-                ).filter(cat => TRIP_CATEGORIES.includes(cat as any)),
+                ).filter(cat => TRIP_CATEGORIES.includes(cat)),
                 tags: tripDetails.tags || [],
                 location: {
                     address: tripDetails.locationObj?.address || '',
@@ -46,19 +46,19 @@ const EditTripPage = () => {
                     })),
                 pricings: (tripDetails.pricing?.pricings || [])
                     .filter((pricing) => pricing && pricing.label)
-                    .map((pricing: { label: string; description: string; pricePerPerson: number }, index: number) => ({
+                    .map((pricing: { label: string; description?: string; pricePerPerson: number }, index: number) => ({
                         id: Date.now() + 5000 + index * 100,
                         label: pricing.label,
-                        description: pricing.description,
+                        description: pricing.description || '',
                         pricePerPerson: pricing.pricePerPerson,
                     })),
                 addOns: (tripDetails.pricing?.addOns || [])
                     .filter((addOn) => addOn && addOn.label)
-                    .map((addOn: { label: string; description: string; category: string; pricePerPerson: number }, index: number) => ({
+                    .map((addOn: { label: string; description?: string; category?: string; pricePerPerson: number }, index: number) => ({
                         id: Date.now() + 6000 + index * 100,
                         label: addOn.label,
-                        description: addOn.description,
-                        category: addOn.category as AddOnCategory,
+                        description: addOn.description || '',
+                        category: (addOn.category as AddOnCategory) || 'others',
                         pricePerPerson: addOn.pricePerPerson,
                     })),
                 cancellationPolicy: (tripDetails.cancellationPolicy?.refundTiers || [])
@@ -85,13 +85,13 @@ const EditTripPage = () => {
                         };
                     }),
                 highlights: (tripDetails.highlights || [])
-                    .filter((highlight: any) => {
+                    .filter((highlight: string | { title: string; image?: string }) => {
                         if (typeof highlight === 'string') {
                             return highlight && highlight.trim().length > 0;
                         }
                         return highlight && highlight.title && highlight.title.trim().length > 0;
                     })
-                    .map((highlight: any, index: number) => {
+                    .map((highlight: string | { title: string; image?: string }, index: number) => {
                         if (typeof highlight === 'string') {
                             // Convert string to object with blank image
                             return {

@@ -86,18 +86,19 @@ export interface TripDetailsApiResponse {
     pricings: Array<{
       label: string
       description: string
-      pricePerPerson: number
+      pricePerPerson: string
     }>
     addOns: Array<{
       label: string
       description: string
       category: string
-      pricePerPerson: number
+      pricePerPerson: string
     }>
     isAdvanceBookingAllowed?: boolean
     advanceBookingPrice?: number
   }
   additionalInfo?: string
+  bestTimeToVisit?: string
   cancellationPolicy?: CancellationPolicy
   totalViews?: number
   totalShares?: number
@@ -141,8 +142,17 @@ export interface TripDetails {
   thingsToCarry?: string[]
   pricing?: {
     currency: string
-    pricings: Array<PricingTier>
-    addOns: Array<addOns>
+    pricings: Array<{
+      label: string
+      description?: string
+      pricePerPerson: number
+    }>
+    addOns: Array<{
+      label: string
+      description?: string
+      category?: string
+      pricePerPerson: number
+    }>
     isAdvanceBookingAllowed?: boolean
     advanceBookingPrice?: number
   }

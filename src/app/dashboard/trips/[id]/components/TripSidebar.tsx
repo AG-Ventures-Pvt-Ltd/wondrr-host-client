@@ -16,13 +16,13 @@ interface TripSidebarProps {
         currency: string;
         pricings: Array<{
             label: string;
-            description: string;
+            description?: string;
             pricePerPerson: number;
         }>;
         addOns: Array<{
             label: string;
-            description: string;
-            category: string;
+            description?: string;
+            category?: string;
             pricePerPerson: number;
         }>;
     };

@@ -1,4 +1,4 @@
-export const TRIP_CATEGORIES = [
+export const TRIP_CATEGORIES: string[] = [
   'Adventure',
   'Cultural',
   'Relaxation',

@@ -33,7 +33,11 @@ export const useTripDetails = (slug: string) => {
     totalReviews: data.totalReviews,
     bestTimeToVisit: data.bestTimeToVisit || '',
     cancellationPolicy: data.cancellationPolicy,
-    pricing: data.pricing,
+    pricing: data.pricing ? {
+      ...data.pricing,
+      pricings: data.pricing.pricings.map(p => ({ ...p, pricePerPerson: Number(p.pricePerPerson) })),
+      addOns: data.pricing.addOns.map(a => ({ ...a, pricePerPerson: Number(a.pricePerPerson) })),
+    } : undefined,
     additionalInfo: data?.additionalInfo,
     status: data.status,
     isAdvanceBookingAllowed: data.pricing?.isAdvanceBookingAllowed ?? false,
