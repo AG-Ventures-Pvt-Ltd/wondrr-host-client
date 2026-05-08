@@ -156,6 +156,44 @@ export const VALIDATION_RULES = {
   MIN_MAX_PRICE: 0,
 } as const
 
+/**
+ * All validation error messages in one place.
+ * Update messages here and they will be reflected in both the
+ * validateTripForm function and any form UI that references them.
+ */
+export const VALIDATION_MESSAGES = {
+  // Basic info
+  title: 'Trip title is required',
+  description: 'Trip description is required',
+  category: 'At least one category is required',
+  tags: `At least ${VALIDATION_RULES.MIN_TAGS} tags are required`,
+  // Location
+  locationCity: 'City is required',
+  locationState: 'State is required',
+  // Media & FAQ
+  tripImages: `At least ${VALIDATION_RULES.MIN_IMAGES} trip images are required`,
+  faqs: `At least ${VALIDATION_RULES.MIN_FAQS} FAQs are required`,
+  // Pricing
+  pricings: 'At least one pricing tier is required',
+  advanceBookingPrice: 'Advance booking price must be greater than 0 when advance booking is enabled',
+  // Itinerary
+  itinerary: `At least ${VALIDATION_RULES.MIN_ITINERARY_DAYS} itinerary day is required`,
+  // Inclusions / exclusions / highlights
+  inclusions: `At least ${VALIDATION_RULES.MIN_INCLUSIONS} inclusions are required`,
+  exclusions: `At least ${VALIDATION_RULES.MIN_EXCLUSIONS} exclusions are required`,
+  highlights: `At least ${VALIDATION_RULES.MIN_HIGHLIGHTS} highlights are required`,
+  // Per-item dynamic messages
+  pricingTierLabel: (index: number) => `Pricing tier ${index + 1}: Label is required`,
+  pricingTierPrice: (index: number) => `Pricing tier ${index + 1}: Price per person cannot be negative`,
+  pricingTierQuantity: (index: number) => `Pricing tier ${index + 1}: Max quantity must be at least 1`,
+  addonLabel: (index: number) => `Add-on ${index + 1}: Label is required`,
+  addonPrice: (index: number) => `Add-on ${index + 1}: Price per person cannot be negative`,
+  itineraryDayTitle: (dayNumber: number) => `Day ${dayNumber} title is required`,
+  itineraryDayDescription: (dayNumber: number) => `Day ${dayNumber} itinerary description is required`,
+  itineraryDayWordCount: (dayNumber: number) =>
+    `Day ${dayNumber} itinerary exceeds ${VALIDATION_RULES.MAX_ITINERARY_WORDS} words limit`,
+}
+
 export const IMAGE_UPLOAD_CONFIG = {
   maxSize: VALIDATION_RULES.MAX_IMAGE_SIZE,
   acceptedTypes: VALIDATION_RULES.ACCEPTED_IMAGE_TYPES,

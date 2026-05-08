@@ -37,15 +37,17 @@ const TripDetailsPage = () => {
 
     if (error) return <div className="flex justify-center items-center h-screen text-red-500">Error loading trip details</div>;
 
+    if (!tripDetails) return <div className="flex justify-center items-center h-screen text-neutral-500">Trip not found</div>;
+
     return (
         <div className="min-h-screen">
             <BackButton />
             <div className="flex pt-6 gap-8">
                 <div className='flex-3'>
                     <TripHero
-                        images={tripDetails!.tripImages}
-                        title={tripDetails!.title}
-                        location={tripDetails!.location}
+                        images={tripDetails.tripImages}
+                        title={tripDetails.title}
+                        location={tripDetails.location}
                         onEdit={handleEditTrip}
                     />
                 </div>
@@ -84,41 +86,41 @@ const TripDetailsPage = () => {
             </div>
             <div className="pt-8">
                 <StatsCards
-                    totalRevenue={tripDetails!.stats.totalRevenue}
-                    batches={tripDetails!.stats.batches}
-                    category={tripDetails!.category}
-                    difficulty={tripDetails!.difficulty}
-                    totalViews={tripDetails!.totalViews}
-                    totalShares={tripDetails!.totalShares}
+                    totalRevenue={tripDetails.stats.totalRevenue}
+                    batches={tripDetails.stats.batches}
+                    category={tripDetails.category}
+                    difficulty={tripDetails.difficulty}
+                    totalViews={tripDetails.totalViews}
+                    totalShares={tripDetails.totalShares}
                 />
             </div>
             <div className="pt-6">
                 <div className="grid grid-cols-[1fr_349px] gap-6">
                     <div className="flex flex-col gap-6">
                         <TripBatches batches={tripBatches} tripId={tripId} />
-                        <Itinerary items={tripDetails!.itinerary} />
-                        <TripDescription description={tripDetails!.description} />
-                        <FAQ faqs={tripDetails!.faqs} />
+                        <Itinerary items={tripDetails.itinerary} />
+                        <TripDescription description={tripDetails.description} />
+                        <FAQ faqs={tripDetails.faqs} />
                     </div>
                     <TripSidebar
-                        tags={tripDetails!.tags}
-                        inclusions={tripDetails!.inclusions}
-                        exclusions={tripDetails!.exclusions}
-                        thingsToCarry={tripDetails!.thingsToCarry}
-                        highlights={tripDetails!.highlights}
-                        pricing={tripDetails!.pricing}
-                        cancellationPolicy={tripDetails!.cancellationPolicy}
-                        isFemaleOnly={tripDetails!.isFemaleOnly}
-                        difficulty={tripDetails!.difficulty}
-                        rating={tripDetails!.rating}
-                        totalReviews={tripDetails!.totalReviews}
+                        tags={tripDetails.tags}
+                        inclusions={tripDetails.inclusions}
+                        exclusions={tripDetails.exclusions}
+                        thingsToCarry={tripDetails.thingsToCarry}
+                        highlights={tripDetails.highlights}
+                        pricing={tripDetails.pricing}
+                        cancellationPolicy={tripDetails.cancellationPolicy}
+                        isFemaleOnly={tripDetails.isFemaleOnly}
+                        difficulty={tripDetails.difficulty}
+                        rating={tripDetails.rating}
+                        totalReviews={tripDetails.totalReviews}
                     />
                 </div>
             </div>
             <ShareTripModal
                 isOpen={isShareModalOpen}
                 onClose={() => setIsShareModalOpen(false)}
-                tripTitle={tripDetails?.title || ''}
+                tripTitle={tripDetails.title}
                 tripSlug={tripId}
             />
         </div>

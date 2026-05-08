@@ -34,23 +34,29 @@ const ItineraryStep: React.FC<ItineraryStepProps> = () => {
 
   const { bestTimeToVisit, updateField } = useTripFormStore()
 
-  // Derive start and end months directly from the store value
-  const startMonth = bestTimeToVisit ? bestTimeToVisit.split(' - ')[0] ?? '' : ''
-  const endMonth = bestTimeToVisit ? bestTimeToVisit.split(' - ')[1] ?? '' : ''
+  // Use local state for each dropdown so selections are shown immediately,
+  // even before both months are chosen. The store value is the source of truth
+  // on mount; after that local state drives the selects.
+  const [localStartMonth, setLocalStartMonth] = React.useState(() =>
+    bestTimeToVisit ? bestTimeToVisit.split(' - ')[0] ?? '' : ''
+  )
+  const [localEndMonth, setLocalEndMonth] = React.useState(() =>
+    bestTimeToVisit ? bestTimeToVisit.split(' - ')[1] ?? '' : ''
+  )
 
   const handleStartMonthChange = (value: string) => {
-    const currentEndMonth = bestTimeToVisit ? bestTimeToVisit.split(' - ')[1] ?? '' : ''
-    if (value && currentEndMonth) {
-      updateField('bestTimeToVisit', `${value} - ${currentEndMonth}`)
+    setLocalStartMonth(value)
+    if (value && localEndMonth) {
+      updateField('bestTimeToVisit', `${value} - ${localEndMonth}`)
     } else {
       updateField('bestTimeToVisit', '')
     }
   }
 
   const handleEndMonthChange = (value: string) => {
-    const currentStartMonth = bestTimeToVisit ? bestTimeToVisit.split(' - ')[0] ?? '' : ''
-    if (currentStartMonth && value) {
-      updateField('bestTimeToVisit', `${currentStartMonth} - ${value}`)
+    setLocalEndMonth(value)
+    if (localStartMonth && value) {
+      updateField('bestTimeToVisit', `${localStartMonth} - ${value}`)
     } else {
       updateField('bestTimeToVisit', '')
     }
@@ -177,7 +183,7 @@ const ItineraryStep: React.FC<ItineraryStepProps> = () => {
           <div className="space-y-1">
             <Label className="text-xs">Start Month</Label>
             <CustomSelect
-              value={startMonth}
+              value={localStartMonth}
               onChange={handleStartMonthChange}
               placeholder="Select month"
               options={MONTH_OPTIONS}
@@ -187,7 +193,7 @@ const ItineraryStep: React.FC<ItineraryStepProps> = () => {
           <div className="space-y-1">
             <Label className="text-xs">End Month</Label>
             <CustomSelect
-              value={endMonth}
+              value={localEndMonth}
               onChange={handleEndMonthChange}
               placeholder="Select month"
               options={MONTH_OPTIONS}
@@ -195,9 +201,9 @@ const ItineraryStep: React.FC<ItineraryStepProps> = () => {
             />
           </div>
         </div>
-        {bestTimeToVisit && (
+        {(localStartMonth || localEndMonth) && (
           <p className="text-xs text-neutral-500">
-            Best time: <span className="font-medium text-neutral-700">{bestTimeToVisit}</span>
+            Best time: <span className="font-medium text-neutral-700">{localStartMonth || '?'} - {localEndMonth || '?'}</span>
           </p>
         )}
       </div>

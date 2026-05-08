@@ -9,10 +9,10 @@ export const useTripDetails = (slug: string) => {
   );
 
   const tripDetails: TripDetails | null = data ? {
-    id: data._id,
-    title: data.title,
-    description: data.description,
-    location: data.location?.address + ', ' + data.location?.city,
+    id: data._id || '',
+    title: data.title || '',
+    description: data.description || '',
+    location: [data.location?.address, data.location?.city].filter(Boolean).join(', ') || '',
     locationObj: {
       address: data.location?.address || '',
       city: data.location?.city || '',
@@ -35,8 +35,8 @@ export const useTripDetails = (slug: string) => {
     cancellationPolicy: data.cancellationPolicy,
     pricing: data.pricing ? {
       ...data.pricing,
-      pricings: data.pricing.pricings.map(p => ({ ...p, pricePerPerson: Number(p.pricePerPerson) })),
-      addOns: data.pricing.addOns.map(a => ({ ...a, pricePerPerson: Number(a.pricePerPerson) })),
+      pricings: (data.pricing.pricings || []).map(p => ({ ...p, pricePerPerson: Number(p.pricePerPerson) })),
+      addOns: (data.pricing.addOns || []).map(a => ({ ...a, pricePerPerson: Number(a.pricePerPerson) })),
     } : undefined,
     additionalInfo: data?.additionalInfo,
     status: data.status,

@@ -106,7 +106,10 @@ const TripForm: React.FC<TripFormProps> = ({ isEditMode = false, tripId }) => {
       setShowResultModal(true)
     },
     isEditMode, 
-    tripId 
+    tripId,
+    // Provide the auto-saved draft slug so the final submit updates the draft
+    // instead of creating a duplicate trip.
+    getSavedDraftSlug: () => savedTripSlugRef.current,
   })
 
   /** Attempt a silent background save only if the current step's fields have changed. */

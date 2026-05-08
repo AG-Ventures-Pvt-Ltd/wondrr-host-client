@@ -1,5 +1,5 @@
 import { TripFormData } from './types'
-import { VALIDATION_RULES } from './constants'
+import { VALIDATION_RULES, VALIDATION_MESSAGES } from './constants'
 
 export interface ValidationResult {
   isValid: boolean
@@ -11,107 +11,102 @@ export const validateTripForm = (formData: TripFormData): ValidationResult => {
 
   // Basic Information validations
   if (!formData.title.trim()) {
-    errors.push('Trip title is required')
+    errors.push(VALIDATION_MESSAGES.title)
   }
 
   if (!formData.description.trim()) {
-    errors.push('Trip description is required')
+    errors.push(VALIDATION_MESSAGES.description)
   }
 
   if (formData.category.length === 0) {
-    errors.push('At least one category is required')
+    errors.push(VALIDATION_MESSAGES.category)
   }
 
   if (formData.tags.length < VALIDATION_RULES.MIN_TAGS) {
-    errors.push(`At least ${VALIDATION_RULES.MIN_TAGS} tags are required`)
+    errors.push(VALIDATION_MESSAGES.tags)
   }
 
   // Location validations
   if (!formData.location.city.trim()) {
-    errors.push('City is required')
+    errors.push(VALIDATION_MESSAGES.locationCity)
   }
 
   if (!formData.location.state.trim()) {
-    errors.push('State is required')
+    errors.push(VALIDATION_MESSAGES.locationState)
   }
 
   // Media validations
   if (formData.tripImages.length < VALIDATION_RULES.MIN_IMAGES) {
-    errors.push(`At least ${VALIDATION_RULES.MIN_IMAGES} trip images are required`)
+    errors.push(VALIDATION_MESSAGES.tripImages)
   }
 
   if (formData.faqs.length < VALIDATION_RULES.MIN_FAQS) {
-    errors.push(`At least ${VALIDATION_RULES.MIN_FAQS} FAQs are required`)
+    errors.push(VALIDATION_MESSAGES.faqs)
   }
 
   // Pricing validations
   if (formData.pricings.length === 0) {
-    errors.push('At least one pricing tier is required')
+    errors.push(VALIDATION_MESSAGES.pricings)
   }
 
   formData.pricings.forEach((tier, index) => {
     if (!tier.label.trim()) {
-      errors.push(`Pricing tier ${index + 1}: Label is required`)
+      errors.push(VALIDATION_MESSAGES.pricingTierLabel(index))
     }
     if (tier.pricePerPerson < 0) {
-      errors.push(`Pricing tier ${index + 1}: Price per person cannot be negative`)
+      errors.push(VALIDATION_MESSAGES.pricingTierPrice(index))
     }
     if (tier.maxQuantity !== undefined && tier.maxQuantity < 1) {
-      errors.push(`Pricing tier ${index + 1}: Max quantity must be at least 1`)
+      errors.push(VALIDATION_MESSAGES.pricingTierQuantity(index))
     }
   })
 
   // Advance booking validations
   if (formData.isAdvanceBookingAllowed && formData.advanceBookingPrice <= 0) {
-    errors.push('Advance booking price must be greater than 0 when advance booking is enabled')
+    errors.push(VALIDATION_MESSAGES.advanceBookingPrice)
   }
 
   // Add-on validations
   formData.addOns.forEach((addon, index) => {
     if (!addon.label.trim()) {
-      errors.push(`Add-on ${index + 1}: Label is required`)
+      errors.push(VALIDATION_MESSAGES.addonLabel(index))
     }
     if (addon.pricePerPerson < 0) {
-      errors.push(`Add-on ${index + 1}: Price per person cannot be negative`)
+      errors.push(VALIDATION_MESSAGES.addonPrice(index))
     }
   })
 
   // Itinerary validations
   if (formData.itinerary.length < VALIDATION_RULES.MIN_ITINERARY_DAYS) {
-    errors.push(`At least ${VALIDATION_RULES.MIN_ITINERARY_DAYS} itinerary day is required`)
+    errors.push(VALIDATION_MESSAGES.itinerary)
   }
 
   formData.itinerary.forEach((day) => {
     if (!day.title.trim()) {
-      errors.push(`Day ${day.dayNumber} title is required`)
+      errors.push(VALIDATION_MESSAGES.itineraryDayTitle(day.dayNumber))
     }
     if (!day.description.trim()) {
-      errors.push(`Day ${day.dayNumber} itinerary description is required`)
+      errors.push(VALIDATION_MESSAGES.itineraryDayDescription(day.dayNumber))
     }
     if (day.wordCount > VALIDATION_RULES.MAX_ITINERARY_WORDS) {
-      errors.push(
-        `Day ${day.dayNumber} itinerary exceeds ${VALIDATION_RULES.MAX_ITINERARY_WORDS} words limit`
-      )
+      errors.push(VALIDATION_MESSAGES.itineraryDayWordCount(day.dayNumber))
     }
   })
 
   // Inclusions validations
   if (formData.inclusions.length < VALIDATION_RULES.MIN_INCLUSIONS) {
-    errors.push(`At least ${VALIDATION_RULES.MIN_INCLUSIONS} inclusions are required`)
+    errors.push(VALIDATION_MESSAGES.inclusions)
   }
 
   // Highlights validations
   if (formData.highlights.length < VALIDATION_RULES.MIN_HIGHLIGHTS) {
-    errors.push(`At least ${VALIDATION_RULES.MIN_HIGHLIGHTS} highlights are required`)
+    errors.push(VALIDATION_MESSAGES.highlights)
   }
 
   // Exclusions validations
   if (formData.exclusions.length < VALIDATION_RULES.MIN_EXCLUSIONS) {
-    errors.push(`At least ${VALIDATION_RULES.MIN_EXCLUSIONS} exclusions are required`)
+    errors.push(VALIDATION_MESSAGES.exclusions)
   }
-
-  // Sharing Price validations
-  // (removed — sharingPrice replaced by pricings tiers)
 
   return {
     isValid: errors.length === 0,
