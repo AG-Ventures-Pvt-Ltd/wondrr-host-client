@@ -17,6 +17,7 @@ export const useTripDetails = (slug: string) => {
       address: data.location?.address || '',
       city: data.location?.city || '',
       state: data.location?.state || '',
+      country: data.location?.country || 'India',
     },
     tripImages: data.tripImages || [],
     tags: data.tags || [],

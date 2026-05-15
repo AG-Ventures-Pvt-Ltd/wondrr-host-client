@@ -58,6 +58,7 @@ export interface TripDetailsApiResponse {
     address: string
     city: string
     state: string
+    country : string
   }
   description: string
   tripImages: string[]
@@ -116,6 +117,7 @@ export interface TripDetails {
     address: string
     city: string
     state: string
+    country : string
   }
   description: string
   status?: string
