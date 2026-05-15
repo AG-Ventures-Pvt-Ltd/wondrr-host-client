@@ -220,6 +220,7 @@ export interface LocationData {
   address: string
   city: string
   state: string
+  country: string
   latitude: number | null
   longitude: number | null
 }

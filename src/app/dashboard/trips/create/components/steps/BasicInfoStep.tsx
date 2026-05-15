@@ -11,7 +11,7 @@ import Modal from '@/common/components/composites/Modal'
 import { Select as MuiSelect, MenuItem, FormControl, SelectChangeEvent, Checkbox, ListItemText } from '@mui/material'
 import { useTripFormStore } from '../../store'
 import { useTagManager } from '../../hooks'
-import { TRIP_CATEGORIES, TRIP_DIFFICULTIES, VALIDATION_RULES, INDIAN_STATES } from '../../constants'
+import { TRIP_CATEGORIES, TRIP_DIFFICULTIES, VALIDATION_RULES, INDIAN_STATES, COUNTRIES } from '../../constants'
 import type { TripDifficulty } from '../../types'
 
 interface BasicInfoStepProps {
@@ -28,6 +28,15 @@ const BasicInfoStep: React.FC<BasicInfoStepProps> = () => {
   const difficultyOptions = TRIP_DIFFICULTIES.map(d => ({ value: d.value, label: d.label }))
 
   const stateOptions = INDIAN_STATES.map(state => ({ value: state, label: state }))
+  const countryOptions = COUNTRIES.map(c => ({ value: c, label: c }))
+
+  const isIndia = location.country === 'India' || !location.country
+
+  const handleCountryChange = (val: string) => {
+    updateLocationField('country', val)
+    // Clear state when switching countries so user picks/types the correct one
+    updateLocationField('state', '')
+  }
 
   const handleAddCustomCategory = () => {
     if (customCategoryInput.trim() && !customCategories.includes(customCategoryInput.trim())) {
@@ -222,7 +231,18 @@ const BasicInfoStep: React.FC<BasicInfoStepProps> = () => {
         {/* City and State */}
         <div>
           <h3 className="text-sm font-semibold text-neutral-900 mb-3">Location</h3>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+            <div className="space-y-1.5">
+              <Label htmlFor="country" className="text-sm">Country</Label>
+              <CustomSelect
+                id="country"
+                value={location.country || 'India'}
+                placeholder="Select Country"
+                onChange={handleCountryChange}
+                options={countryOptions}
+                className="w-full"
+              />
+            </div>
             <div className="space-y-1.5">
               <Label htmlFor="city" className="text-sm">City</Label>
               <CustomInput
@@ -233,16 +253,28 @@ const BasicInfoStep: React.FC<BasicInfoStepProps> = () => {
                 variant="input"
               />
             </div>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-1.5">
-              <Label htmlFor="state" className="text-sm">State</Label>
-              <CustomSelect
-                id="state"
-                value={location.state || ''}
-                placeholder="Select State"
-                onChange={(val) => updateLocationField('state', val)}
-                options={stateOptions}
-                className="w-full"
-              />
+              <Label htmlFor="state" className="text-sm">State {isIndia ? '' : '/ Province'}</Label>
+              {isIndia ? (
+                <CustomSelect
+                  id="state"
+                  value={location.state || ''}
+                  placeholder="Select State"
+                  onChange={(val) => updateLocationField('state', val)}
+                  options={stateOptions}
+                  className="w-full"
+                />
+              ) : (
+                <CustomInput
+                  id="state"
+                  placeholder="e.g., Bavaria"
+                  value={location.state || ''}
+                  onChange={(e) => updateLocationField('state', e.target.value)}
+                  variant="input"
+                />
+              )}
             </div>
           </div>
         </div>

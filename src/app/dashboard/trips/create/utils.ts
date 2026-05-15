@@ -135,6 +135,7 @@ export const prepareSubmissionData = (formData: TripFormData) => {
     location: {
       city: formData.location.city,
       state: formData.location.state,
+      ...(formData.location.country && formData.location.country !== 'India' && { country: formData.location.country }),
       latitude: formData.location.latitude,
       longitude: formData.location.longitude,
     },

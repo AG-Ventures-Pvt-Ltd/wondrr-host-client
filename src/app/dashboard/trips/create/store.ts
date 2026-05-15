@@ -14,6 +14,7 @@ const initialFormData: TripFormData = {
     address: '',
     city: '',
     state: '',
+    country: 'India',
     latitude: null,
     longitude: null,
   },

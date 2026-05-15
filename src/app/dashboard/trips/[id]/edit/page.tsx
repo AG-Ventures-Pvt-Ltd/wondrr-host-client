@@ -31,6 +31,7 @@ const EditTripPage = () => {
                     address: tripDetails.locationObj?.address || '',
                     city: tripDetails.locationObj?.city || '',
                     state: tripDetails.locationObj?.state || '',
+                    country: tripDetails.locationObj?.country || 'India',
                     latitude: null,
                     longitude: null,
                 },
