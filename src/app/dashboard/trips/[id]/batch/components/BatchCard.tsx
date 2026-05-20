@@ -1,5 +1,5 @@
 import { useRouter } from 'next/navigation';
-import { Calendar, Copy, Star, Users } from 'lucide-react';
+import { Calendar, Copy, Star, Trash2, Users } from 'lucide-react';
 import Card from '@/common/components/composites/Card';
 import { formatDate, formatDateRangeWithDuration } from '@/common/utils/dateUtils';
 import { BATCH_STATUS } from '../../../constants/batchStatus';
@@ -9,6 +9,10 @@ interface BatchCardProps {
     batch: TripBatchDetails;
     tripId: string;
     onDuplicate?: (batchId: string, durationDays: number) => void;
+    onDelete?: (batchId: string) => void;
+    isSelected?: boolean;
+    onToggleSelect?: (batchId: string) => void;
+    selectionMode?: boolean;
 }
 
 const getStatusColor = (status: string) => {
@@ -34,33 +38,66 @@ const STATUS_TEXT: Record<string, string> = {
     gray: 'text-gray-600',
 };
 
-const BatchCard = ({ batch, tripId, onDuplicate }: BatchCardProps) => {
+const BatchCard = ({ batch, tripId, onDuplicate, onDelete, isSelected, onToggleSelect, selectionMode }: BatchCardProps) => {
     const router = useRouter();
     const color = getStatusColor(batch.status);
+    // A batch is deletable only if it has no bookings
+    const isDeletable = batch.totalBookings === 0;
 
     const handleDuplicateClick = (e: React.MouseEvent) => {
         e.stopPropagation();
         onDuplicate?.(batch._id, batch.durationDays);
     };
 
+    const handleDeleteClick = (e: React.MouseEvent) => {
+        e.stopPropagation();
+        onDelete?.(batch._id);
+    };
+
+    const handleCardClick = () => {
+        if (selectionMode && isDeletable) {
+            onToggleSelect?.(batch._id);
+        } else if (!selectionMode) {
+            router.push(`/dashboard/trips/${tripId}/batch/${batch._id}`);
+        }
+    };
+
+    const handleCheckboxClick = (e: React.MouseEvent) => {
+        e.stopPropagation();
+        onToggleSelect?.(batch._id);
+    };
+
     return (
         <Card
             key={batch._id}
-            className="cursor-pointer hover:shadow-md transition-shadow"
-            onClick={() => router.push(`/dashboard/trips/${tripId}/batch/${batch._id}`)}
+            className={`cursor-pointer hover:shadow-md transition-shadow ${isSelected ? 'ring-2 ring-primary' : ''}`}
+            onClick={handleCardClick}
         >
             <div className="flex flex-col gap-4">
                 <div className="flex justify-between items-start">
-                    <div className="flex flex-col gap-2">
-                        <div className="flex items-center gap-2">
-                            <Calendar size={16} className="text-subtext" />
-                            <span className="text-base text-maintext">
-                                {formatDate(batch.startDate)}
+                    <div className="flex items-start gap-2">
+                        {isDeletable && (
+                            <div onClick={handleCheckboxClick} className="mt-0.5">
+                                <input
+                                    type="checkbox"
+                                    checked={!!isSelected}
+                                    onChange={() => onToggleSelect?.(batch._id)}
+                                    className="w-4 h-4 accent-primary cursor-pointer"
+                                    onClick={(e) => e.stopPropagation()}
+                                />
+                            </div>
+                        )}
+                        <div className="flex flex-col gap-2">
+                            <div className="flex items-center gap-2">
+                                <Calendar size={16} className="text-subtext" />
+                                <span className="text-base text-maintext">
+                                    {formatDate(batch.startDate)}
+                                </span>
+                            </div>
+                            <span className="text-sm text-subtext">
+                                {formatDateRangeWithDuration(batch.startDate, batch.endDate)}
                             </span>
                         </div>
-                        <span className="text-sm text-subtext">
-                            {formatDateRangeWithDuration(batch.startDate, batch.endDate)}
-                        </span>
                     </div>
                     <div className="flex items-center gap-2">
                         <span className={`px-3 py-1 rounded-xl text-xs ${STATUS_BG[color]} ${STATUS_TEXT[color]}`}>
@@ -73,6 +110,15 @@ const BatchCard = ({ batch, tripId, onDuplicate }: BatchCardProps) => {
                         >
                             <Copy size={14} />
                         </button>
+                        {isDeletable && (
+                            <button
+                                title="Delete batch"
+                                onClick={handleDeleteClick}
+                                className="p-1.5 rounded-lg hover:bg-red-50 text-subtext hover:text-red-500 transition-colors"
+                            >
+                                <Trash2 size={14} />
+                            </button>
+                        )}
                     </div>
                 </div>
                 <div className="grid grid-cols-2 gap-4">

@@ -5,6 +5,7 @@ export const BATCH_STATUS = {
   SOLD_OUT: 'sold-out',
   CLOSED: 'closed',
   CANCELLED: 'cancelled',
+  DELETED: 'deleted',
 } as const;
 
 export type BatchStatus = (typeof BATCH_STATUS)[keyof typeof BATCH_STATUS];
