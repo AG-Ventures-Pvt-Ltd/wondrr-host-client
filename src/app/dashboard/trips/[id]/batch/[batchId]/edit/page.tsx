@@ -56,8 +56,8 @@ const EditBatchPage = () => {
                 ) ?? []
 
             const formData = {
-                startDateTime: formatDateTimeForInput(rawData.startDate), // Format as datetime-local
-                endDateTime: formatDateForInput(rawData.endDate),
+                startDateTime: formatDateTimeForInput(rawData.startDateTime), // Format as datetime-local
+                endDateTime: formatDateForInput(rawData.endDateTime),
                 meetingPoint: meetingPoints,
                 dropPoint: dropPoints,
                 pointOfContact: {
