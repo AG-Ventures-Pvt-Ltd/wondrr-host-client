@@ -46,7 +46,12 @@ const BatchCard = ({ batch, tripId, onDuplicate, onDelete, isSelected, onToggleS
 
     const handleDuplicateClick = (e: React.MouseEvent) => {
         e.stopPropagation();
-        onDuplicate?.(batch._id, batch.durationDays);
+        // Compute IST calendar day gap client-side (avoids relying on server's raw-ms durationDays)
+        const istDay = (d: string) => new Date(d).toLocaleDateString('en-CA', { timeZone: 'Asia/Kolkata' }).split('-').map(Number) as [number, number, number];
+        const [sy, sm, sd] = istDay(batch.startDate);
+        const [ey, em, ed] = istDay(batch.endDate);
+        const durationDays = Math.round((new Date(ey, em - 1, ed).getTime() - new Date(sy, sm - 1, sd).getTime()) / 86400000);
+        onDuplicate?.(batch._id, durationDays);
     };
 
     const handleDeleteClick = (e: React.MouseEvent) => {
