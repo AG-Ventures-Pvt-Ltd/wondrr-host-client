@@ -7,9 +7,9 @@ export interface BatchDetailsApiResponse {
   /** Trip title (returned as `title` by the server) */
   title: string;
   /** ISO date string — aliased from model's startDateTime */
-  startDate: string;
+  startDateTime: string;
   /** ISO date string — aliased from model's endDateTime */
-  endDate: string;
+  endDateTime: string;
   status: string;
   totalSeats: number;
   totalBookings: number;
@@ -63,7 +63,7 @@ export const useBatchDetails = (batchId: string) => {
   const batchDetails: BatchDetails | null = data ? {
     id: data._id,
     title: data.title || data.tripTitle || '',
-    dateRange: formatDateRangeWithDuration(data.startDate, data.endDate),
+    dateRange: formatDateRangeWithDuration(data.startDateTime, data.startDateTime),
     status: data.status,
     stats: {
       revenue: `${data.revenue ?? 0}`,
@@ -76,6 +76,8 @@ export const useBatchDetails = (batchId: string) => {
       contactPhone: data.pointOfContact?.phone ?? '',
     },
   } : null;
+
+  console.log(data)
 
   return {
     batchDetails,
