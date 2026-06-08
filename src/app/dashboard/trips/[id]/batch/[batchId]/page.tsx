@@ -18,8 +18,6 @@ const BatchDetailsPage = () => {
 
   const { batchDetails, isLoading, error } = useBatchDetails(batchId);
 
-  console.log(batchDetails)
-
   const handleEditBatch = () => {
     router.push(`/dashboard/trips/${tripId}/batch/${batchId}/edit`);
   };
