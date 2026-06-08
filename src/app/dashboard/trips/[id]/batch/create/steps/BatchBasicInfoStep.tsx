@@ -111,10 +111,11 @@ const BatchBasicInfoStep: React.FC = () => {
   // Auto-fill endDateTime when startDateTime changes and totalDays is known
   useEffect(() => {
     if (startDateTime && totalDays > 0) {
-      const start = new Date(startDateTime)
-      if (!isNaN(start.getTime())) {
-        const end = new Date(start.getTime() + (totalDays - 1) * 24 * 60 * 60 * 1000)
-        const endStr = end.toISOString().slice(0, 10)
+      // startDateTime from datetime-local is "YYYY-MM-DDTHH:MM" in IST
+      const startIST = new Date(startDateTime + ':00+05:30')
+      if (!isNaN(startIST.getTime())) {
+        const end = new Date(startIST.getTime() + (totalDays - 1) * 24 * 60 * 60 * 1000)
+        const endStr = end.toLocaleDateString('en-CA', { timeZone: 'Asia/Kolkata' })
         if (!endDateTime || endDateTime <= startDateTime.split('T')[0]) {
           updateField('endDateTime', endStr)
         }
@@ -124,18 +125,19 @@ const BatchBasicInfoStep: React.FC = () => {
   }, [startDateTime, totalDays])
 
   const now = new Date()
-  const todayStr = now.toISOString().slice(0, 10)
+  const todayStr = now.toLocaleDateString('en-CA', { timeZone: 'Asia/Kolkata' })
 
   const getCloseBookingConstraints = () => {
-    const today = now.toISOString().split('T')[0]
+    const today = now.toLocaleDateString('en-CA', { timeZone: 'Asia/Kolkata' })
     if (!startDateTime) return { min: today, max: '' }
-    const startDate = new Date(startDateTime)
-    const oneDayBefore = new Date(startDate.getTime() - 24 * 60 * 60 * 1000)
-    const threeDaysBefore = new Date(startDate.getTime() - 3 * 24 * 60 * 60 * 1000)
+    // startDateTime is "YYYY-MM-DDTHH:MM" from datetime-local — split gives IST date directly
+    const startIST = new Date(startDateTime.split('T')[0] + 'T12:00:00+05:30')
+    const oneDayBefore = new Date(startIST.getTime() - 24 * 60 * 60 * 1000)
+    const threeDaysBefore = new Date(startIST.getTime() - 3 * 24 * 60 * 60 * 1000)
     const minDate = threeDaysBefore > now ? threeDaysBefore : now
     return {
-      min: minDate.toISOString().split('T')[0],
-      max: oneDayBefore.toISOString().split('T')[0],
+      min: minDate.toLocaleDateString('en-CA', { timeZone: 'Asia/Kolkata' }),
+      max: oneDayBefore.toLocaleDateString('en-CA', { timeZone: 'Asia/Kolkata' }),
     }
   }
 

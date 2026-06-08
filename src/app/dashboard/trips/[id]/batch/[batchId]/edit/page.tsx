@@ -17,25 +17,28 @@ const EditBatchPage = () => {
 
     useEffect(() => {
         if (rawData) {
-            // Format datetime for datetime-local input (YYYY-MM-DDTHH:MM in local time)
+            // Convert UTC ISO string → "YYYY-MM-DDTHH:MM" in IST for datetime-local input
             const formatDateTimeForInput = (dateStr: string) => {
                 if (!dateStr) return ''
                 const date = new Date(dateStr)
                 if (isNaN(date.getTime())) return ''
-                const year = date.getFullYear()
-                const month = String(date.getMonth() + 1).padStart(2, '0')
-                const day = String(date.getDate()).padStart(2, '0')
-                const hours = String(date.getHours()).padStart(2, '0')
-                const minutes = String(date.getMinutes()).padStart(2, '0')
-                return `${year}-${month}-${day}T${hours}:${minutes}`
+                // Use IST locale to get each part
+                const parts = new Intl.DateTimeFormat('en-CA', {
+                    timeZone: 'Asia/Kolkata',
+                    year: 'numeric', month: '2-digit', day: '2-digit',
+                    hour: '2-digit', minute: '2-digit', hour12: false,
+                }).formatToParts(date)
+                const get = (t: string) => parts.find(p => p.type === t)?.value ?? '00'
+                const hh = get('hour') === '24' ? '00' : get('hour') // midnight edge
+                return `${get('year')}-${get('month')}-${get('day')}T${hh}:${get('minute')}`
             }
 
-            // Extract just the date part (YYYY-MM-DD) for the date input
+            // Convert UTC ISO string → "YYYY-MM-DD" in IST for date input
             const formatDateForInput = (dateStr: string) => {
                 if (!dateStr) return ''
                 const date = new Date(dateStr)
                 if (isNaN(date.getTime())) return ''
-                return date.toISOString().split('T')[0]
+                return date.toLocaleDateString('en-CA', { timeZone: 'Asia/Kolkata' })
             }
 
             // meetingPoint.location may be a populated object or a plain ID string
@@ -66,7 +69,9 @@ const EditBatchPage = () => {
                 },
                 totalSeats: rawData.totalSeats || null,
                 status: (rawData.status?.toLowerCase() || 'draft') as 'draft' | 'published' | 'cancelled',
-                closeBooking: rawData.closeBooking ? new Date(rawData.closeBooking).toISOString().split('T')[0] : '',
+                closeBooking: rawData.closeBooking
+                    ? new Date(rawData.closeBooking).toLocaleDateString('en-CA', { timeZone: 'Asia/Kolkata' })
+                    : '',
             }
 
             useBatchFormStore.getState().prefillFormData(formData)

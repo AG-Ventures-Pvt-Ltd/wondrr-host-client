@@ -26,10 +26,8 @@ const CouponCard = ({ coupon, onDeactivateSuccess }: CouponCardProps) => {
     const startDate = new Date(coupon.startDate)
     const endDate = new Date(coupon.endDate)
     
-    const formatDate = (date: Date) => {
-      const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
-      return `${months[date.getMonth()]} ${date.getDate()}`
-    }
+    const formatDate = (date: Date) =>
+      date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', timeZone: 'Asia/Kolkata' })
     
     return `${formatDate(startDate)} - ${formatDate(endDate)}`
   }

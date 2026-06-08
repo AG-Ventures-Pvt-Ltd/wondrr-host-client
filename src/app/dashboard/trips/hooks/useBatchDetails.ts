@@ -63,7 +63,7 @@ export const useBatchDetails = (batchId: string) => {
   const batchDetails: BatchDetails | null = data ? {
     id: data._id,
     title: data.title || data.tripTitle || '',
-    dateRange: formatDateRangeWithDuration(data.startDateTime, data.startDateTime),
+    dateRange: formatDateRangeWithDuration(data.startDateTime, data.endDateTime),
     status: data.status,
     stats: {
       revenue: `${data.revenue ?? 0}`,
@@ -76,8 +76,6 @@ export const useBatchDetails = (batchId: string) => {
       contactPhone: data.pointOfContact?.phone ?? '',
     },
   } : null;
-
-  console.log(data)
 
   return {
     batchDetails,

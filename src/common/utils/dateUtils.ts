@@ -1,10 +1,12 @@
+const IST_LOCALE_DATE = (d: Date) =>
+  d.toLocaleDateString('en-CA', { timeZone: 'Asia/Kolkata' }); // "YYYY-MM-DD"
+
 export const formatDate = (date: Date | string): string => {
-  const utcDate = new Date(date);
-  const istDate = new Date(utcDate.getTime() + (5.5 * 60 * 60 * 1000));
-  const month = istDate.toLocaleDateString('en-US', { month: 'short' });
-  const day = istDate.getDate();
-  const year = istDate.getFullYear();
-  return `${month} ${day}, ${year}`;
+  const d = new Date(date);
+  const [year, month, day] = IST_LOCALE_DATE(d).split('-').map(Number);
+  const localMidnight = new Date(year, month - 1, day);
+  const monthStr = localMidnight.toLocaleDateString('en-US', { month: 'short' });
+  return `${monthStr} ${day}, ${year}`;
 };
 
 export const formatDateTime = (date: Date | string): string => {
@@ -19,20 +21,14 @@ export const formatDateTime = (date: Date | string): string => {
 };
 
 export const formatDateRangeWithDuration = (startDate: string, endDate: string): string => {
-  const start = new Date(startDate);
-  const end = new Date(endDate);
-
-  const diffTime = end.getTime() - start.getTime();
-  const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1;
+  const parseIST = (s: string) => {
+    const [y, m, d] = new Date(s).toLocaleDateString('en-CA', { timeZone: 'Asia/Kolkata' }).split('-').map(Number);
+    return new Date(y, m - 1, d);
+  };
+  const start = parseIST(startDate);
+  const end = parseIST(endDate);
+  const diffDays = Math.round((end.getTime() - start.getTime()) / 86400000) + 1;
   const nights = diffDays - 1;
-
-  const format = (date: Date) =>
-    new Intl.DateTimeFormat('en-US', {
-      timeZone: 'Asia/Kolkata',
-      month: 'short',
-      day: '2-digit',
-      year: 'numeric',
-    }).format(date);
-
-  return `${format(start)} - ${format(end)} • ${diffDays}D/${nights}N`;
+  const fmt = (d: Date) => d.toLocaleDateString('en-US', { month: 'short', day: '2-digit', year: 'numeric' });
+  return `${fmt(start)} - ${fmt(end)} • ${diffDays}D/${nights}N`;
 };

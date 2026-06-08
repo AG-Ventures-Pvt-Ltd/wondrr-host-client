@@ -26,23 +26,27 @@ export const generateCalendarDays = (
     });
   }
 
+  // Pre-build a map of IST date string → batches for O(1) lookup
+  const batchByISTDay = new Map<string, typeof batches>();
+  for (const batchItem of batches) {
+    if (!batchItem.startDate) continue;
+    const istStr = new Date(batchItem.startDate).toLocaleDateString('en-CA', { timeZone: 'Asia/Kolkata' });
+    const existing = batchByISTDay.get(istStr) ?? [];
+    batchByISTDay.set(istStr, [...existing, batchItem]);
+  }
+
+  const todayIST = today.toLocaleDateString('en-CA', { timeZone: 'Asia/Kolkata' });
+
   // Add actual days of the month
   for (let date = 1; date <= daysInMonth; date++) {
-    const dayBatches = batches
-      .filter((batchItem) => {
-        const batchDate = new Date(batchItem.startDate);
-        return (
-          batchDate.getDate() === date &&
-          batchDate.getMonth() === month &&
-          batchDate.getFullYear() === year
-        );
-      })
+    const dayStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(date).padStart(2, '0')}`;
+    const dayBatches = (batchByISTDay.get(dayStr) ?? [])
       .map(mapBatchItemToBatch)
       .filter((batch) =>
         searchQuery ? batch.destination.toLowerCase().includes(searchQuery.toLowerCase()) : true
       );
 
-    const isToday = date === today.getDate() && month === today.getMonth() && year === today.getFullYear();
+    const isToday = dayStr === todayIST;
 
     days.push({
       date,

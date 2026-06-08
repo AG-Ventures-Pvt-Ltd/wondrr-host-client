@@ -57,11 +57,11 @@ export const validateBatchForm = (formData: BatchFormData): ValidationResult => 
 
   // Close booking validations
   if (formData.closeBooking && formData.startDateTime) {
-    const closeBookingDate = new Date(formData.closeBooking)
-    const startDateTime = new Date(formData.startDateTime)
-    const startDate = new Date(startDateTime.toISOString().split('T')[0])
-    const now = new Date()
-    const today = new Date(now.toISOString().split('T')[0])
+    const closeBookingDate = new Date(formData.closeBooking + 'T00:00')
+    const startDateStr = formData.startDateTime.split('T')[0] // IST date from datetime-local
+    const startDate = new Date(startDateStr + 'T00:00')
+    const todayStr = new Date().toLocaleDateString('en-CA', { timeZone: 'Asia/Kolkata' })
+    const today = new Date(todayStr + 'T00:00')
     const threeDaysBeforeStart = new Date(startDate.getTime() - 3 * 24 * 60 * 60 * 1000)
 
     if (closeBookingDate >= startDate) {
@@ -84,13 +84,15 @@ export const validateBatchForm = (formData: BatchFormData): ValidationResult => 
 }
 
 export const prepareSubmissionData = (formData: BatchFormData, tripId: string) => {
-  // Form stores startDateTime as local datetime (YYYY-MM-DDTHH:MM); keep as local time for API
-  const toDateTime = (date: string) => date ? `${date}T00:00` : date
+  // Datetime-local input gives YYYY-MM-DDTHH:MM in IST (browser local).
+  // Append explicit +05:30 so the UTC server stores the correct UTC value.
+  const toISTDateTime = (s: string) => s ? `${s}:00+05:30` : s
+  const toISTDateMidnight = (s: string) => s ? `${s}T00:00:00+05:30` : s
 
   return {
     tripId,
-    startDateTime: formData.startDateTime, // Keep as local datetime string
-    endDateTime: toDateTime(formData.endDateTime),
+    startDateTime: toISTDateTime(formData.startDateTime),
+    endDateTime: toISTDateMidnight(formData.endDateTime),
     meetingPoint: formData.meetingPoint.map(point => ({
       location: point.location,
       pickupPrice: point.pickupPrice ?? 0,
@@ -98,7 +100,7 @@ export const prepareSubmissionData = (formData: BatchFormData, tripId: string) =
     dropPoint: formData.dropPoint,
     pointOfContact: formData.pointOfContact,
     totalSeats: formData.totalSeats,
-    closeBooking: formData.closeBooking,
+    closeBooking: toISTDateMidnight(formData.closeBooking),
     status: 'draft',
   }
 }
@@ -109,12 +111,12 @@ export const scrollToTop = () => {
 
 export const formatDate = (dateString: string): string => {
   if (!dateString) return ''
-  const utcDate = new Date(dateString)
-  const istDate = new Date(utcDate.getTime() + (5.5 * 60 * 60 * 1000));
-  const month = istDate.toLocaleDateString('en-US', { month: 'short' });
-  const day = istDate.getDate();
-  const year = istDate.getFullYear();
-  return `${month} ${day}, ${year}`;
+  const [year, month, day] = new Date(dateString)
+    .toLocaleDateString('en-CA', { timeZone: 'Asia/Kolkata' })
+    .split('-')
+    .map(Number)
+  const localMidnight = new Date(year, month - 1, day)
+  return `${localMidnight.toLocaleDateString('en-US', { month: 'short' })} ${day}, ${year}`
 }
 
 export const formatTime = (timeString: string): string => {
