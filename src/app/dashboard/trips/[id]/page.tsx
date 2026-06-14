@@ -13,9 +13,11 @@ import TripDescription from './components/TripDescription';
 import FAQ from './components/FAQ';
 import TripSidebar from './components/TripSidebar';
 import ShareTripModal from './components/ShareTripModal';
+import DeleteTripModal from './components/DeleteTripModal';
+import { useDeleteTrip } from '../hooks/useDeleteTrip';
 import Loader from '@/common/components/composites/Loader';
 import Button from '@/common/components/atoms/Button';
-import { Share2, BarChart3, Eye } from 'lucide-react';
+import { Share2, BarChart3, Eye, Trash2 } from 'lucide-react';
 import Card from '@/common/components/composites/Card';
 
 
@@ -25,6 +27,8 @@ const TripDetailsPage = () => {
     const params = useParams();
     const tripId = params.id as string;
     const [isShareModalOpen, setIsShareModalOpen] = React.useState(false);
+    const [isDeleteModalOpen, setIsDeleteModalOpen] = React.useState(false);
+    const deleteTripMutation = useDeleteTrip();
 
     const { tripDetails, isLoading, error } = useTripDetails(tripId);
     const { tripBatches } = useTripBatchDetails(tripId, 1, 2);
@@ -81,6 +85,14 @@ const TripDetailsPage = () => {
                             <Share2 className="w-4 h-4 text-neutral-600" />
                             <span className="text-sm text-neutral-600">Share Trip</span>
                         </Button>
+                        <Button
+                            variant="text"
+                            className="h-10 px-4 rounded-2xl flex items-center gap-2 hover:bg-red-50 text-left justify-start"
+                            onClick={() => setIsDeleteModalOpen(true)}
+                        >
+                            <Trash2 className="w-4 h-4 text-red-500" />
+                            <span className="text-sm text-red-500">Delete Trip</span>
+                        </Button>
                     </div>
                 </Card>
             </div>
@@ -122,6 +134,20 @@ const TripDetailsPage = () => {
                 onClose={() => setIsShareModalOpen(false)}
                 tripTitle={tripDetails.title}
                 tripSlug={tripId}
+            />
+            <DeleteTripModal
+                open={isDeleteModalOpen}
+                onClose={() => setIsDeleteModalOpen(false)}
+                tripName={tripDetails.title}
+                isPending={deleteTripMutation.isPending}
+                onConfirm={() => {
+                    deleteTripMutation.mutate(tripId, {
+                        onSuccess: () => {
+                            setIsDeleteModalOpen(false);
+                            router.push('/dashboard/trips');
+                        },
+                    });
+                }}
             />
         </div>
     );

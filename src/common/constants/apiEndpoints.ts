@@ -20,6 +20,7 @@ export const API_ENDPOINTS = {
     GET_TRIP_BATCH_RESOURCES: (tripSlug: string) => `api/client/v1/trips/host/trip/${tripSlug}/batch-resources`,
     DUPLICATE_BATCH: 'api/client/v1/trips/host/trip/batch/duplicate',
     DELETE_BATCHES: 'api/client/v1/trips/host/trip/batch/delete',
+    DELETE_TRIP: (slug: string) => `api/client/v1/trips/host/trip/${slug}/delete`,
   },
   BOOKINGS: {
     GET_HOST_BOOKINGS: (page: number, limit: number, tripId?: string, batchId?: string) => {
