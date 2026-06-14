@@ -7,17 +7,24 @@ import Modal from '@/common/components/composites/Modal'
 import { useRouter } from 'next/navigation'
 import { useTrips } from './hooks/useTrips'
 import { useUpdateTripStatus } from './hooks/useUpdateTripStatus'
+import { useDeleteTrip } from './hooks/useDeleteTrip'
 import TripsLoadingState from './components/TripsLoadingState'
 import TripsErrorState from './components/TripsErrorState'
 import TripsEmptyState from './components/TripsEmptyState'
 import TripCard from './components/TripCard'
+import DeleteTripModal from './[id]/components/DeleteTripModal'
 
 const Trips = () => {
     const router = useRouter()
     const { trips, isLoading, error, refetch } = useTrips()
     const updateTripStatusMutation = useUpdateTripStatus()
+    const deleteTripMutation = useDeleteTrip()
+
     const [showStatusModal, setShowStatusModal] = useState(false)
     const [selectedTrip, setSelectedTrip] = useState<{ id: string; name: string; status: string; targetStatus: string } | null>(null)
+
+    const [showDeleteModal, setShowDeleteModal] = useState(false)
+    const [tripToDelete, setTripToDelete] = useState<{ slug: string; name: string } | null>(null)
 
     const handleStatusToggle = (trip: { id: string; name: string; status: string }, targetStatus: string) => {
         setSelectedTrip({ ...trip, targetStatus })
@@ -36,6 +43,23 @@ const Trips = () => {
                     },
                 }
             )
+        }
+    }
+
+    const handleDeleteClick = (trip: { slug: string; name: string }) => {
+        setTripToDelete(trip)
+        setShowDeleteModal(true)
+    }
+
+    const handleConfirmDelete = () => {
+        if (tripToDelete) {
+            deleteTripMutation.mutate(tripToDelete.slug, {
+                onSuccess: () => {
+                    setShowDeleteModal(false)
+                    setTripToDelete(null)
+                    refetch()
+                },
+            })
         }
     }
 
@@ -65,6 +89,7 @@ const Trips = () => {
                             trip={trip}
                             onStatusToggle={handleStatusToggle}
                             isUpdating={updateTripStatusMutation.isPending}
+                            onDelete={handleDeleteClick}
                         />
                     ))}
                 </div>
@@ -95,6 +120,17 @@ const Trips = () => {
                 onSubmit={handleConfirmStatusChange}
                 cancelText="Cancel"
                 disabled={updateTripStatusMutation.isPending}
+            />
+
+            <DeleteTripModal
+                open={showDeleteModal}
+                onClose={() => {
+                    setShowDeleteModal(false)
+                    setTripToDelete(null)
+                }}
+                tripName={tripToDelete?.name ?? ''}
+                isPending={deleteTripMutation.isPending}
+                onConfirm={handleConfirmDelete}
             />
         </div>
     )

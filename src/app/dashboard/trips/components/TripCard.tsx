@@ -1,4 +1,4 @@
-import { Dot, Folder, MapPin } from 'lucide-react'
+import { Dot, Folder, MapPin, Trash2 } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import Card from '@/common/components/composites/Card'
 import MyImage from '@/common/components/atoms/Image'
@@ -10,9 +10,10 @@ interface TripCardProps {
     trip: TripList
     onStatusToggle: (trip: { id: string; name: string; status: string }, targetStatus: string) => void
     isUpdating: boolean
+    onDelete: (trip: { slug: string; name: string }) => void
 }
 
-const TripCard = ({ trip, onStatusToggle, isUpdating }: TripCardProps) => {
+const TripCard = ({ trip, onStatusToggle, isUpdating, onDelete }: TripCardProps) => {
     const router = useRouter()
 
     return (
@@ -59,6 +60,15 @@ const TripCard = ({ trip, onStatusToggle, isUpdating }: TripCardProps) => {
                         </div>
                     </div>
                     <div className="flex items-center gap-3">
+                        <div onClick={(e) => e.stopPropagation()}>
+                            <button
+                                className="p-1.5 rounded-lg text-neutral-400 hover:text-red-500 hover:bg-red-50 transition-colors"
+                                onClick={() => onDelete({ slug: trip.slug, name: trip.name })}
+                                title="Delete trip"
+                            >
+                                <Trash2 size={16} />
+                            </button>
+                        </div>
                         <div onClick={(e) => e.stopPropagation()}>
                             <div className={cn(
                                 "p-1 rounded-lg transition-colors",
