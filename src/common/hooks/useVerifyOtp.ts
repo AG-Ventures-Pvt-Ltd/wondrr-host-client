@@ -6,6 +6,7 @@ import { API_ENDPOINTS } from "@/common/constants/apiEndpoints";
 interface VerifyOtpCredentials extends Record<string, unknown> {
   email: string;
   otp: string;
+  purpose: 'signup' | 'login';
 }
 
 interface VerifyOtpResponse {

@@ -2,7 +2,7 @@ import { useQueryClient } from '@tanstack/react-query';
 import usePostData from '@/common/services/usePostData';
 import { API_ENDPOINTS } from '@/common/constants/apiEndpoints';
 
-type UpdateType = 'basic_info' | 'payment_details' | 'social_links' | 'documents';
+type UpdateType = 'basic_info' | 'payment_details' | 'social_links' | 'documents' | 'media';
 
 interface BasicInfoUpdate {
   bio: string;
@@ -27,6 +27,11 @@ interface SocialLinksUpdate {
   instagram: string;
   linkedin: string;
   facebook: string;
+}
+
+interface MediaUpdate {
+  banner?: string;
+  profileVideos?: string[];
 }
 
 interface UseProfileUpdateOptions {
@@ -96,4 +101,17 @@ export const useUpdateSocialLinks = (options?: UseProfileUpdateOptions) => {
   };
 
   return { updateSocialLinks, isPending };
+};
+
+export const useUpdateMedia = (options?: UseProfileUpdateOptions) => {
+  const { mutate, isPending } = useProfileUpdate('media', options);
+
+  const updateMedia = (data: MediaUpdate) => {
+    mutate({
+      update_type: 'media',
+      ...data,
+    });
+  };
+
+  return { updateMedia, isPending };
 };

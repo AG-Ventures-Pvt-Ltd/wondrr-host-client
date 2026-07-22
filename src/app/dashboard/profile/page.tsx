@@ -8,6 +8,8 @@ import { VerifiedDocuments } from './components/VerifiedDocuments';
 import { MembershipInfo } from './components/MembershipInfo';
 import { PaymentDetails } from './components/PaymentDetails';
 import { LinksCard } from './components/LinksCard';
+import { BannerCard } from './components/BannerCard';
+import { ProfileVideosCard } from './components/ProfileVideosCard';
 import UpdateAvatarModal from './components/UpdateAvatarModal';
 import ChangePasswordModal from './components/ChangePasswordModal';
 // import {
@@ -40,6 +42,8 @@ interface ProfileData {
   }
   isVerified: boolean;
   companyDocuments:boolean;
+  banner?: string;
+  profileVideos?: string[];
   socialMedia : [{
     platform : 'Facebook' | 'Instagram' | 'LinkedIn' | 'Website';
     url : string;
@@ -162,6 +166,8 @@ const ProfilePage = () => {
           />
         </div>
       </div>
+      <BannerCard banner={profileData.banner} />
+      <ProfileVideosCard videos={profileData.profileVideos || []} />
       <UpdateAvatarModal
         open={isAvatarModalOpen}
         onClose={() => setIsAvatarModalOpen(false)}
