@@ -25,7 +25,7 @@ const LoginForm = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     if (showOtp) {
-      const result = await verifyOtp({ email, otp })
+      const result = await verifyOtp({ email, otp, purpose: 'login' })
       if (result.success && result.data?.verified) {
         setShowOtp(false)
         setOtp('')

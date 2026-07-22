@@ -87,7 +87,7 @@ const SignupForm = () => {
   const handleVerifyOtp = async (e: React.FormEvent) => {
     e.preventDefault()
     try {
-      const response = await verifyOtpMutation({ email, otp })
+      const response = await verifyOtpMutation({ email, otp, purpose: 'signup' })
       if (response.data.verified) {
         router.push('/auth?mode=login')
       }
