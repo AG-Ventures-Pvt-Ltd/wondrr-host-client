@@ -206,13 +206,14 @@ const BULLET_PREFIX = /^(?:[-*•·●▪▸>]|\d+[.):])\s+/
 
 // Pasted text becomes one point per sentence. Newlines are usually soft wraps from
 // poster-style copy, so they join into one line — unless every line is bulleted/numbered,
-// then each line is its own point. Only "." before whitespace/end splits ("9.30 am" survives).
+// then each line is its own point. Only "." before whitespace/end splits ("9.30 am" survives);
+// ".," too, since copied comma-joined point lists look like "a.,b.,c".
 export const toItineraryPoints = (text: string): string[] => {
   const lines = text.split('\n').map((line) => line.trim()).filter(Boolean)
   const isList = lines.length > 1 && lines.every((line) => BULLET_PREFIX.test(line))
   const chunks = isList ? lines.map((line) => line.replace(BULLET_PREFIX, '')) : [lines.join(' ')]
   return chunks
-    .flatMap((chunk) => chunk.split(/\.(?=\s|$)/))
+    .flatMap((chunk) => chunk.split(/\.(?:,|(?=\s|$))/))
     .map((point) => point.replace(/\s+/g, ' ').trim())
     .filter(Boolean)
 }
