@@ -9,6 +9,7 @@ import useS3Upload from '@/common/hooks/useS3Upload'
 import { notify } from '@/common/utils/notify'
 import MyImage from '@/common/components/atoms/Image'
 import { useSession } from 'next-auth/react'
+import ImageCropModal from './ImageCropModal'
 
 interface ImagePreview {
   file?: File
@@ -35,6 +36,8 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({
   const { uploadImages, isUploading, progress, error } = useS3Upload()
   const [previewImages, setPreviewImages] = useState<ImagePreview[]>(images)
   const [stagedImages, setStagedImages] = useState<ImagePreview[]>([])
+  const [cropQueue, setCropQueue] = useState<File[]>([])
+  const [activeCropFile, setActiveCropFile] = useState<{ file: File; url: string } | null>(null)
 
   // Update previewImages when images prop changes (for edit mode)
   React.useEffect(() => {
@@ -43,22 +46,40 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({
 
   const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(e.target.files || []) as File[]
-    
+
     if (files.length === 0) return
 
-    const newStagedImages: ImagePreview[] = files.map(file => ({
-      file,
-      url: URL.createObjectURL(file),
-      name: file.name,
-      isUploading: false,
-    }))
-    
-    setStagedImages(prev => [...prev, ...newStagedImages])
-    
+    setCropQueue(prev => [...prev, ...files])
+
     // Reset file input
     if (fileInputRef.current) {
       fileInputRef.current.value = ''
     }
+  }
+
+  // Pop next file off the crop queue whenever the modal is free
+  React.useEffect(() => {
+    if (!activeCropFile && cropQueue.length > 0) {
+      const [nextFile, ...rest] = cropQueue
+      setActiveCropFile({ file: nextFile, url: URL.createObjectURL(nextFile) })
+      setCropQueue(rest)
+    }
+  }, [activeCropFile, cropQueue])
+
+  const handleCropCancel = () => {
+    if (activeCropFile) URL.revokeObjectURL(activeCropFile.url)
+    setActiveCropFile(null)
+  }
+
+  const handleCropDone = (croppedFile: File) => {
+    if (activeCropFile) URL.revokeObjectURL(activeCropFile.url)
+    setStagedImages(prev => [...prev, {
+      file: croppedFile,
+      url: URL.createObjectURL(croppedFile),
+      name: croppedFile.name,
+      isUploading: false,
+    }])
+    setActiveCropFile(null)
   }
 
   const handleRemoveImage = (index: number, isStaged: boolean) => {    if (isStaged) {
@@ -108,14 +129,7 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({
       return
     }
 
-    const newStagedImages: ImagePreview[] = imageFiles.map(file => ({
-      file,
-      url: URL.createObjectURL(file),
-      name: file.name,
-      isUploading: false,
-    }))
-    
-    setStagedImages(prev => [...prev, ...newStagedImages])
+    setCropQueue(prev => [...prev, ...imageFiles])
   }
 
   const handleUploadImages = async () => {
@@ -368,6 +382,16 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({
             </div>
           )}
         </div>
+      )}
+      {activeCropFile && (
+        <ImageCropModal
+          open={!!activeCropFile}
+          imageSrc={activeCropFile.url}
+          fileName={activeCropFile.file.name}
+          fileType={activeCropFile.file.type}
+          onCancel={handleCropCancel}
+          onCropDone={handleCropDone}
+        />
       )}
     </div>
   )
