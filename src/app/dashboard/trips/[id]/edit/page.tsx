@@ -74,15 +74,13 @@ const EditTripPage = () => {
                     })),
                 itinerary: (tripDetails.itinerary || [])
                     .filter((item) => item && (item.title || item.day || item.description))
-                    .map((item: { day: string; title?: string; description: string; activities?: string[] }, index: number) => {
-                        const description = typeof item.description === 'string' ? item.description : String(item.description || '');
+                    .map((item: { day: string; title?: string; description: string[]; activities?: string[] }, index: number) => {
                         return {
                             id: Date.now() + 20000 + index * 100,
                             dayNumber: index + 1,
                             title: item.title || item.day || '',
-                            description: description,
+                            description: item.description || [],
                             activities: item.activities || [],
-                            wordCount: description.trim().split(/\s+/).filter((word: string) => word.length > 0).length || 0,
                         };
                     }),
                 highlights: (tripDetails.highlights || [])

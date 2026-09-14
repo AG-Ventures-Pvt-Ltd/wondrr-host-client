@@ -229,8 +229,7 @@ export interface ItineraryDay {
   id: number
   dayNumber: number
   title: string
-  description: string
-  wordCount: number
+  description: string[]
 }
 
 export interface Highlight {
@@ -330,7 +329,8 @@ export interface TripFormState extends TripFormData {
   addFAQ: (question: string, answer: string) => void
   removeFAQ: (id: number) => void
   addItineraryDay: () => void
-  updateItineraryDay: (id: number, description: string) => void
+  addItineraryPoints: (id: number, points: string[]) => void
+  removeItineraryPoint: (id: number, index: number) => void
   updateItineraryTitle: (id: number, title: string) => void
   removeItineraryDay: (id: number) => void
   setItineraryStartDay: (day: 0 | 1) => void

@@ -4,7 +4,8 @@ export const useItineraryManager = () => {
   const { 
     itinerary, 
     addItineraryDay, 
-    updateItineraryDay, 
+    addItineraryPoints,
+    removeItineraryPoint,
     updateItineraryTitle,
     removeItineraryDay,
     itineraryStartDay,
@@ -14,7 +15,8 @@ export const useItineraryManager = () => {
   return {
     itinerary,
     addItineraryDay,
-    updateItineraryDay,
+    addItineraryPoints,
+    removeItineraryPoint,
     updateItineraryTitle,
     removeItineraryDay,
     itineraryStartDay,

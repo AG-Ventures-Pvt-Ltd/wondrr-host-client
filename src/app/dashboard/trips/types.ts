@@ -76,7 +76,7 @@ export interface TripDetailsApiResponse {
   itinerary: Array<{
     day: string
     title?: string
-    description: string
+    description: string[]
     activities?: string[]
   }>
   inclusions: string[]
@@ -136,7 +136,7 @@ export interface TripDetails {
   itinerary: Array<{
     day: string
     title?: string
-    description: string
+    description: string[]
     activities?: string[]
   }>
   inclusions: string[]
@@ -177,7 +177,7 @@ export interface TripDetails {
 export interface Itinerary {
   day: string
   title?: string
-  description: string
+  description: string[]
 }
 
 export interface RefundTier { 
