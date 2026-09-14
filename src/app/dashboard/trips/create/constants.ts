@@ -258,7 +258,6 @@ export const VALIDATION_RULES = {
   MIN_INCLUSIONS: 3,
   MIN_EXCLUSIONS: 2,
   MIN_HIGHLIGHTS: 2,
-  MAX_ITINERARY_WORDS: 100,
   MIN_BASE_PRICE: 0,
   MIN_MAX_PRICE: 0,
 } as const
@@ -297,8 +296,6 @@ export const VALIDATION_MESSAGES = {
   addonPrice: (index: number) => `Add-on ${index + 1}: Price per person cannot be negative`,
   itineraryDayTitle: (dayNumber: number) => `Day ${dayNumber} title is required`,
   itineraryDayDescription: (dayNumber: number) => `Day ${dayNumber} needs at least one itinerary point`,
-  itineraryDayWordCount: (dayNumber: number) =>
-    `Day ${dayNumber} itinerary exceeds ${VALIDATION_RULES.MAX_ITINERARY_WORDS} words limit`,
 }
 
 export const IMAGE_UPLOAD_CONFIG = {
