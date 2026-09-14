@@ -6,8 +6,7 @@ import { Badge } from '@/common/ui/badge'
 import { Plus, Trash2, X } from 'lucide-react'
 import CustomInput from '@/common/components/composites/CustomInput'
 import { useItineraryManager } from '../../hooks'
-import { VALIDATION_RULES } from '../../constants'
-import { countWords, toItineraryPoints } from '../../utils'
+import { toItineraryPoints } from '../../utils'
 import { ItineraryDay } from '../../types'
 import { useTripFormStore } from '../../store'
 import CustomSelect from '@/common/components/composites/CustomSelect'
@@ -185,7 +184,6 @@ const ItineraryStep: React.FC<ItineraryStepProps> = () => {
       </div>
 
         {itinerary.map((day) => {
-          const wordCount = countWords(day.description)
           return (
           <div
             key={day.id}
@@ -194,9 +192,6 @@ const ItineraryStep: React.FC<ItineraryStepProps> = () => {
             <div className="flex items-center justify-between">
               <Label className="text-sm font-medium">Day {day.dayNumber}</Label>
               <div className="flex items-center gap-3">
-                <span className="text-xs text-neutral-500">
-                  {wordCount}/{VALIDATION_RULES.MAX_ITINERARY_WORDS} words
-                </span>
                 <button
                   type="button"
                   onClick={() => removeItineraryDay(day.id)}
@@ -226,12 +221,6 @@ const ItineraryStep: React.FC<ItineraryStepProps> = () => {
                 Plan for the day
               </Label>
               <ItineraryDayPoints day={day} onAdd={addItineraryPoints} onRemove={removeItineraryPoint} />
-              {wordCount > VALIDATION_RULES.MAX_ITINERARY_WORDS && (
-                <p className="text-xs text-red-500">
-                  Exceeds {VALIDATION_RULES.MAX_ITINERARY_WORDS} words limit by{' '}
-                  {wordCount - VALIDATION_RULES.MAX_ITINERARY_WORDS} words
-                </p>
-              )}
             </div>
           </div>
           )

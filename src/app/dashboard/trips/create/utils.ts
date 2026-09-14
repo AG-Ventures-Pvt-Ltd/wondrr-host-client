@@ -88,9 +88,6 @@ export const validateTripForm = (formData: TripFormData): ValidationResult => {
     if (day.description.length === 0) {
       errors.push(VALIDATION_MESSAGES.itineraryDayDescription(day.dayNumber))
     }
-    if (countWords(day.description) > VALIDATION_RULES.MAX_ITINERARY_WORDS) {
-      errors.push(VALIDATION_MESSAGES.itineraryDayWordCount(day.dayNumber))
-    }
   })
 
   // Inclusions validations
