@@ -85,10 +85,10 @@ export const validateTripForm = (formData: TripFormData): ValidationResult => {
     if (!day.title.trim()) {
       errors.push(VALIDATION_MESSAGES.itineraryDayTitle(day.dayNumber))
     }
-    if (!day.description.trim()) {
+    if (day.description.length === 0) {
       errors.push(VALIDATION_MESSAGES.itineraryDayDescription(day.dayNumber))
     }
-    if (day.wordCount > VALIDATION_RULES.MAX_ITINERARY_WORDS) {
+    if (countWords(day.description) > VALIDATION_RULES.MAX_ITINERARY_WORDS) {
       errors.push(VALIDATION_MESSAGES.itineraryDayWordCount(day.dayNumber))
     }
   })
@@ -154,7 +154,7 @@ export const prepareSubmissionData = (formData: TripFormData) => {
     itinerary: formData.itinerary.map((day) => ({
       day: day.dayNumber,
       title: day.title,
-      description: Array.isArray(day.description) ? day.description : [day.description],
+      description: day.description,
     })),
     inclusions: formData.inclusions.map((item) => item.text),
     exclusions: formData.exclusions.map((item) => item.text),
@@ -201,3 +201,21 @@ export const isValidImageFile = (file: File): boolean => {
     file.size <= VALIDATION_RULES.MAX_IMAGE_SIZE
   )
 }
+
+const BULLET_PREFIX = /^(?:[-*•·●▪▸>]|\d+[.):])\s+/
+
+// Pasted text becomes one point per sentence. Newlines are usually soft wraps from
+// poster-style copy, so they join into one line — unless every line is bulleted/numbered,
+// then each line is its own point. Only "." before whitespace/end splits ("9.30 am" survives).
+export const toItineraryPoints = (text: string): string[] => {
+  const lines = text.split('\n').map((line) => line.trim()).filter(Boolean)
+  const isList = lines.length > 1 && lines.every((line) => BULLET_PREFIX.test(line))
+  const chunks = isList ? lines.map((line) => line.replace(BULLET_PREFIX, '')) : [lines.join(' ')]
+  return chunks
+    .flatMap((chunk) => chunk.split(/\.(?=\s|$)/))
+    .map((point) => point.replace(/\s+/g, ' ').trim())
+    .filter(Boolean)
+}
+
+export const countWords = (points: string[]): number =>
+  points.join(' ').split(/\s+/).filter(Boolean).length

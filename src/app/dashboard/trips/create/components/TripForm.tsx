@@ -167,7 +167,7 @@ const TripForm: React.FC<TripFormProps> = ({ isEditMode = false, tripId }) => {
       tripImages.length > 0 ||
       faqs.length > 0 ||
       pricings.length > 0 ||
-      itinerary.some(day => day.title.trim() !== '' || day.description.trim() !== '') ||
+      itinerary.some(day => day.title.trim() !== '' || day.description.length > 0) ||
       inclusions.length > 0 ||
       exclusions.length > 0 ||
       cancellationPolicy.length > 0 ||

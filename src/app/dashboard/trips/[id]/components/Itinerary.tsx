@@ -3,7 +3,8 @@ import Card from '@/common/components/composites/Card';
 
 interface ItineraryItem {
     day: string;
-    description: string;
+    title?: string;
+    description: string[];
 }
 
 interface ItineraryProps {
@@ -20,10 +21,12 @@ const Itinerary: React.FC<ItineraryProps> = ({ items }) => {
                         key={index}
                         className="px-5 pt-5 pb-1 bg-neutral-50/50 rounded-2xl border border-neutral-200/50 flex flex-col gap-2"
                     >
-                        <h3 className="text-base text-maintext">{item.day}</h3>
-                        <p className="text-sm text-neutral-700 leading-6 pb-4">
-                            {item.description}
-                        </p>
+                        <h3 className="text-base text-maintext">{item.title || item.day}</h3>
+                        <ul className="text-sm text-neutral-700 leading-6 pb-4 list-disc pl-5">
+                            {item.description.map((point, i) => (
+                                <li key={i}>{point}</li>
+                            ))}
+                        </ul>
                     </div>
                 ))}
             </div>

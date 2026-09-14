@@ -296,7 +296,7 @@ export const VALIDATION_MESSAGES = {
   addonLabel: (index: number) => `Add-on ${index + 1}: Label is required`,
   addonPrice: (index: number) => `Add-on ${index + 1}: Price per person cannot be negative`,
   itineraryDayTitle: (dayNumber: number) => `Day ${dayNumber} title is required`,
-  itineraryDayDescription: (dayNumber: number) => `Day ${dayNumber} itinerary description is required`,
+  itineraryDayDescription: (dayNumber: number) => `Day ${dayNumber} needs at least one itinerary point`,
   itineraryDayWordCount: (dayNumber: number) =>
     `Day ${dayNumber} itinerary exceeds ${VALIDATION_RULES.MAX_ITINERARY_WORDS} words limit`,
 }

@@ -28,8 +28,7 @@ const initialFormData: TripFormData = {
       id: Date.now(),
       dayNumber: 1,
       title: '',
-      description: '',
-      wordCount: 0,
+      description: [],
     },
   ],
   inclusions: [],
@@ -137,24 +136,27 @@ export const useTripFormStore = create<TripFormState>((set) => ({
             id: Date.now(),
             dayNumber: newDayNumber,
             title: '',
-            description: '',
-            wordCount: 0,
+            description: [],
           },
         ],
         validationErrors: state.validationErrors.length > 0 ? [] : state.validationErrors,
       }
     }),
 
-  updateItineraryDay: (id, description) =>
-    set((state) => {
-      const wordCount = description.trim().split(/\s+/).filter((word) => word.length > 0).length
-      return {
-        itinerary: state.itinerary.map((day) =>
-          day.id === id ? { ...day, description, wordCount } : day
-        ),
-        validationErrors: state.validationErrors.length > 0 ? [] : state.validationErrors,
-      }
-    }),
+  addItineraryPoints: (id, points) =>
+    set((state) => ({
+      itinerary: state.itinerary.map((day) =>
+        day.id === id ? { ...day, description: [...day.description, ...points] } : day
+      ),
+      validationErrors: state.validationErrors.length > 0 ? [] : state.validationErrors,
+    })),
+
+  removeItineraryPoint: (id, index) =>
+    set((state) => ({
+      itinerary: state.itinerary.map((day) =>
+        day.id === id ? { ...day, description: day.description.filter((_, i) => i !== index) } : day
+      ),
+    })),
 
   updateItineraryTitle: (id, title) =>
     set((state) => ({
