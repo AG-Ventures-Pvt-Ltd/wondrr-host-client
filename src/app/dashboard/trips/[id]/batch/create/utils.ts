@@ -41,6 +41,10 @@ export const validateBatchForm = (formData: BatchFormData): ValidationResult => 
     errors.push('Total seats is required and must be greater than 0')
   }
 
+  if (formData.addOnPrice !== null && formData.addOnPrice < 0) {
+    errors.push('Batch add-on price must be non-negative')
+  }
+
   if (!formData.closeBooking.trim()) {
     errors.push('Close booking date and time is required')
   }
@@ -100,6 +104,7 @@ export const prepareSubmissionData = (formData: BatchFormData, tripId: string) =
     dropPoint: formData.dropPoint,
     pointOfContact: formData.pointOfContact,
     totalSeats: formData.totalSeats,
+    addOnPrice: formData.addOnPrice ?? 0,
     closeBooking: toISTDateMidnight(formData.closeBooking),
     status: 'draft',
   }

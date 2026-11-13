@@ -33,6 +33,7 @@ export interface BatchDetailsApiResponse {
     phone: string;
   };
   closeBooking?: string;
+  addOnPrice?: number;
   tripTitle?: string;
   tripLocation?: string;
   availableSeats?: number;
@@ -52,6 +53,7 @@ interface BatchDetails {
     dropPoint: BatchDetailsApiResponse['dropPoint'];
     pointOfContact: string;
     contactPhone: string;
+    addOnPrice: number;
   };
 }
 
@@ -74,6 +76,7 @@ export const useBatchDetails = (batchId: string) => {
       dropPoint: data.dropPoint ?? [],
       pointOfContact: data.pointOfContact?.name ?? '',
       contactPhone: data.pointOfContact?.phone ?? '',
+      addOnPrice: data.addOnPrice ?? 0,
     },
   } : null;
 

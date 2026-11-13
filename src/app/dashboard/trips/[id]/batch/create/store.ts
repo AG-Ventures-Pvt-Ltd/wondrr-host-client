@@ -22,6 +22,7 @@ const initialFormData: BatchFormData = {
     phone: '',
   },
   totalSeats: null,
+  addOnPrice: null,
   status: 'draft',
   closeBooking: '',
 }

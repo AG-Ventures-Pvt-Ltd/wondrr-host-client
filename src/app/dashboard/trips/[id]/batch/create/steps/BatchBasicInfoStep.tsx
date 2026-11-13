@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from 'react'
 import { Label } from '@/common/ui/label'
-import { MapPin, User, Phone, Users, Plus, Trash2, CheckCircle2, Pencil } from 'lucide-react'
+import { MapPin, User, Phone, Users, Plus, Trash2, CheckCircle2, Pencil, IndianRupee } from 'lucide-react'
 import CustomInput from '@/common/components/composites/CustomInput'
 import Button from '@/common/components/atoms/Button'
 import LocationPickerModal, {
@@ -72,6 +72,7 @@ const BatchBasicInfoStep: React.FC = () => {
     dropPoint,
     pointOfContact,
     totalSeats,
+    addOnPrice,
     closeBooking,
     updateField,
     updatePointOfContact,
@@ -449,6 +450,26 @@ const BatchBasicInfoStep: React.FC = () => {
         />
         <p className="text-xs text-muted-foreground">
           Total number of available seats for this batch
+        </p>
+      </div>
+
+      {/* Batch Add-on Price */}
+      <div className="space-y-2">
+        <Label htmlFor="addOnPrice" className="text-sm flex items-center gap-2">
+          <IndianRupee className="w-4 h-4 text-neutral-400" />
+          Batch Add-on Price (per person)
+        </Label>
+        <CustomInput
+          id="addOnPrice"
+          type="number"
+          placeholder="e.g., 500 (leave empty for none)"
+          value={addOnPrice === null ? '' : addOnPrice}
+          onChange={(e) => updateField('addOnPrice', e.target.value ? Number(e.target.value) : null)}
+          variant="input"
+          min={0}
+        />
+        <p className="text-xs text-muted-foreground">
+          Added to every pricing tier for this date only, e.g. peak weekends or festivals. Travellers see it under the date and in the tier price.
         </p>
       </div>
 
