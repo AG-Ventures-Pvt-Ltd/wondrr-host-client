@@ -68,6 +68,7 @@ const EditBatchPage = () => {
                     phone: rawData.pointOfContact?.phone || '',
                 },
                 totalSeats: rawData.totalSeats || null,
+                addOnPrice: rawData.addOnPrice || null,
                 status: (rawData.status?.toLowerCase() || 'draft') as 'draft' | 'published' | 'cancelled',
                 closeBooking: rawData.closeBooking
                     ? new Date(rawData.closeBooking).toLocaleDateString('en-CA', { timeZone: 'Asia/Kolkata' })

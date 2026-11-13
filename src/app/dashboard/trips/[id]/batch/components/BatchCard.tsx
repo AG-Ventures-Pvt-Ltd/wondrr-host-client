@@ -129,7 +129,10 @@ const BatchCard = ({ batch, tripId, onDuplicate, onDelete, isSelected, onToggleS
                 <div className="grid grid-cols-2 gap-4">
                     <div className="flex flex-col gap-1">
                         <span className="text-xs text-subtext">Price</span>
-                        <span className="text-sm text-maintext">{batch.priceRange || '₹0'}</span>
+                        <span className="text-sm text-maintext">
+                            {batch.priceRange || '₹0'}
+                            {!!batch.addOnPrice && <span className="text-xs text-subtext"> + ₹{batch.addOnPrice.toLocaleString('en-IN')} add-on</span>}
+                        </span>
                     </div>
                     <div className="flex flex-col gap-1">
                         <span className="text-xs text-subtext">Seats</span>

@@ -105,6 +105,17 @@ const BatchDetailsPage = () => {
                 </div>
               </div>
               <div className="flex flex-col gap-2">
+                <span className="text-xs text-neutral-500">Batch Add-on Price</span>
+                <div className="flex items-center gap-2">
+                  <IndianRupee className="w-4 h-4 text-neutral-400" />
+                  <span className="text-sm text-maintext">
+                    {batchDetails.batchInfo.addOnPrice > 0
+                      ? `₹${batchDetails.batchInfo.addOnPrice.toLocaleString('en-IN')} per person, added to every tier`
+                      : 'None'}
+                  </span>
+                </div>
+              </div>
+              <div className="flex flex-col gap-2">
                 <span className="text-xs text-neutral-500">Drop Points</span>
                 <div className="flex items-center gap-2">
                   <MapPin className="w-4 h-4 text-neutral-400" />

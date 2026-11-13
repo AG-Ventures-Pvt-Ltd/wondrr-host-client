@@ -35,6 +35,8 @@ export interface BatchFormData {
   dropPoint: string[]
   pointOfContact: PointOfContact
   totalSeats: number | null
+  /** Per-person price added to every pricing tier for this batch only. null = none */
+  addOnPrice: number | null
   status: 'draft' | 'published' | 'cancelled'
   closeBooking: string
 }

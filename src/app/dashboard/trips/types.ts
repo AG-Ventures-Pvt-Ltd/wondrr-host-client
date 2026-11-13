@@ -34,6 +34,7 @@ export interface TripBatchDetails {
   priceRange: string
   durationDays: number
   occupancyPercent: number
+  addOnPrice?: number
   rating?: number
   reviewCount?: number
 }
